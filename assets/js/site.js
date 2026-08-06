@@ -233,9 +233,12 @@
       if (record.width && !img.getAttribute("width")) img.setAttribute("width", record.width);
       if (record.height && !img.getAttribute("height")) img.setAttribute("height", record.height);
 
-      /* Only touch src when the registry and the markup disagree, so the
-         normal case costs no extra request. */
-      if (img.getAttribute("src") !== wanted && !img.classList.contains("is-placeholder")) {
+      /* Attempt the record's real image whenever the markup points
+         elsewhere. Advocate pages ship the silhouette as their src, so
+         this line is what makes the photograph appear the moment the
+         firm supplies the file — and while the file is absent, the
+         error handler above falls straight back to the silhouette. */
+      if (img.getAttribute("src") !== wanted) {
         img.src = wanted;
       }
 

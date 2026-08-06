@@ -1,0 +1,1004 @@
+@charset "UTF-8";
+
+/* ===================================================================
+   H.R. Legal Associate - lexlawandtax.com
+   Foundation stylesheet
+
+   1.  Design tokens
+   2.  Reset and base elements
+   3.  Layout helpers
+   4.  Header and navigation
+   5.  Footer
+   6.  Page furniture (hero, sections, cards)
+   7.  Forms
+   8.  States and utilities
+   9.  Responsive rules
+   10. Reduced motion and print
+
+   The palette is predominantly white, with navy and teal carrying the
+   structure and gold used sparingly as an accent.
+   =================================================================== */
+
+
+/* 1. Design tokens
+   ------------------------------------------------------------------ */
+
+:root {
+  /* Brand */
+  --navy-900: #08172b;
+  --navy-800: #0d2440;
+  --navy-700: #123256;
+  --navy-600: #1a4373;
+  --navy-100: #e7edf5;
+  --navy-050: #f4f7fb;
+
+  --teal-700: #0b5f60;
+  --teal-600: #0f7b7b;
+  --teal-500: #159595;
+  --teal-100: #e2f2f2;
+
+  --gold-600: #a8842f;
+  --gold-500: #c8a24a;
+  --gold-100: #f7efdc;
+  /* Gold is too light to carry text; this darker step is the only one
+     used for wording, at 5.0:1 on white. */
+  --gold-text: #8a6b1f;
+
+  /* Neutrals */
+  --white: #ffffff;
+  --grey-050: #fafbfc;
+  --grey-100: #f1f3f6;
+  --grey-200: #e2e6ec;
+  --grey-300: #cbd2dc;
+  /* Dark enough to clear 4.5:1 on white *and* on the tinted --navy-050
+     section background, which the lighter greys did not. */
+  --grey-500: #616b7a;
+  --grey-700: #3d4552;
+
+  /* Semantic */
+  --color-bg: var(--white);
+  --color-bg-muted: var(--navy-050);
+  --color-text: #1c2430;
+  --color-text-muted: var(--grey-500);
+  --color-heading: var(--navy-800);
+  --color-link: var(--teal-700);
+  --color-link-hover: var(--navy-700);
+  --color-border: var(--grey-200);
+  --color-accent: var(--gold-500);
+  --color-focus: var(--teal-600);
+
+  /* Typography */
+  --font-body: "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-heading: Georgia, "Times New Roman", "Noto Serif", serif;
+
+  --step--1: 0.875rem;
+  --step-0: 1rem;
+  --step-1: 1.125rem;
+  --step-2: 1.375rem;
+  --step-3: 1.75rem;
+  --step-4: 2.125rem;
+  --step-5: 2.625rem;
+
+  /* Space */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-s: 1rem;
+  --space-m: 1.5rem;
+  --space-l: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+
+  /* Shape */
+  --radius-s: 4px;
+  --radius-m: 8px;
+  --radius-l: 14px;
+
+  --shadow-s: 0 1px 2px rgba(8, 23, 43, 0.06);
+  --shadow-m: 0 6px 20px rgba(8, 23, 43, 0.08);
+
+  --wrap: 72rem;
+  --measure: 68ch;
+
+  --transition: 160ms ease;
+}
+
+
+/* 2. Reset and base elements
+   ------------------------------------------------------------------ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 6rem;
+}
+
+html.has-smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  color: var(--color-heading);
+  line-height: 1.25;
+  margin: 0 0 var(--space-s);
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--step-4); }
+h2 { font-size: var(--step-3); }
+h3 { font-size: var(--step-2); }
+h4 { font-size: var(--step-1); }
+
+p,
+ul,
+ol,
+dl {
+  margin: 0 0 var(--space-s);
+}
+
+p {
+  max-width: var(--measure);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  margin: var(--space-l) 0;
+}
+
+address {
+  font-style: normal;
+}
+
+small {
+  font-size: var(--step--1);
+}
+
+:target {
+  scroll-margin-top: 6rem;
+}
+
+/* Visible keyboard focus everywhere, without a mouse-click ring. */
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-s);
+}
+
+/* Older engines without :focus-visible still get a ring. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
+/* 3. Layout helpers
+   ------------------------------------------------------------------ */
+
+.container {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--space-s);
+}
+
+.section {
+  padding-block: var(--space-xl);
+}
+
+.section--muted {
+  background-color: var(--color-bg-muted);
+  border-block: 1px solid var(--color-border);
+}
+
+.section__header {
+  margin-bottom: var(--space-l);
+}
+
+.section__header p {
+  color: var(--color-text-muted);
+  margin-bottom: 0;
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-m);
+}
+
+.grid--2 { grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+.grid--3 { grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+
+.stack > * + * {
+  margin-top: var(--space-s);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 999;
+  background: var(--navy-800);
+  color: var(--white);
+  padding: var(--space-2xs) var(--space-s);
+  border-radius: 0 0 var(--radius-m) 0;
+}
+
+.skip-link:focus {
+  left: 0;
+  color: var(--white);
+}
+
+
+/* 4. Header and navigation
+   ------------------------------------------------------------------ */
+
+.site-header {
+  background-color: var(--white);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* A hairline of gold under the header is the only decorative flourish
+   at this stage. */
+.site-header::after {
+  content: "";
+  display: block;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    var(--navy-700) 0%,
+    var(--teal-600) 45%,
+    var(--gold-500) 100%
+  );
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  flex-wrap: wrap;
+  padding-block: var(--space-xs);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  text-decoration: none;
+  color: inherit;
+  margin-right: auto;
+}
+
+.brand-mark {
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-m);
+  background-color: var(--navy-800);
+  color: var(--white);
+  font-family: var(--font-heading);
+  font-size: var(--step-0);
+  letter-spacing: 0.04em;
+  border: 1px solid var(--navy-700);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-family: var(--font-heading);
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--navy-800);
+  line-height: 1.2;
+}
+
+.brand-tagline {
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  gap: var(--space-2xs);
+  font: inherit;
+  font-size: var(--step--1);
+  color: var(--navy-800);
+  background: var(--white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  padding: var(--space-2xs) var(--space-xs);
+  cursor: pointer;
+}
+
+.nav-toggle-bars {
+  display: grid;
+  gap: 3px;
+  width: 1rem;
+}
+
+.nav-toggle-bars span {
+  display: block;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 2px;
+}
+
+.site-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3xs);
+}
+
+.site-nav a {
+  display: block;
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-s);
+  color: var(--navy-800);
+  text-decoration: none;
+  font-size: var(--step--1);
+  border-bottom: 2px solid transparent;
+}
+
+.site-nav a:hover {
+  background-color: var(--navy-050);
+  color: var(--navy-700);
+}
+
+.site-nav a[aria-current="page"] {
+  color: var(--teal-700);
+  border-bottom-color: var(--gold-500);
+  font-weight: 600;
+}
+
+/* Qualified with .site-nav so it outweighs the `.site-nav a` colour
+   above; otherwise the label renders navy on navy. */
+.site-nav a.nav-cta {
+  display: inline-block;
+  padding: var(--space-2xs) var(--space-s);
+  border-radius: var(--radius-m);
+  background-color: var(--navy-800);
+  color: var(--white);
+  text-decoration: none;
+  font-size: var(--step--1);
+  border-bottom: 0;
+}
+
+.site-nav a.nav-cta:hover {
+  background-color: var(--teal-700);
+  color: var(--white);
+}
+
+
+/* 5. Footer
+   ------------------------------------------------------------------ */
+
+.site-footer {
+  margin-top: var(--space-2xl);
+  background-color: var(--navy-800);
+  color: var(--navy-100);
+  font-size: var(--step--1);
+}
+
+.site-footer a {
+  color: var(--navy-100);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--gold-500);
+  text-decoration: underline;
+}
+
+.site-footer :focus-visible {
+  outline-color: var(--gold-500);
+}
+
+.footer-grid {
+  display: grid;
+  gap: var(--space-l);
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  padding-block: var(--space-xl);
+}
+
+.footer-heading {
+  font-family: var(--font-heading);
+  font-size: var(--step-0);
+  color: var(--white);
+  margin: 0 0 var(--space-2xs);
+}
+
+.footer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-list li + li {
+  margin-top: var(--space-3xs);
+}
+
+.footer-note {
+  color: var(--navy-100);
+  opacity: 0.85;
+  max-width: var(--measure);
+}
+
+.footer-bar {
+  border-top: 1px solid rgba(231, 237, 245, 0.18);
+  padding-block: var(--space-s);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-m);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-bar p {
+  margin: 0;
+  max-width: none;
+}
+
+
+/* 6. Page furniture
+   ------------------------------------------------------------------ */
+
+.hero {
+  background:
+    linear-gradient(180deg, var(--navy-050) 0%, var(--white) 100%);
+  border-bottom: 1px solid var(--color-border);
+  padding-block: var(--space-2xl);
+}
+
+.hero__eyebrow {
+  display: inline-block;
+  font-size: var(--step--1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal-700);
+  margin-bottom: var(--space-2xs);
+}
+
+.hero h1 {
+  font-size: var(--step-5);
+  margin-bottom: var(--space-s);
+}
+
+.hero__lead {
+  font-size: var(--step-1);
+  color: var(--grey-700);
+}
+
+.page-header {
+  background-color: var(--navy-050);
+  border-bottom: 1px solid var(--color-border);
+  padding-block: var(--space-l);
+}
+
+.page-header h1 {
+  margin-bottom: var(--space-2xs);
+}
+
+.page-header p {
+  color: var(--color-text-muted);
+  margin-bottom: 0;
+}
+
+.breadcrumb {
+  font-size: var(--step--1);
+  margin-bottom: var(--space-2xs);
+}
+
+.breadcrumb ol {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3xs);
+  margin: 0;
+  padding: 0;
+  color: var(--color-text-muted);
+}
+
+.breadcrumb li + li::before {
+  content: "/";
+  margin-right: var(--space-3xs);
+  color: var(--grey-300);
+}
+
+.button {
+  display: inline-block;
+  padding: var(--space-2xs) var(--space-m);
+  border-radius: var(--radius-m);
+  font-size: var(--step-0);
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+.button--primary {
+  background-color: var(--navy-800);
+  color: var(--white);
+}
+
+.button--primary:hover {
+  background-color: var(--teal-700);
+  color: var(--white);
+}
+
+.button--secondary {
+  background-color: var(--white);
+  color: var(--navy-800);
+  border-color: var(--navy-100);
+}
+
+.button--secondary:hover {
+  border-color: var(--teal-600);
+  color: var(--teal-700);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-m);
+}
+
+.card {
+  background-color: var(--white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-l);
+  padding: var(--space-m);
+  box-shadow: var(--shadow-s);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.card h3 {
+  margin: 0;
+  font-size: var(--step-1);
+}
+
+.card p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--step--1);
+}
+
+.card__link {
+  margin-top: auto;
+  padding-top: var(--space-2xs);
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+
+/* Whole-card link target, keyboard focus stays on the anchor. */
+.card--link {
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.card--link:hover {
+  border-color: var(--teal-600);
+  box-shadow: var(--shadow-m);
+  color: inherit;
+}
+
+.card--link:hover .card__link {
+  color: var(--teal-700);
+}
+
+/* Advocate cards */
+.advocate-card {
+  align-items: flex-start;
+}
+
+.advocate-card img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--radius-m);
+  background-color: var(--navy-050);
+  border: 1px solid var(--color-border);
+}
+
+.advocate-card img.is-placeholder {
+  object-fit: contain;
+  padding: var(--space-s);
+}
+
+.advocate-profile {
+  display: grid;
+  gap: var(--space-l);
+  grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+  align-items: start;
+}
+
+.advocate-profile img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--radius-l);
+  border: 1px solid var(--color-border);
+  background-color: var(--navy-050);
+}
+
+.advocate-profile img.is-placeholder {
+  object-fit: contain;
+  padding: var(--space-m);
+}
+
+.credentials {
+  list-style: none;
+  margin: 0 0 var(--space-m);
+  padding: 0;
+}
+
+.credentials li {
+  position: relative;
+  padding-left: var(--space-m);
+  margin-bottom: var(--space-3xs);
+}
+
+.credentials li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--gold-500);
+}
+
+/* Plain link lists used for practice areas and locations */
+.link-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xs);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
+.link-list a {
+  display: block;
+  padding: var(--space-2xs) var(--space-xs);
+  border-left: 3px solid var(--teal-600);
+  background-color: var(--grey-050);
+  border-radius: 0 var(--radius-s) var(--radius-s) 0;
+  text-decoration: none;
+  color: var(--navy-800);
+}
+
+.link-list a:hover {
+  border-left-color: var(--gold-500);
+  background-color: var(--navy-050);
+}
+
+/* Neutral marker for sections still being prepared. */
+.note {
+  border-left: 3px solid var(--gold-500);
+  background-color: var(--gold-100);
+  padding: var(--space-xs) var(--space-s);
+  border-radius: 0 var(--radius-m) var(--radius-m) 0;
+  color: var(--grey-700);
+  font-size: var(--step--1);
+  max-width: var(--measure);
+}
+
+.note p:last-child {
+  margin-bottom: 0;
+}
+
+.disclaimer-block {
+  background-color: var(--navy-050);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  padding: var(--space-m);
+  font-size: var(--step--1);
+  color: var(--grey-700);
+}
+
+.prose h2 {
+  margin-top: var(--space-l);
+}
+
+.prose ul,
+.prose ol {
+  max-width: var(--measure);
+  padding-left: var(--space-m);
+}
+
+.prose li {
+  margin-bottom: var(--space-3xs);
+}
+
+
+/* 7. Forms
+   ------------------------------------------------------------------ */
+
+.form {
+  display: grid;
+  gap: var(--space-s);
+  max-width: 34rem;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-3xs);
+}
+
+.field label {
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--navy-800);
+}
+
+.field .hint {
+  font-size: var(--step--1);
+  color: var(--color-text-muted);
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  width: 100%;
+  padding: var(--space-2xs) var(--space-xs);
+  border: 1px solid var(--grey-300);
+  border-radius: var(--radius-s);
+  background-color: var(--white);
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--teal-600);
+}
+
+textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled,
+button:disabled {
+  background-color: var(--grey-100);
+  color: var(--grey-500);
+  cursor: not-allowed;
+  border-color: var(--color-border);
+}
+
+.required {
+  color: var(--gold-text);
+}
+
+
+/* 8. States and utilities
+   ------------------------------------------------------------------ */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.lead {
+  font-size: var(--step-1);
+  color: var(--grey-700);
+}
+
+/* Configuration values that are still {{PLACEHOLDERS}}. */
+.is-pending {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.site-footer .is-pending {
+  color: var(--navy-100);
+  opacity: 0.7;
+}
+
+a.is-pending {
+  text-decoration: none;
+  cursor: not-allowed;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+
+/* 9. Responsive rules
+   ------------------------------------------------------------------ */
+
+@media (max-width: 60em) {
+  .advocate-profile {
+    grid-template-columns: 1fr;
+  }
+
+  .advocate-profile img {
+    max-width: 18rem;
+  }
+}
+
+@media (max-width: 48em) {
+  :root {
+    --step-4: 1.875rem;
+    --step-5: 2.125rem;
+  }
+
+  /* The collapsible menu only exists once site.js has run, so pages
+     stay navigable with JavaScript switched off. */
+  .site-header.has-js-menu .nav-toggle {
+    display: inline-flex;
+  }
+
+  .site-header.has-js-menu .site-nav {
+    display: none;
+    flex-basis: 100%;
+  }
+
+  .site-header.has-js-menu .site-nav.is-open {
+    display: block;
+    padding-bottom: var(--space-2xs);
+  }
+
+  .site-nav ul {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .site-nav li {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .site-nav a {
+    padding: var(--space-xs) var(--space-2xs);
+    border-radius: 0;
+    border-bottom: 0;
+    border-left: 3px solid transparent;
+  }
+
+  .site-nav a[aria-current="page"] {
+    border-left-color: var(--gold-500);
+  }
+
+  .site-nav a.nav-cta {
+    margin-top: var(--space-2xs);
+    text-align: center;
+  }
+
+  .section {
+    padding-block: var(--space-l);
+  }
+
+  .hero {
+    padding-block: var(--space-xl);
+  }
+}
+
+@media (max-width: 30em) {
+  .brand-tagline {
+    display: none;
+  }
+
+  .button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+
+/* 10. Reduced motion and print
+   ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  html.has-smooth-scroll {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .nav-toggle,
+  .button-row {
+    display: none !important;
+  }
+
+  body {
+    color: #000;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+  }
+}

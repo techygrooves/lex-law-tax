@@ -63,7 +63,9 @@ advocate. **Referenced but not yet present** in the repository.
 
 Until each file is added, the pages ship pointing at the SVG silhouette, so
 nothing appears broken and no stock photograph ever stands in for a real
-person.
+person. On every visit, `site.js` attempts the JPG first and shows it the
+moment the file exists — adding the three files to `assets/images/` is the
+whole job, with no markup or rebuild step needed.
 
 **Recommended specification**
 

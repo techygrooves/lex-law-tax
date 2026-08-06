@@ -1,0 +1,7 @@
+# robots.txt for lexlawandtax.com
+# H.R. Legal Associate
+
+User-agent: *
+Allow: /
+
+Sitemap: https://lexlawandtax.com/sitemap.xml

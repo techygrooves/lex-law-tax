@@ -1,32 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" width="640" height="800" role="img" aria-labelledby="placeholderTitle placeholderDesc">
-  <title id="placeholderTitle">Advocate photograph placeholder</title>
-  <desc id="placeholderDesc">A neutral silhouette shown while the advocate photograph is being prepared.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" width="640" height="800" role="img" aria-labelledby="apTitle apDesc" preserveAspectRatio="xMidYMid meet">
+  <title id="apTitle">Advocate photograph placeholder</title>
+  <desc id="apDesc">A plain silhouette shown in place of an advocate photograph that has not yet been supplied.</desc>
 
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#f4f7fb"/>
-      <stop offset="1" stop-color="#e7edf5"/>
+    <linearGradient id="apField" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FCFCFA"/>
+      <stop offset="1" stop-color="#F2F4F6"/>
     </linearGradient>
-    <clipPath id="frame">
-      <rect x="0" y="0" width="640" height="800" rx="16" ry="16"/>
+    <linearGradient id="apFigure" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#1B3A57"/>
+      <stop offset="1" stop-color="#102A43"/>
+    </linearGradient>
+    <clipPath id="apClip">
+      <rect x="0" y="0" width="640" height="800"/>
     </clipPath>
   </defs>
 
-  <g clip-path="url(#frame)">
-    <rect width="640" height="800" fill="url(#bg)"/>
+  <rect width="640" height="800" fill="url(#apField)"/>
 
-    <!-- Shoulders -->
-    <path d="M100 800c0-105 98-176 220-176s220 71 220 176z" fill="#123256" opacity="0.82"/>
+  <g clip-path="url(#apClip)">
+    <!-- Shoulders and torso -->
+    <path d="M320 470c104 0 188 66 188 148v182H132V618c0-82 84-148 188-148z" fill="url(#apFigure)"/>
+
+    <!-- Collar opening, reads as a formal band collar -->
+    <path d="M320 470c22 0 43 3 62 9l-62 96-62-96c19-6 40-9 62-9z" fill="#FCFCFA" opacity="0.94"/>
+
+    <!-- Narrow teal band at the collar -->
+    <path d="M320 575l30-46 12 8-42 64-42-64 12-8z" fill="#16656B"/>
 
     <!-- Head -->
-    <circle cx="320" cy="330" r="126" fill="#123256" opacity="0.82"/>
-
-    <!-- Collar detail in teal -->
-    <path d="M320 624l-52 88-26-64 34-30zM320 624l52 88 26-64-34-30z" fill="#0f7b7b" opacity="0.9"/>
-
-    <!-- Gold baseline accent -->
-    <rect x="0" y="788" width="640" height="12" fill="#c8a24a"/>
+    <circle cx="320" cy="322" r="118" fill="url(#apFigure)"/>
   </g>
 
-  <rect x="1" y="1" width="638" height="798" rx="16" ry="16" fill="none" stroke="#cbd2dc" stroke-width="2"/>
+  <!-- Fine gold rules, the only ornament -->
+  <rect x="40" y="40" width="560" height="720" fill="none" stroke="#D8C39A" stroke-width="1" opacity="0.75"/>
+  <rect x="0" y="794" width="640" height="6" fill="#B78B4A"/>
+  <rect x="1" y="1" width="638" height="798" fill="none" stroke="#E4E8EB" stroke-width="2"/>
 </svg>

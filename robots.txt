@@ -4,4 +4,7 @@
 User-agent: *
 Allow: /
 
+# Internal design-system reference, not part of the public site
+Disallow: /components/
+
 Sitemap: https://lexlawandtax.com/sitemap.xml

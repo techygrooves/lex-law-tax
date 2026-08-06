@@ -1,46 +1,64 @@
 /*
- * Image data
- * ----------
- * Single registry for every image used on the site.
+ * Image data adapter
+ * ------------------
+ * The registry itself lives in src/data/images.js — that file is the
+ * single place any image URL is written.
  *
- * All `src` values are written RELATIVE TO THE SITE ROOT.
- * site.js prefixes them with the per-page base path that is declared on
- * <html data-base="..."> so the same record works at any folder depth
- * and when the site is opened directly from the file system.
+ * This file derives the flat `window.imageData` lookup that site.js
+ * resolves `data-image="..."` references against, so markup can say
+ * `data-image="photos.hero"` or `data-image="advocates.hamid-razzaq"`
+ * without knowing how the registry is shaped.
  *
- * `fallback` is used automatically when the primary file is missing, so
- * pages stay presentable before the photographs are supplied.
+ * Load order matters: src/data/images.js must come before this file.
  */
 
-window.imageData = {
-  placeholders: {
-    advocate: "assets/images/advocate-placeholder.svg"
-  },
+(function () {
+  "use strict";
 
-  advocates: {
-    "mohammad-kamran": {
-      src: "assets/images/kamran-adv.jpg",
-      fallback: "assets/images/advocate-placeholder.svg",
-      alt: "Portrait of Advocate Mohammad Kamran",
-      width: 640,
-      height: 800,
-      credit: "To be supplied by the firm"
-    },
-    "hamid-razzaq": {
-      src: "assets/images/hamid-adv.jpg",
-      fallback: "assets/images/advocate-placeholder.svg",
-      alt: "Portrait of Advocate Hamid Razzaq",
-      width: 640,
-      height: 800,
-      credit: "To be supplied by the firm"
-    },
-    "irfan-ahmad-khan": {
-      src: "assets/images/irfan-adv.jpg",
-      fallback: "assets/images/advocate-placeholder.svg",
-      alt: "Portrait of Advocate Irfan Ahmad Khan",
-      width: 640,
-      height: 800,
-      credit: "To be supplied by the firm"
-    }
+  var registry = window.siteImages;
+
+  if (!registry) {
+    /* Missing registry is a wiring mistake, not a runtime condition.
+       Fail quietly with an empty map so pages still render — every
+       image already carries a usable src in the markup. */
+    window.imageData = { photos: {}, advocates: {}, fallbacks: {} };
+    return;
   }
-};
+
+  var data = {
+    photos: {},
+    advocates: {},
+    fallbacks: registry.fallbacks || {},
+    practiceAreas: registry.practiceAreas || {}
+  };
+
+  /* Remote photographs: `url` becomes `src` so every record the
+     resolver sees has the same shape. Neutral block, not the advocate
+     silhouette, when a remote photograph fails. */
+  Object.keys(registry.photos || {}).forEach(function (key) {
+    var photo = registry.photos[key];
+    data.photos[key] = {
+      src: photo.url,
+      alt: photo.alt,
+      width: photo.width,
+      height: photo.height,
+      source: photo.source,
+      altVerified: photo.altVerified === true,
+      fallback: null
+    };
+  });
+
+  /* Advocate photographs fall back to the SVG silhouette. */
+  Object.keys(registry.advocates || {}).forEach(function (key) {
+    var advocate = registry.advocates[key];
+    data.advocates[key] = {
+      src: advocate.src,
+      alt: advocate.alt,
+      width: advocate.width,
+      height: advocate.height,
+      fallback: (registry.fallbacks || {}).advocate || null
+    };
+  });
+
+  window.imageData = data;
+})();

@@ -35,6 +35,10 @@ const FONT_CSS =
    parser reads "&family" as an entity reference. */
 const attr = (value) => value.replace(/&/g, "&amp;");
 
+/* Escapes a bare & for text and attribute content, leaving entities that
+   are already written (&amp;, &middot;, &#8212;) untouched. */
+const esc = (value) => String(value).replace(/&(?!#?\w+;)/g, "&amp;");
+
 /* ------------------------------------------------------------------ */
 /* Image registry — loaded from the one file that holds the URLs        */
 /* ------------------------------------------------------------------ */
@@ -110,9 +114,9 @@ const UP_LOCATIONS = [
   ["Prayagraj", "Uttar Pradesh"],
   ["Varanasi", "Uttar Pradesh"],
   ["Gorakhpur", "Uttar Pradesh"],
-  ["Ayodhya", "Uttar Pradesh"],
-  ["Barabanki", "Uttar Pradesh"],
-  ["Raebareli", "Uttar Pradesh"]
+  ["Bareilly", "Uttar Pradesh"],
+  ["Agra", "Uttar Pradesh"],
+  ["Jhansi", "Uttar Pradesh"]
 ];
 
 const NAV = [
@@ -150,8 +154,43 @@ const ICON = {
   file: (s) => ico('<path d="M14 3H7a1.5 1.5 0 0 0-1.5 1.5v15A1.5 1.5 0 0 0 7 21h10a1.5 1.5 0 0 0 1.5-1.5V7.5L14 3Z"/><path d="M14 3v4.5h4.5"/>', s || 20),
   map: (s) => ico('<path d="m9 4-6 2.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4Z"/><path d="M9 4v13"/><path d="M15 6.5v13"/>', s || 20),
   close: (s) => ico('<path d="M6 6l12 12M18 6 6 18"/>', s || 18),
-  image: (s) => ico('<rect x="3" y="4.5" width="18" height="15" rx="1.5"/><circle cx="8.5" cy="10" r="1.5"/><path d="m3.5 17 5-4.5 4 3.5 3-2.5 5 4"/>', s || 22)
+  image: (s) => ico('<rect x="3" y="4.5" width="18" height="15" rx="1.5"/><circle cx="8.5" cy="10" r="1.5"/><path d="m3.5 17 5-4.5 4 3.5 3-2.5 5 4"/>', s || 22),
+  check: (s) => ico('<path d="m4.5 12.5 4.5 4.5 10.5-11"/>', s || 16),
+  chat: (s) => ico('<path d="M20.5 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 20.5 12Z"/>', s || 20),
+  handshake: (s) => ico('<path d="m3 11 4-4 3.2 2.4a2 2 0 0 0 2.4 0L16 7l5 4"/><path d="M21 11v5a1.5 1.5 0 0 1-1.5 1.5H17"/><path d="M3 11v5a1.5 1.5 0 0 0 1.5 1.5H7"/><path d="m8 15 2.5 2.5a1.8 1.8 0 0 0 2.6 0L16 15"/>', s || 20),
+  building: (s) => ico('<path d="M4 21V6.5L12 3l8 3.5V21"/><path d="M3 21h18"/><path d="M9.5 21v-4.5h5V21"/><path d="M9 10h1.5M13.5 10H15M9 13.5h1.5M13.5 13.5H15"/>', s || 20),
+  compass: (s) => ico('<circle cx="12" cy="12" r="8.5"/><path d="m15 9-1.8 4.2L9 15l1.8-4.2L15 9Z"/>', s || 20),
+  key: (s) => ico('<circle cx="8" cy="12" r="3.5"/><path d="M11.5 12H21"/><path d="M17.5 12v3M20 12v2"/>', s || 20),
+  receipt: (s) => ico('<path d="M6 3h12v18l-3-1.6-3 1.6-3-1.6L6 21V3Z"/><path d="M9.5 8h5M9.5 12h5"/>', s || 20)
 };
+
+/* --- Legal guides ---------------------------------------------------
+   The individual guide pages are not written yet, so each card points at
+   the guides index rather than a URL that does not exist. */
+
+const GUIDES = [
+  {
+    title: "Property Documents to Review Before a Purchase",
+    category: "Property",
+    text: "Which title documents, encumbrance records and approvals are usually examined before an agreement is signed.",
+    imageKey: "photos.legalGuides",
+    href: "legal-guides/index.html"
+  },
+  {
+    title: "Responding to a Cheque-Bounce Matter",
+    category: "Recovery",
+    text: "The notice period, the limitation involved and the steps that follow dishonour of a cheque.",
+    icon: () => ICON.receipt(44),
+    href: "legal-guides/index.html"
+  },
+  {
+    title: "Legal and Tax Checklist for Starting a Firm",
+    category: "Business",
+    text: "Registration, partnership documentation and the tax registrations a new firm generally has to consider.",
+    icon: () => ICON.building(44),
+    href: "legal-guides/index.html"
+  }
+];
 
 /* --- 1. Skip link -------------------------------------------------- */
 
@@ -338,8 +377,10 @@ function sectionHead(o) {
   const lead = o.lead ? `      <p class="section-head__lead">${o.lead}</p>\n` : "";
   const level = o.level || "h2";
 
+  const id = o.id ? ` id="${o.id}"` : "";
+
   return `    <div class="${cls.join(" ")}"${o.reveal === false ? "" : " data-reveal"}>
-${eyebrow}      <${level} class="section-head__title">${o.title}</${level}>
+${eyebrow}      <${level} class="section-head__title"${id}>${o.title}</${level}>
 ${lead}    </div>`;
 }
 
@@ -534,16 +575,162 @@ function ctaBand(P, o) {
   </section>`;
 }
 
+/* --- Homepage: hero information panel -------------------------------------- */
+
+function heroPanel(items) {
+  return `        <ul class="hero__panel">
+${items.map((t) => `          <li>${ICON.check(15)}<span>${t}</span></li>`).join("\n")}
+        </ul>`;
+}
+
+/* --- Homepage: service card (image, factual line, explore link) ------------- */
+
+function serviceCard(P, o) {
+  return `      <article class="card service-card" data-reveal>
+        ${media({ imageKey: o.imageKey, ratio: "16x9", base: P, pad: "        " })}
+        <div class="card__body">
+          <h3 class="card__title"><a href="${P}${o.href}">${o.title}</a></h3>
+          <p class="card__text">${o.text}</p>
+          <p class="card__foot">${arrowLink("Explore Service", P + o.href)}</p>
+        </div>
+      </article>`;
+}
+
+/* --- Homepage: checklist used inside the feature sections ------------------- */
+
+function checkList(items) {
+  return `        <ul class="check-list">
+${items
+  .map(
+    ([label, note]) => `          <li>${ICON.check()}<span><strong>${label}</strong><span>${note}</span></span></li>`
+  )
+  .join("\n")}
+        </ul>`;
+}
+
+/* --- Homepage: positioning pillars ----------------------------------------- */
+
+function pillars(items) {
+  return `      <ul class="pillars" data-reveal-group data-reveal-step="70">
+${items
+  .map(
+    ([icon, title, text]) => `        <li class="pillar" data-reveal>
+          <span class="pillar__icon">${icon}</span>
+          <h3>${title}</h3>
+          <p>${text}</p>
+        </li>`
+  )
+  .join("\n")}
+      </ul>`;
+}
+
+/* --- Homepage: four-step process ------------------------------------------- */
+
+function processSteps(items) {
+  return `      <ol class="steps" data-reveal-group data-reveal-step="70">
+${items
+  .map(
+    ([title, text], i) => `        <li class="step" data-reveal>
+          <span class="step__number">Step ${String(i + 1).padStart(2, "0")}</span>
+          <h3>${title}</h3>
+          <p>${text}</p>
+        </li>`
+  )
+  .join("\n")}
+      </ol>`;
+}
+
+/* --- Homepage: city links --------------------------------------------------
+   Individual city pages do not exist yet, so every chip points at the
+   locations index. No link on this page is a placeholder or a dead end. */
+
+function cityLinks(P, cities) {
+  return `      <ul class="city-links">
+${cities
+  .map(
+    ([name, isOffice]) => `        <li><a href="${P}locations/index.html"${isOffice ? " data-office" : ""}>${ICON.pin(14)}<span>${name}</span></a></li>`
+  )
+  .join("\n")}
+      </ul>`;
+}
+
+/* --- Homepage: legal guide card -------------------------------------------
+   A card either carries a photograph or a colour-block header with a
+   category icon, so no single image repeats across the row. */
+
+function guideCard(P, o) {
+  const head = o.imageKey
+    ? `        <div class="guide-card__head">
+          ${media({ imageKey: o.imageKey, ratio: "16x9", base: P, pad: "          " })}
+        </div>`
+    : `        <div class="guide-card__head guide-card__head--tint" aria-hidden="true">
+          ${o.icon()}
+        </div>`;
+
+  return `      <article class="card card--article" data-reveal>
+${head}
+        <div class="card__body">
+          <p class="guide-card__category">${ICON.file(13)}<span>${o.category}</span></p>
+          <h3 class="card__title"><a href="${P}${o.href}">${o.title}</a></h3>
+          <p class="card__text">${o.text}</p>
+          <p class="card__foot">${arrowLink("Read the guide", P + o.href)}</p>
+        </div>
+      </article>`;
+}
+
+/* --- Homepage: contact panel ----------------------------------------------- */
+
+function contactPanel(P) {
+  return `      <ul class="contact-panel" data-reveal-group data-reveal-step="70">
+        <li class="contact-method" data-reveal>
+          <span class="contact-method__icon">${ICON.phone(20)}</span>
+          <span>
+            <span class="contact-method__label">Telephone</span>
+            <a class="contact-method__value" data-config="phone" data-config-role="tel" data-pending-label="To be published"><span data-config-slot>To be published</span></a>
+          </span>
+        </li>
+        <li class="contact-method" data-reveal>
+          <span class="contact-method__icon">${ICON.chat(20)}</span>
+          <span>
+            <span class="contact-method__label">WhatsApp</span>
+            <a class="contact-method__value" data-config="whatsapp" data-config-role="whatsapp" data-pending-label="To be published"><span data-config-slot>To be published</span></a>
+          </span>
+        </li>
+        <li class="contact-method" data-reveal>
+          <span class="contact-method__icon">${ICON.mail(20)}</span>
+          <span>
+            <span class="contact-method__label">Email</span>
+            <a class="contact-method__value" data-config="email" data-config-role="email" data-pending-label="To be published"><span data-config-slot>To be published</span></a>
+          </span>
+        </li>
+        <li class="contact-method" data-reveal>
+          <span class="contact-method__icon">${ICON.pin(20)}</span>
+          <span>
+            <span class="contact-method__label">Lucknow office</span>
+            <span class="contact-method__value" data-config="address" data-pending-label="Office address to be published">Office address to be published</span>
+          </span>
+        </li>
+      </ul>`;
+}
+
 /* --- 21. Footer ------------------------------------------------------------ */
 
 function footer(P) {
-  const areas = PRACTICE_AREAS.slice(0, 6)
+  const areas = PRACTICE_AREAS.slice(0, 7)
     .map(([slug, name]) => `            <li><a href="${P}practice-areas/${slug}/index.html">${name}</a></li>`)
     .join("\n");
 
-  const site = NAV.slice(1)
-    .map(([, label, href]) => `            <li><a href="${P}${href}">${label}</a></li>`)
-    .join("\n");
+  const advocates = ADVOCATES.map(
+    (a) => `            <li><a href="${P}advocates/${a.slug}/index.html">${a.short}</a></li>`
+  ).join("\n");
+
+  const cities = UP_LOCATIONS.map(
+    ([name]) => `            <li><a href="${P}locations/index.html">${name}</a></li>`
+  ).join("\n");
+
+  const guides = GUIDES.map(
+    (g) => `            <li><a href="${P}legal-guides/index.html">${g.title}</a></li>`
+  ).join("\n");
 
   return `<footer class="site-footer">
   <div class="container">
@@ -552,14 +739,9 @@ function footer(P) {
       <div class="footer-brand">
         <p class="footer-brand__name" data-firm-name>${FIRM}</p>
         <p class="footer-brand__descriptor">${DESCRIPTOR}</p>
-        <p>Advocates based in Lucknow, attending to legal and tax matters across Uttar Pradesh.</p>
-      </div>
-
-      <div>
-        <h2 class="footer-heading">Site</h2>
-        <ul class="footer-list">
-${site}
-        </ul>
+        <p>Advocates based in Lucknow, assisting individuals, property owners,
+        professionals and businesses with legal, documentation, registration and
+        tax matters across Uttar Pradesh.</p>
       </div>
 
       <div>
@@ -570,13 +752,36 @@ ${areas}
         </ul>
       </div>
 
+      <div>
+        <h2 class="footer-heading">Advocates</h2>
+        <ul class="footer-list">
+${advocates}
+            <li><a href="${P}advocates/index.html">All advocates</a></li>
+        </ul>
+
+        <h2 class="footer-heading footer-heading--stacked">Legal guides</h2>
+        <ul class="footer-list">
+${guides}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer-heading">Service locations</h2>
+        <ul class="footer-list">
+${cities}
+            <li><a href="${P}locations/index.html">All locations</a></li>
+        </ul>
+      </div>
+
       <div class="footer-contact">
         <h2 class="footer-heading">Office</h2>
         <address>
           <p class="is-pending" data-config="address" data-pending-label="Office address to be published"></p>
           <p><a data-config="phone" data-config-role="tel" data-pending-label="Telephone to be published"><span data-config-slot>Telephone to be published</span></a></p>
+          <p><a data-config="whatsapp" data-config-role="whatsapp" data-pending-label="WhatsApp to be published"><span data-config-slot>WhatsApp to be published</span></a></p>
           <p><a data-config="email" data-config-role="email" data-pending-label="Email to be published"><span data-config-slot>Email to be published</span></a></p>
           <p><a data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Map link to be published">View on Google Maps</a></p>
+          <p><a href="${P}contact/index.html">Contact form</a></p>
         </address>
       </div>
     </div>
@@ -607,24 +812,28 @@ ${areas}
 /* --- 22. Disclaimer acknowledgement ----------------------------------------- */
 
 function disclaimerGate(P, auto) {
-  return `<div class="disclaimer-gate" data-disclaimer-gate="${auto ? "auto" : "manual"}" role="dialog" aria-modal="true" aria-labelledby="disclaimer-gate-title" hidden>
+  const points = [
+    "This website provides general information about " + FIRM + " and its areas of practice.",
+    "It is not intended as advertising or as a solicitation of work.",
+    "Viewing this website does not create an advocate&ndash;client relationship.",
+    "Legal outcomes depend on the facts of each matter and the law applicable to it.",
+    "Please obtain advice on your own specific matter before acting on anything read here."
+  ];
+
+  return `<div class="disclaimer-gate" data-disclaimer-gate="${auto ? "auto" : "manual"}" role="dialog" aria-modal="true" aria-labelledby="disclaimer-gate-title" aria-describedby="disclaimer-gate-points" hidden>
   <div class="disclaimer-gate__dialog">
-    <p class="eyebrow">Please note</p>
+    <p class="eyebrow">Please read before continuing</p>
     <h2 class="disclaimer-gate__title" id="disclaimer-gate-title">Disclaimer</h2>
-    <p>
-      The rules of the Bar Council of India prohibit advocates from advertising or
-      soliciting work. By continuing, you acknowledge that you are seeking information
-      about ${FIRM} of your own accord and that no part of this website is an
-      advertisement or a solicitation.
-    </p>
-    <p>
-      Nothing on this website is legal advice, and using it does not create an
-      advocate&ndash;client relationship.
-    </p>
+    <ul class="disclaimer-gate__points" id="disclaimer-gate-points">
+${points.map((t) => `      <li>${ICON.check(15)}<span>${t}</span></li>`).join("\n")}
+    </ul>
     <div class="disclaimer-gate__actions">
-      <button class="btn btn--primary" type="button" data-disclaimer-accept>I acknowledge</button>
-      <a class="btn btn--secondary" href="${P}disclaimer/index.html">Read the full disclaimer</a>
+      <button class="btn btn--primary" type="button" data-disclaimer-accept>I Understand and Continue</button>
+      <button class="btn btn--secondary" type="button" data-disclaimer-exit>Exit Website</button>
     </div>
+    <p class="disclaimer-gate__foot">
+      The full terms are set out in the <a href="${P}disclaimer/index.html">disclaimer</a>.
+    </p>
   </div>
 </div>`;
 }
@@ -666,18 +875,28 @@ function page(o) {
     ? '  <link rel="preconnect" href="https://images.pexels.com" crossorigin>\n'
     : "";
 
+  /* Structured data carries the same {{PLACEHOLDERS}} as the rest of the
+     site; site.js substitutes the real values once site-config.js is
+     filled in, and drops any property still unresolved so the markup is
+     never published claiming a placeholder is a telephone number. */
+  const structuredData = o.jsonLd
+    ? '\n  <script type="application/ld+json" data-config-json>\n' +
+      JSON.stringify(o.jsonLd, null, 2).replace(/^/gm, "  ") +
+      "\n  </script>\n"
+    : "";
+
   return `<!DOCTYPE html>
 <html lang="en" class="no-js" data-base="${P}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${o.title}</title>
-  <meta name="description" content="${o.description}">
+  <title>${esc(o.title)}</title>
+  <meta name="description" content="${esc(o.description)}">
 ${robots}${canonical}  <meta name="theme-color" content="#102a43">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="${FIRM}">
-  <meta property="og:title" content="${o.title}">
-  <meta property="og:description" content="${o.description}">
+  <meta property="og:title" content="${esc(o.title)}">
+  <meta property="og:description" content="${esc(o.description)}">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -690,7 +909,7 @@ ${imgPreconnect}  <link rel="stylesheet" href="${attr(FONT_CSS)}">
   <script src="${P}assets/js/site-config.js" defer></script>
   <script src="${P}assets/js/image-data.js" defer></script>
   <script src="${P}assets/js/site.js" defer></script>
-</head>
+${structuredData}</head>
 <body>
 
 ${skipLink()}
@@ -705,8 +924,7 @@ ${mobileNav(P)}
 ${o.body}
 </main>
 
-${ctaBand(P, o.cta)}
-
+${o.cta === false ? "" : ctaBand(P, o.cta)}
 ${footer(P)}
 
 ${disclaimerGate(P, o.depth === 0 && !o.noindex)}
@@ -726,81 +944,278 @@ const files = {};
 
 /* --- Home ------------------------------------------------------------ */
 
+const HOME_SERVICES = [
+  ["Civil Litigation", "civil", "practice-areas/civil-litigation/index.html",
+   "Suits, appeals and execution proceedings before civil courts in Uttar Pradesh."],
+  ["Criminal Law", "criminal", "practice-areas/criminal-law/index.html",
+   "Complaints, bail applications, trials and appeals before criminal courts."],
+  ["Cheque Bounce &amp; Recovery", "chequeBounce", "practice-areas/cheque-bounce-recovery/index.html",
+   "Notices and complaints under the Negotiable Instruments Act, and recovery of dues."],
+  ["Property Law", "property", "practice-areas/property-law/index.html",
+   "Title, partition, tenancy, possession and other immovable property disputes."],
+  ["Property Registration", "registration", "practice-areas/property-registration/index.html",
+   "Sale deeds, gift deeds, registration formalities and mutation of records."],
+  ["Corporate Law", "corporate", "practice-areas/corporate-law/index.html",
+   "Company and LLP matters, secretarial compliance and commercial disputes."],
+  ["Contractual Agreements", "contracts", "practice-areas/contractual-agreements/index.html",
+   "Drafting, review and enforcement of commercial and personal agreements."],
+  ["Income Tax &amp; GST", "tax", "practice-areas/income-tax/index.html",
+   "Returns, notices, assessments and appellate proceedings in direct and indirect tax."],
+  ["Firm Registration", "registration", "practice-areas/firm-business-registration/index.html",
+   "Formation and registration of firms, partnerships, companies and other entities."]
+];
+
+const HOME_CITIES = UP_LOCATIONS.map(([name, meta]) => [name, meta === "Office"]);
+
 files["index.html"] = page({
   depth: 0,
   canonical: "/",
   remoteImages: true,
-  title: FIRM + " | Advocates in Lucknow, Uttar Pradesh",
+  cta: false,
+  title: "H.R. Legal Associate | Legal, Property, Corporate & Tax Services in Lucknow",
   description:
-    "H.R. Legal Associate is a firm of advocates based in Lucknow, attending to legal, property, corporate and tax matters across Uttar Pradesh.",
-  body: `  <section class="hero">
+    "H.R. Legal Associate provides civil, criminal, cheque-bounce, property, registration, contractual, corporate, income-tax, GST and firm-registration assistance in Lucknow and across Uttar Pradesh.",
+  jsonLd: {
+    "@context": "https://schema.org",
+    "@type": "LegalService",
+    "@id": DOMAIN + "/#practice",
+    name: FIRM,
+    url: DOMAIN + "/",
+    description:
+      "Advocates in Lucknow assisting individuals, property owners, professionals and businesses with litigation, documentation, registration, taxation and regulatory matters across Uttar Pradesh.",
+    telephone: "{{PHONE_NUMBER}}",
+    email: "{{EMAIL_ADDRESS}}",
+    hasMap: "{{GOOGLE_MAPS_URL}}",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "{{OFFICE_ADDRESS}}",
+      addressLocality: "Lucknow",
+      addressRegion: "Uttar Pradesh",
+      addressCountry: "IN"
+    },
+    areaServed: [
+      { "@type": "AdministrativeArea", name: "Uttar Pradesh" },
+      { "@type": "City", name: "Lucknow" }
+    ],
+    knowsAbout: HOME_SERVICES.map(([title]) => title.replace("&amp;", "and")),
+    employee: ADVOCATES.map((a) => ({
+      "@type": "Person",
+      name: a.name,
+      jobTitle: "Advocate",
+      url: DOMAIN + "/advocates/" + a.slug + "/"
+    })),
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Legal and tax services",
+      itemListElement: HOME_SERVICES.map(([title, , href]) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: title.replace("&amp;", "and") },
+        url: DOMAIN + "/" + href.replace("index.html", "")
+      }))
+    }
+  },
+  body: `  <section class="hero" aria-labelledby="hero-title">
     <div class="media hero__media media--overlay">
       <img data-image="photos.hero" src="${IMAGES.photos.hero.url}" alt="${IMAGES.photos.hero.alt}" width="${IMAGES.photos.hero.width}" height="${IMAGES.photos.hero.height}" decoding="async" fetchpriority="high">
       <span class="media__fallback" aria-hidden="true">${ICON.image()}<span>Image unavailable</span></span>
     </div>
     <div class="container hero__inner">
       <div class="hero__content">
-        <p class="eyebrow eyebrow--light">Lucknow, Uttar Pradesh</p>
-        <h1>${FIRM}</h1>
+        <p class="eyebrow eyebrow--light">${FIRM} &bull; Lucknow, Uttar Pradesh</p>
+        <h1 id="hero-title">Legal, Property, Corporate and Tax Assistance in Lucknow</h1>
         <p class="hero__lead">
-          A firm of advocates attending to legal, property, corporate and tax
-          matters for clients across Uttar Pradesh.
+          A multidisciplinary practice assisting individuals, property owners,
+          professionals and businesses with litigation, documentation,
+          registration, taxation and regulatory matters in Lucknow and across
+          Uttar Pradesh.
         </p>
         <div class="hero__actions">
-          <a class="btn btn--inverse" href="practice-areas/index.html">Practice areas</a>
-          <a class="btn btn--outline-light" href="contact/index.html">Contact the office</a>
+          <a class="btn btn--inverse" href="contact/index.html">Discuss Your Matter</a>
+          <a class="btn btn--outline-light" href="practice-areas/index.html">Explore Practice Areas</a>
         </div>
-        <ul class="hero__meta">
-          <li>${ICON.pin(15)}<span>Office in Lucknow</span></li>
-          <li>${ICON.seal(15)}<span>Bar Council of Uttar Pradesh</span></li>
-          <li>${ICON.scale(15)}<span>Twelve practice areas</span></li>
-        </ul>
+${heroPanel([
+  "Civil and criminal matters",
+  "Property documentation and registration",
+  "Corporate contracts and compliance",
+  "Income-tax and GST assistance"
+])}
       </div>
     </div>
   </section>
 
-${trustStrip()}
-
-  <section class="section">
+  <section class="section" aria-labelledby="services-title">
     <div class="container">
 ${sectionHead({
   eyebrow: "Practice areas",
-  title: "Matters handled by the firm",
-  lead: "Twelve areas of practice across litigation, property, corporate, service, employment and tax."
+  title: "Integrated Legal and Tax Services",
+  lead: "Litigation, documentation, registration and taxation handled within one practice, so a matter that crosses more than one of them is not split between separate advisers.",
+  id: "services-title"
 })}
-      <div class="grid grid--3" data-reveal-group data-reveal-step="70">
-${PRACTICE_AREAS.map((area, i) => practiceCard("", area, i, false)).join("\n")}
+      <div class="grid grid--3 grid--services" data-reveal-group data-reveal-step="70">
+${HOME_SERVICES.map(([title, key, href, text]) =>
+  serviceCard("", { title, href, text, imageKey: "photos." + key })
+).join("\n")}
       </div>
     </div>
   </section>
 
-  <section class="section section--soft">
+  <section class="section section--soft" aria-labelledby="property-title">
     <div class="container">
 ${splitSection("", {
-  imageKey: "photos.about",
-  body: `        <p class="eyebrow">About the firm</p>
-        <h2>An established practice in Lucknow</h2>
+  imageKey: "photos.property",
+  ratio: "3x2",
+  body: `        <p class="eyebrow">Property</p>
+        <h2 id="property-title">Legal Support Through the Property Transaction Lifecycle</h2>
         <p>
-          The firm advises and appears for individuals, businesses and government
-          employees in matters before courts, tribunals and departmental authorities
-          in Uttar Pradesh.
+          Property matters rarely stop at one document. The firm assists at each
+          stage, from examining the title before money changes hands to the
+          record entries that follow registration.
         </p>
-        <hr class="rule">
-        <p class="text-muted">Full content for this section is being prepared.</p>
-        <p>${arrowLink("More about the firm", "about/index.html")}</p>`
+${checkList([
+  ["Title and document review", "Examination of title deeds, encumbrance position and approvals before an agreement is entered into."],
+  ["Agreement-to-sell drafting and review", "Preparation and review of the terms, timelines and payment schedule."],
+  ["Sale deed and gift deed assistance", "Drafting and vetting of the conveyance, including stamp duty and valuation questions."],
+  ["Registration support", "Attendance and assistance with formalities before the Sub-Registrar."],
+  ["Mutation and post-registration matters", "Correction and updating of revenue and municipal records after registration."],
+  ["Property disputes", "Title, partition, possession and tenancy proceedings before the appropriate forum."]
+])}
+        <p class="cluster">${btnPrimary("Explore Property Services", "practice-areas/property-law/index.html")}</p>`
 })}
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" aria-labelledby="business-title">
+    <div class="container">
+${splitSection("", {
+  reverse: true,
+  imageKey: "photos.corporate",
+  ratio: "3x2",
+  body: `        <p class="eyebrow">Tax and business</p>
+        <h2 id="business-title">Legal, Tax and Business Compliance Under One Practice</h2>
+        <p>
+          Setting up and running a business raises legal and tax questions at the
+          same time. Both are dealt with here, which keeps the documentation and
+          the filings consistent with each other.
+        </p>
+${checkList([
+  ["Income-tax filings and notices", "Returns, responses to notices, assessments and appellate proceedings."],
+  ["GST registration, filing and notices", "Registration, periodic returns, departmental notices and audits."],
+  ["Firm and partnership registration", "Formation and registration of firms, partnerships and other entities."],
+  ["Partnership deeds", "Drafting of deeds covering capital, profit sharing, retirement and dissolution."],
+  ["Commercial contracts", "Supply, service, agency and confidentiality agreements."],
+  ["Business compliance assistance", "Periodic filings and statutory record-keeping for ongoing operations."]
+])}
+        <p class="cluster">
+          ${btnSecondary("Income Tax &amp; GST", "practice-areas/income-tax/index.html")}
+          ${btnSecondary("Firm Registration", "practice-areas/firm-business-registration/index.html")}
+        </p>`
+})}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="advocates-title">
     <div class="container">
 ${sectionHead({
-  eyebrow: "Advocates",
-  title: "The advocates of the firm",
-  lead: "Each advocate is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice."
+  eyebrow: "The practice",
+  title: "Meet Our Advocates",
+  lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
+  id: "advocates-title"
 })}
       <div class="grid grid--3" data-reveal-group>
 ${ADVOCATES.map((a) => advocateCard("", a)).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="why-title">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Working with the firm",
+  title: "Why H.R. Legal Associate",
+  lead: "What the practice offers, stated plainly. No outcome can be promised in any matter.",
+  id: "why-title"
+})}
+${pillars([
+  [ICON.scale(22), "A combined legal, documentation and tax perspective",
+   "Litigation, drafting, registration and taxation sit in the same practice, so advice on one takes account of the others."],
+  [ICON.handshake(22), "Assistance for individuals and businesses",
+   "Work is undertaken for private individuals and property owners as well as firms, companies and professionals."],
+  [ICON.file(22), "Clear communication and organised documentation",
+   "Papers are set out and kept in order, and the position in a matter is explained in plain terms."],
+  [ICON.pin(22), "Lucknow practice with Uttar Pradesh coverage",
+   "The office is in Lucknow, and matters are attended to before forums across the state."],
+  [ICON.compass(22), "Matter-specific consultation",
+   "Advice is given on the facts and papers of the particular matter rather than from a general template."]
+])}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="process-title">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Process",
+  title: "How the Process Works",
+  lead: "How a matter is generally taken forward. The steps vary with the nature of the matter and the forum involved.",
+  id: "process-title"
+})}
+${processSteps([
+  ["Initial discussion", "A first conversation about what has happened, what is sought and what timelines apply."],
+  ["Document review", "The papers already available are examined, and anything still required is identified."],
+  ["Scope and next steps", "The available course of action, the work involved and the likely stages are set out."],
+  ["Representation, drafting, filing or compliance assistance", "The agreed work is carried out, whether that is appearance, drafting, filing or continuing compliance."]
+])}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="locations-title">
+    <div class="container">
+${splitSection("", {
+  imageKey: "photos.lucknow",
+  ratio: "3x2",
+  body: `        <p class="eyebrow">Where the firm works</p>
+        <h2 id="locations-title">Based in Lucknow, Assisting Clients Across Uttar Pradesh</h2>
+        <p>
+          The firm has a single principal office, in Lucknow. There is no branch
+          office anywhere else. Matters elsewhere in Uttar Pradesh are attended to
+          from Lucknow before the court, tribunal or authority concerned.
+        </p>
+${cityLinks("", HOME_CITIES)}
+        <p class="text-muted">Lucknow is the office; the remaining districts are areas the firm serves.</p>
+        <p class="cluster">${btnSecondary("View All Service Locations", "locations/index.html")}</p>`
+})}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="guides-title">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Legal guides",
+  title: "General Information Notes",
+  lead: "Short notes on procedure, published for general information. They are not legal advice.",
+  id: "guides-title"
+})}
+      <div class="grid grid--3" data-reveal-group>
+${GUIDES.map((g) => guideCard("", g)).join("\n")}
+      </div>
+      <p class="cluster mt-l">${arrowLink("All legal guides", "legal-guides/index.html")}</p>
+    </div>
+  </section>
+
+  <section class="cta-band" aria-labelledby="contact-title">
+    <div class="container cta-band__body">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow eyebrow--light">Contact</p>
+        <h2 class="section-head__title" id="contact-title">Speak With H.R. Legal Associate</h2>
+        <p class="section-head__lead">
+          Describe the matter briefly and the office will revert. Sending an
+          enquiry does not create an advocate&ndash;client relationship, and
+          confidential documents should not be sent through this website.
+        </p>
+      </div>
+${contactPanel("")}
+      <div class="cta-band__actions" data-reveal>
+        <a class="btn btn--inverse" href="contact/index.html">Go to the contact form</a>
+        <a class="btn btn--outline-light" data-config="phone" data-config-role="tel" data-config-text="keep" data-pending-label="Telephone to be published">${ICON.phone()}<span>Call the office</span></a>
       </div>
     </div>
   </section>`

@@ -29,10 +29,11 @@
    23. Disclaimer acknowledgement
    24. Back to top
    25. Hero and page header
-   26. 404 layout
-   27. Component preview page
-   28. Responsive
-   29. Reduced motion and print
+   26. Homepage sections
+   27. 404 layout
+   28. Component preview page
+   29. Responsive
+   30. Reduced motion and print
    =================================================================== */
 
 
@@ -478,6 +479,7 @@ small {
 }
 
 .rule--center { margin-inline: auto; }
+.mt-l { margin-top: var(--space-l); }
 
 /* Configuration values still held as {{PLACEHOLDER}} in site-config.js */
 .is-pending {
@@ -1815,6 +1817,11 @@ html:not(.js) .accordion__panel {
   pointer-events: none;
 }
 
+.cta-band__body {
+  position: relative;
+  padding-block: clamp(2.5rem, 5vw, 4rem);
+}
+
 .cta-band__inner {
   position: relative;
   display: flex;
@@ -1960,7 +1967,7 @@ textarea:disabled {
 
 .footer-top {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  grid-template-columns: minmax(0, 1.3fr) repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
   gap: var(--space-xl) var(--space-l);
   padding-block: clamp(2.5rem, 5vw, 4rem);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -1996,6 +2003,10 @@ textarea:disabled {
   margin: 0 0 var(--space-s);
   padding-bottom: var(--space-2xs);
   border-bottom: 1px solid rgba(216, 195, 154, 0.35);
+}
+
+.footer-heading--stacked {
+  margin-top: var(--space-m);
 }
 
 .footer-list {
@@ -2102,6 +2113,29 @@ textarea:disabled {
   max-width: none;
 }
 
+.disclaimer-gate__points {
+  list-style: none;
+  margin: var(--space-s) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.disclaimer-gate__points li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  font-size: var(--fs-sm);
+  color: var(--color-slate);
+  line-height: var(--lh-snug);
+}
+
+.disclaimer-gate__points svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--color-teal);
+}
+
 .disclaimer-gate__actions {
   display: flex;
   flex-wrap: wrap;
@@ -2109,6 +2143,12 @@ textarea:disabled {
   margin-top: var(--space-m);
   padding-top: var(--space-m);
   border-top: var(--hairline);
+}
+
+.disclaimer-gate__foot {
+  margin: var(--space-s) 0 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
 }
 
 /* Inline acknowledgement block, for use inside a page */
@@ -2214,7 +2254,7 @@ textarea:disabled {
   font-size: var(--fs-hero);
   color: var(--color-white);
   margin-bottom: var(--space-s);
-  max-width: 18ch;
+  max-width: 24ch;
 }
 
 .hero__lead {
@@ -2274,8 +2314,349 @@ textarea:disabled {
   margin-bottom: 0;
 }
 
+/* Discreet panel of practice headings inside the hero */
+.hero__panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2xs) var(--space-m);
+  list-style: none;
+  margin: var(--space-l) 0 0;
+  padding: var(--space-m);
+  max-width: 44rem;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 2px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  color: rgba(255, 255, 255, 0.9);
+}
 
-/* 26. 404 layout
+.hero__panel li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2xs);
+  line-height: var(--lh-snug);
+}
+
+.hero__panel svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--color-gold-soft);
+}
+
+
+/* 26. Homepage sections
+   ------------------------------------------------------------------ */
+
+/* --- Service card: image header, factual body, explore link --- */
+
+/* Nine cards: a 20rem minimum resolves to three columns at the widest
+   container, giving 3x3 rather than 4+4 and one orphan. */
+.grid--services {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.service-card .media {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.service-card .media img {
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.service-card:hover .media img {
+  transform: scale(1.04);
+}
+
+.service-card .card__body {
+  gap: var(--space-2xs);
+}
+
+.service-card .card__title {
+  font-size: var(--fs-lg);
+}
+
+/* --- Checklist used in the feature sections --- */
+
+.check-list {
+  list-style: none;
+  margin: 0 0 var(--space-m);
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xs);
+  max-width: var(--measure);
+}
+
+.check-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  line-height: var(--lh-snug);
+}
+
+.check-list svg {
+  flex: none;
+  margin-top: 4px;
+  color: var(--color-teal);
+}
+
+.check-list strong {
+  display: block;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.check-list span span {
+  color: var(--color-slate);
+  font-size: var(--fs-sm);
+}
+
+/* --- Positioning pillars --- */
+
+.pillars {
+  display: grid;
+  /* Five items: 20rem yields three columns, so the row breaks 3+2
+     instead of leaving a single card stranded. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-m);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pillar {
+  padding: var(--space-m);
+  background-color: var(--color-white);
+  border: var(--hairline);
+  border-top: 2px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+}
+
+.pillar__icon {
+  display: block;
+  color: var(--color-teal);
+  margin-bottom: var(--space-2xs);
+}
+
+.pillar h3 {
+  font-size: var(--fs-base);
+  font-family: var(--font-body);
+  font-weight: 700;
+  margin-bottom: var(--space-3xs);
+}
+
+.pillar p {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-slate);
+  line-height: var(--lh-snug);
+}
+
+/* --- Four-step process --- */
+
+.steps {
+  display: grid;
+  /* Four steps: 16rem gives one row at desktop and a clean 2x2 at
+     tablet, rather than 3 across with the fourth stranded below. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-m);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--color-border);
+}
+
+/* The rule above each step carries a gold segment for its own width */
+.step::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 2.5rem;
+  height: 2px;
+  background-color: var(--color-gold);
+}
+
+.step__number {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-gold-ink);
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-2xs);
+}
+
+.step h3 {
+  font-size: var(--fs-base);
+  font-family: var(--font-body);
+  font-weight: 700;
+  margin-bottom: var(--space-3xs);
+}
+
+.step p {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-slate);
+  line-height: var(--lh-snug);
+}
+
+/* --- City links --- */
+
+.city-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  list-style: none;
+  margin: 0 0 var(--space-m);
+  padding: 0;
+}
+
+.city-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-height: var(--tap);
+  padding: var(--space-2xs) var(--space-s);
+  background-color: var(--color-white);
+  border: var(--hairline);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--color-navy);
+  text-decoration: none;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.city-links a:hover {
+  border-color: var(--color-gold);
+  color: var(--color-teal);
+}
+
+.city-links svg {
+  color: var(--color-gold);
+  flex: none;
+}
+
+.city-links [data-office] {
+  border-color: var(--color-teal);
+  background-color: var(--color-teal-tint);
+}
+
+/* --- Legal guide cards --- */
+
+.guide-card__head {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  overflow: hidden;
+}
+
+/* Colour-block header, used where a photograph would repeat */
+.guide-card__head--tint {
+  display: grid;
+  place-items: center;
+  background-image: linear-gradient(140deg, var(--color-navy) 0%, var(--color-teal-dark) 100%);
+}
+
+.guide-card__head--tint::after {
+  content: "";
+  position: absolute;
+  inset: 0.75rem;
+  border: 1px solid rgba(216, 195, 154, 0.4);
+  pointer-events: none;
+}
+
+.guide-card__head--tint svg {
+  color: var(--color-gold-soft);
+  position: relative;
+  z-index: 1;
+}
+
+.guide-card__head .media {
+  height: 100%;
+  border-radius: 0;
+}
+
+.guide-card__category {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+}
+
+.guide-card__category svg {
+  color: var(--color-gold);
+}
+
+/* --- Contact panel --- */
+
+.contact-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: var(--space-m);
+  list-style: none;
+  margin: 0 0 var(--space-l);
+  padding: 0;
+}
+
+.contact-method {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: var(--space-m);
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-sm);
+}
+
+.contact-method__icon {
+  flex: none;
+  color: var(--color-gold-soft);
+  margin-top: 2px;
+}
+
+.contact-method__label {
+  display: block;
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-gold-soft);
+  margin-bottom: var(--space-3xs);
+}
+
+.contact-method__value {
+  display: block;
+  color: var(--color-white);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+a.contact-method__value:hover {
+  color: var(--color-gold-soft);
+}
+
+.contact-method .is-pending {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+
+/* 27. 404 layout
    ------------------------------------------------------------------ */
 
 .error-page {
@@ -2327,7 +2708,7 @@ textarea:disabled {
 }
 
 
-/* 27. Component preview page
+/* 28. Component preview page
    ------------------------------------------------------------------ */
 
 .preview-nav {
@@ -2476,7 +2857,7 @@ textarea:disabled {
 .type-sample--3 { font-size: var(--fs-xl); }
 
 
-/* 28. Responsive
+/* 29. Responsive
    ------------------------------------------------------------------ */
 
 /* Nav visible but the row is at its tightest. Measured: logo with
@@ -2585,7 +2966,12 @@ textarea:disabled {
     margin-bottom: var(--space-l);
   }
 
-  .cta-band__inner {
+  .cta-band__body {
+  position: relative;
+  padding-block: clamp(2.5rem, 5vw, 4rem);
+}
+
+.cta-band__inner {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -2601,6 +2987,16 @@ textarea:disabled {
     display: none;
   }
 
+  .hero__panel {
+    grid-template-columns: 1fr;
+    padding: var(--space-s);
+  }
+
+  .pillar,
+  .contact-method {
+    padding: var(--space-s);
+  }
+
   .hero__actions .btn,
   .cta-band__actions .btn {
     flex: 1 1 100%;
@@ -2612,7 +3008,7 @@ textarea:disabled {
 }
 
 
-/* 29. Reduced motion and print
+/* 30. Reduced motion and print
    ------------------------------------------------------------------ */
 
 @media (prefers-reduced-motion: reduce) {

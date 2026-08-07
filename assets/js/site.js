@@ -651,6 +651,18 @@
       });
     }
 
+    /* "Exit Website" closes the tab where the browser allows it — which is
+       only when a script opened it — and otherwise navigates away to a
+       blank page. Either way the visitor leaves without acknowledging. */
+    $$("[data-disclaimer-exit]", gate).forEach(function (button) {
+      button.addEventListener("click", function () {
+        window.close();
+        window.setTimeout(function () {
+          window.location.replace("about:blank");
+        }, 120);
+      });
+    });
+
     gate.addEventListener("keydown", function (event) {
       if (event.key === "Tab") trapFocus(gate, event);
     });
@@ -666,6 +678,64 @@
     if (gate.getAttribute("data-disclaimer-gate") === "auto" && !readStore(STORE_KEY)) {
       open();
     }
+  }
+
+  /* ---------------------------------------------------------------
+     Structured data
+     ---------------------------------------------------------------
+     The JSON-LD ships with the same {{PLACEHOLDERS}} as the markup.
+     Resolved values are substituted; anything still unresolved is
+     removed, so search engines are never told that a placeholder is a
+     telephone number.                                                 */
+
+  var PLACEHOLDER_KEYS = {
+    PHONE_NUMBER: "phone",
+    WHATSAPP_NUMBER: "whatsapp",
+    EMAIL_ADDRESS: "email",
+    OFFICE_ADDRESS: "address",
+    GOOGLE_MAPS_URL: "googleMapsUrl"
+  };
+
+  function resolveNode(node) {
+    var touched = false;
+
+    Object.keys(node).forEach(function (key) {
+      var value = node[key];
+
+      if (typeof value === "string") {
+        var match = value.match(/^\{\{([A-Z0-9_]+)\}\}$/);
+        if (!match) return;
+
+        var resolved = config[PLACEHOLDER_KEYS[match[1]]];
+        touched = true;
+
+        if (isPlaceholder(resolved)) {
+          /* Deleting from an array would leave a hole, so blank it. */
+          if (Array.isArray(node)) node[key] = "";
+          else delete node[key];
+        } else {
+          node[key] = resolved;
+        }
+      } else if (value && typeof value === "object") {
+        if (resolveNode(value)) touched = true;
+      }
+    });
+
+    return touched;
+  }
+
+  function initStructuredData() {
+    $$('script[type="application/ld+json"][data-config-json]').forEach(function (node) {
+      var data;
+      try {
+        data = JSON.parse(node.textContent);
+      } catch (error) {
+        return;
+      }
+      if (resolveNode(data)) {
+        node.textContent = JSON.stringify(data, null, 2);
+      }
+    });
   }
 
   /* ---------------------------------------------------------------
@@ -717,6 +787,7 @@
     initReveal();
     initBackToTop();
     initDisclaimerGate();
+    initStructuredData();
     initForms();
   }
 

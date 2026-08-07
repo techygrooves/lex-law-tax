@@ -1,12 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Sitemap for lexlawandtax.com
-  Generated from the pages on disk. Update <lastmod> when content is revised.
+  Generated from the pages on disk. Pages carrying a noindex directive are
+  deliberately excluded. Update <lastmod> when content is revised.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
+    <loc>https://lexlawandtax.com/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
     <loc>https://lexlawandtax.com/about/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/advocates/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/business-registration/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/cheque-bounce-and-recovery/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/civil-litigation/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/contact/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/corporate-and-contracts/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/criminal-law/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/disclaimer/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/legal-guides/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/locations/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/practice-areas/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/privacy-policy/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/property-law-and-registration/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/tax-and-gst/</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -17,13 +123,6 @@
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://lexlawandtax.com/advocates/</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
   </url>
 
   <url>
@@ -38,13 +137,6 @@
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://lexlawandtax.com/business-registration/</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
 
   <url>
@@ -104,13 +196,6 @@
   </url>
 
   <url>
-    <loc>https://lexlawandtax.com/cheque-bounce-and-recovery/</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
     <loc>https://lexlawandtax.com/cheque-bounce-and-recovery/money-recovery-legal-notice-lucknow/</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -139,13 +224,6 @@
   </url>
 
   <url>
-    <loc>https://lexlawandtax.com/civil-litigation/</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
     <loc>https://lexlawandtax.com/civil-litigation/injunction-lawyer-lucknow/</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -157,13 +235,6 @@
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://lexlawandtax.com/contact/</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.9</priority>
   </url>
 
   <url>
@@ -192,13 +263,6 @@
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://lexlawandtax.com/corporate-and-contracts/</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
 
   <url>
@@ -244,38 +308,52 @@
   </url>
 
   <url>
-    <loc>https://lexlawandtax.com/criminal-law/</loc>
+    <loc>https://lexlawandtax.com/locations/agra/</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://lexlawandtax.com/disclaimer/</loc>
+    <loc>https://lexlawandtax.com/locations/bareilly/</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://lexlawandtax.com/</loc>
+    <loc>https://lexlawandtax.com/locations/gorakhpur/</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
+    <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://lexlawandtax.com/legal-guides/</loc>
+    <loc>https://lexlawandtax.com/locations/kanpur/</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://lexlawandtax.com/locations/</loc>
+    <loc>https://lexlawandtax.com/locations/lucknow/</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/locations/prayagraj/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://lexlawandtax.com/locations/varanasi/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <url>
@@ -342,13 +420,6 @@
   </url>
 
   <url>
-    <loc>https://lexlawandtax.com/practice-areas/</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
     <loc>https://lexlawandtax.com/practice-areas/property-law/</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -370,13 +441,6 @@
   </url>
 
   <url>
-    <loc>https://lexlawandtax.com/privacy-policy/</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
     <loc>https://lexlawandtax.com/property-law-and-registration/agreement-to-sell-lawyer-lucknow/</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -388,13 +452,6 @@
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://lexlawandtax.com/property-law-and-registration/</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
 
   <url>
@@ -507,13 +564,6 @@
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://lexlawandtax.com/tax-and-gst/</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
 
 </urlset>

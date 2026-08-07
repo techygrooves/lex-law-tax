@@ -58,6 +58,7 @@ const IMAGES = loadData("src/data/images.js", "siteImages");
 const ADVOCATE_DATA = loadData("src/data/advocates.js", "advocateData");
 const LEGAL = loadData("src/data/legal-services.js", "legalServices");
 const TAXBIZ = loadData("src/data/tax-business.js", "taxBusinessServices");
+const LOCATIONS = loadData("src/data/locations.js", "siteLocations");
 
 /* Both content files use the same page model, so the renderer treats
    them as one list. The coverage statement and the review date are
@@ -140,16 +141,18 @@ const PRACTICE_AREA_HUBS = {
   "firm-business-registration": "business-registration"
 };
 
-const UP_LOCATIONS = [
-  ["Lucknow", "Office"],
-  ["Kanpur", "Uttar Pradesh"],
-  ["Prayagraj", "Uttar Pradesh"],
-  ["Varanasi", "Uttar Pradesh"],
-  ["Gorakhpur", "Uttar Pradesh"],
-  ["Bareilly", "Uttar Pradesh"],
-  ["Agra", "Uttar Pradesh"],
-  ["Jhansi", "Uttar Pradesh"]
-];
+/* Every city list on the site is derived from src/data/locations.js, so a
+   city cannot appear in the navigation without a page behind it.
+
+   TIER_1 are the pages indexable at launch. Only those are linked from
+   the footer and the homepage: the rest carry noindex until their local
+   content has been independently reviewed, and a sitewide link to a page
+   that is not meant to be indexed is a mixed signal. The locations index
+   links to all fourteen, grouped. */
+const CITIES = LOCATIONS.cities;
+const TIER_1 = CITIES.filter((c) => c.index);
+const TIER_2 = CITIES.filter((c) => !c.index);
+const OFFICE_CITY = CITIES.find((c) => c.isOffice);
 
 const NAV = [
   ["home", "Home", "index.html"],
@@ -505,14 +508,22 @@ function advocateCard(P, advocate) {
       </article>`;
 }
 
-/* --- 15. Location card ------------------------------------------------ */
+/* --- 15. Location card ------------------------------------------------
+   `href` is optional: without one the card is a label, with one it is the
+   linked card used on the locations index. */
 
-function locationCard(name, meta, note) {
+function locationCard(name, meta, note, href) {
+  const title = href
+    ? `<a href="${href}">${name}</a>`
+    : name;
+  const foot = href
+    ? `\n          <p class="card__foot">${arrowLink("Read more", href)}</p>`
+    : "";
   return `      <article class="card card--location" data-reveal>
         <div class="card__body">
           <p class="card__meta">${meta}</p>
-          <h3 class="card__title">${name}</h3>
-          <p class="card__text">${note}</p>
+          <h3 class="card__title">${title}</h3>
+          <p class="card__text">${note}</p>${foot}
         </div>
       </article>`;
 }
@@ -681,14 +692,14 @@ ${items
 }
 
 /* --- Homepage: city links --------------------------------------------------
-   Individual city pages do not exist yet, so every chip points at the
-   locations index. No link on this page is a placeholder or a dead end. */
+   Each chip points at that city's own page. The office chip is marked so
+   Lucknow is visibly the office rather than one district among many. */
 
 function cityLinks(P, cities) {
   return `      <ul class="city-links">
 ${cities
   .map(
-    ([name, isOffice]) => `        <li><a href="${P}locations/index.html"${isOffice ? " data-office" : ""}>${ICON.pin(14)}<span>${name}</span></a></li>`
+    (c) => `        <li><a href="${P}locations/${c.slug}/index.html"${c.isOffice ? " data-office" : ""}>${ICON.pin(14)}<span>${c.name}</span></a></li>`
   )
   .join("\n")}
       </ul>`;
@@ -764,8 +775,8 @@ function footer(P) {
     (a) => `            <li><a href="${P}advocates/${a.slug}/index.html">${a.short}</a></li>`
   ).join("\n");
 
-  const cities = UP_LOCATIONS.map(
-    ([name]) => `            <li><a href="${P}locations/index.html">${name}</a></li>`
+  const cities = TIER_1.map(
+    (c) => `            <li><a href="${P}locations/${c.slug}/index.html">${c.name}</a></li>`
   ).join("\n");
 
   const guides = GUIDES.map(
@@ -907,7 +918,10 @@ const PREP_NOTE = `      <div class="notice" data-reveal>
 
 function page(o) {
   const P = "../".repeat(o.depth);
-  const robots = o.noindex ? '  <meta name="robots" content="noindex, follow">\n' : "";
+  const robots = o.noindex ? '  <meta name="robots" content="noindex,follow">\n' : "";
+  /* A note left in the source where a maintainer will see it, next to the
+     directive it explains, rather than in a tracker nobody opens. */
+  const sourceNote = o.sourceNote ? "  <!-- " + o.sourceNote + " -->\n" : "";
   const canonical = o.canonical ? `  <link rel="canonical" href="${DOMAIN}${o.canonical}">\n` : "";
   /* Only pages that show a remote photograph benefit from the extra
      connection, so the hint is not paid for everywhere. */
@@ -938,7 +952,7 @@ function page(o) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(o.title)}</title>
   <meta name="description" content="${esc(o.description)}">
-${robots}${canonical}  <meta name="theme-color" content="#102a43">
+${sourceNote}${robots}${canonical}  <meta name="theme-color" content="#102a43">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="${FIRM}">
   <meta property="og:title" content="${esc(o.title)}">
@@ -1011,7 +1025,7 @@ const HOME_SERVICES = [
    "Formation and registration of firms, partnerships, companies and other entities."]
 ];
 
-const HOME_CITIES = UP_LOCATIONS.map(([name, meta]) => [name, meta === "Office"]);
+const HOME_CITIES = TIER_1;
 
 files["index.html"] = page({
   depth: 0,
@@ -1813,18 +1827,440 @@ ${PREP_NOTE}
   });
 });
 
-/* --- Locations -------------------------------------------------------------------- */
+/* --- Locations --------------------------------------------------------------
+   The firm has one office, in Lucknow. That single fact governs everything
+   in this section:
+
+     - only the Lucknow page carries an address, a telephone number, a map
+       link or LocalBusiness-style structured data;
+     - every other page carries, immediately under the heading, a statement
+       that it does not represent a separate office in that city;
+     - no page names a local advocate, a branch, a local client or a court
+       building, and no page claims to be near one.
+
+   The wording that makes each city read differently lives in
+   src/data/locations.js, not here. This file only decides how a city is
+   laid out, so a page cannot become a doorway page by being generated. */
+
+/* The six service areas the content model sets out, in order. `emphasis`
+   names the per-city sentence used for the area, and `links` are the pages
+   in that section most often reached from a location page. */
+const CITY_SERVICE_AREAS = [
+  {
+    key: "civil",
+    id: "civil",
+    eyebrow: "Litigation",
+    title: "Civil and Criminal Matters",
+    links: [
+      ["Civil litigation", "civil-litigation/index.html"],
+      ["Criminal law", "criminal-law/index.html"],
+      ["Bail and anticipatory bail", "criminal-law/bail-anticipatory-bail-lawyer-lucknow/index.html"],
+      ["Money recovery suits", "civil-litigation/money-recovery-lawyer-lucknow/index.html"]
+    ]
+  },
+  {
+    key: "cheque",
+    id: "cheque",
+    eyebrow: "Recovery",
+    title: "Cheque Bounce and Recovery",
+    links: [
+      ["Cheque bounce and recovery", "cheque-bounce-and-recovery/index.html"],
+      ["Cheque-bounce demand notice", "cheque-bounce-and-recovery/cheque-bounce-legal-notice-lucknow/index.html"],
+      ["Section 138 defence", "cheque-bounce-and-recovery/section-138-defence-lawyer-lucknow/index.html"],
+      ["Recovery notice", "cheque-bounce-and-recovery/money-recovery-legal-notice-lucknow/index.html"]
+    ]
+  },
+  {
+    key: "property",
+    id: "property",
+    eyebrow: "Property",
+    title: "Property and Registration Matters",
+    links: [
+      ["Property law and registration", "property-law-and-registration/index.html"],
+      ["Title verification", "property-law-and-registration/property-title-verification-lucknow/index.html"],
+      ["Sale deed drafting and registration", "property-law-and-registration/sale-deed-drafting-registration-lucknow/index.html"],
+      ["Mutation of records", "property-law-and-registration/mutation-dakhil-kharij-lucknow/index.html"]
+    ]
+  },
+  {
+    key: "corporate",
+    id: "corporate",
+    eyebrow: "Business",
+    title: "Corporate and Contractual Assistance",
+    links: [
+      ["Corporate and contracts", "corporate-and-contracts/index.html"],
+      ["Contract drafting and review", "corporate-and-contracts/contract-drafting-lawyer-lucknow/index.html"],
+      ["Partnership deeds", "corporate-and-contracts/partnership-deed-drafting-lucknow/index.html"],
+      ["Vendor and service agreements", "corporate-and-contracts/vendor-service-agreement-lucknow/index.html"]
+    ]
+  },
+  {
+    key: "tax",
+    id: "tax",
+    eyebrow: "Tax",
+    title: "Income Tax and GST",
+    links: [
+      ["Tax and GST", "tax-and-gst/index.html"],
+      ["Income-tax notices", "tax-and-gst/income-tax-notice-lawyer-lucknow/index.html"],
+      ["GST registration", "tax-and-gst/gst-registration-lucknow/index.html"],
+      ["Replies to GST notices", "tax-and-gst/gst-notice-reply-lawyer-lucknow/index.html"]
+    ]
+  },
+  {
+    key: "registration",
+    id: "registration",
+    eyebrow: "Registration",
+    title: "Firm and Business Registration",
+    links: [
+      ["Business registration", "business-registration/index.html"],
+      ["Partnership firm registration", "business-registration/partnership-firm-registration-lucknow/index.html"],
+      ["LLP registration", "business-registration/llp-registration-lucknow/index.html"],
+      ["Company registration", "business-registration/private-limited-company-registration-lucknow/index.html"]
+    ]
+  }
+];
+
+/* Work that can sensibly start before anyone travels, and work that
+   cannot. Neither list names a court or claims proximity to one: which
+   forum hears a matter depends on its facts and is confirmed before
+   anything is filed. */
+const REMOTE_START = [
+  "A first discussion about what has happened and what is sought, by telephone or video call.",
+  "Reading scanned documents &mdash; agreements, notices, returns, orders and correspondence &mdash; before originals are seen.",
+  "Drafting and settling notices, replies, agreements and deeds, with revisions exchanged electronically.",
+  "Preparing and submitting registration and return filings that are made online.",
+  "Written replies to notices issued by a tax or registration authority."
+];
+
+const IN_PERSON = [
+  "Execution and registration of a deed, where the parties must attend the registration office in person.",
+  "Hearings where the court, tribunal or authority requires a party rather than only the advocate to be present.",
+  "Examination of original title documents, which frequently cannot be assessed from a photograph or a scan.",
+  "Recording of evidence, and any proceeding in which a party must be identified in person.",
+  "Any step for which the forum concerned directs personal attendance."
+];
+
+const LOCATION_GUIDES = [
+  ["Property Documents to Review Before a Purchase", "legal-guides/index.html"],
+  ["Responding to a Cheque-Bounce Matter", "legal-guides/index.html"],
+  ["Legal and Tax Checklist for Starting a Firm", "legal-guides/index.html"]
+];
+
+/* Typographic hero for every city other than Lucknow.
+
+   There is one photograph of Lucknow in the image registry and no
+   verified photograph of any other city. Putting a stock photograph on
+   the Kanpur page that may show somewhere else would be a small lie in a
+   prominent position, so those pages get a plate built from type instead:
+   ivory ground, a fine map-line pattern, the city name, the state and a
+   location mark. It is decorative, and the heading beside it carries the
+   meaning. */
+function cityHero(P, city, trail) {
+  return `  <section class="hero hero--city">
+    <span class="hero--city__lines" aria-hidden="true"></span>
+    <div class="container hero__inner">
+      <div class="hero--city__grid">
+        <div class="hero__content">
+${breadcrumb(P, trail)}
+          <h1>${city.h1}</h1>
+          <p class="hero__lead">${city.lead}</p>
+        </div>
+        <p class="city-plate" aria-hidden="true">
+          <span class="city-plate__icon">${ICON.pin(18)}</span>
+          <span class="city-plate__name">${city.name}</span>
+          <span class="city-plate__region">Uttar Pradesh</span>
+        </p>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* Section 3 of the content model. The office page states where the office
+   is; every other page states, in the firm's own words and before any
+   service copy, that it is not one. */
+function officeStatement(P, city) {
+  if (city.isOffice) {
+    /* The hero above already carries the one photograph of Lucknow the
+       registry holds, so the address sits in a panel rather than beside a
+       second copy of the same picture. */
+    return `  <section class="section section--tight" aria-labelledby="loc-office">
+    <div class="container container--reading">
+      <div class="service-area-note service-area-note--office" data-reveal>
+        <span class="service-area-note__icon" aria-hidden="true">${ICON.pin(20)}</span>
+        <div>
+          <h2 class="service-area-note__title" id="loc-office">The Firm's Office Is in Lucknow</h2>
+          <p class="service-area-note__statement">
+            This is the firm's principal and only office. There is no branch
+            office in any other district, and no other page of this website
+            represents one.
+          </p>
+          <address class="stack">
+            <p class="is-pending" data-config="address" data-pending-label="Office address to be published"></p>
+            <p><a data-config="phone" data-config-role="tel" data-pending-label="Telephone to be published"><span data-config-slot>Telephone to be published</span></a></p>
+            <p><a data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Map link to be published">View on Google Maps</a></p>
+          </address>
+        </div>
+      </div>
+    </div>
+  </section>`;
+  }
+
+  return `  <section class="section section--tight" aria-labelledby="loc-office">
+    <div class="container container--reading">
+      <div class="service-area-note" data-reveal>
+        <span class="service-area-note__icon" aria-hidden="true">${ICON.pin(20)}</span>
+        <div>
+          <h2 class="service-area-note__title" id="loc-office">Service area, not an office</h2>
+          <p class="service-area-note__statement">
+            ${LOCATIONS.serviceAreaStatement.replace("{{CITY}}", city.name)}
+          </p>
+          <p>
+            There is no office, no telephone line and no advocate of the firm
+            based in ${city.name}. Instructions from the district are taken at
+            the Lucknow office, or remotely, and matters are conducted before
+            whichever court, tribunal or authority has jurisdiction over them.
+          </p>
+          <p>${arrowLink("Where the office is", P + "locations/lucknow/index.html")}</p>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function locationPage(city) {
+  const P = "../../";
+  const canonical = "/locations/" + city.slug + "/";
+  const trail = [
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: "Locations", href: "locations/index.html", canonical: "locations/" },
+    { label: city.name, canonical: "locations/" + city.slug + "/" }
+  ];
+
+  /* Sections 5 to 10. The heading names the area and the city name is
+     carried by the eyebrow, so the page does not repeat the city in six
+     consecutive headings. */
+  const serviceSections = CITY_SERVICE_AREAS.map(
+    (area, i) => `  <section class="section${i % 2 ? " section--soft" : ""}" aria-labelledby="loc-${area.id}">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: area.eyebrow, title: area.title, id: "loc-" + area.id })}
+      <p>${city.emphasis[area.key]}</p>
+${relatedLinks(P, area.links)}
+    </div>
+  </section>`
+  ).join("\n\n");
+
+  const jsonLd = city.isOffice
+    ? [
+        breadcrumbJsonLd(trail),
+        /* Same @id as the node on the homepage: this is the one firm, with
+           its address stated on the page that describes its office, not a
+           second organisation. */
+        {
+          "@context": "https://schema.org",
+          "@type": "LegalService",
+          "@id": DOMAIN + "/#practice",
+          name: FIRM,
+          url: DOMAIN + "/",
+          telephone: "{{PHONE}}",
+          email: "{{EMAIL}}",
+          hasMap: "{{GOOGLE_MAPS_URL}}",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "{{STREET_ADDRESS}}",
+            addressLocality: "Lucknow",
+            addressRegion: "Uttar Pradesh",
+            postalCode: "{{POSTAL_CODE}}",
+            addressCountry: "IN"
+          },
+          areaServed: { "@type": "AdministrativeArea", name: "Uttar Pradesh" }
+        }
+      ]
+    : [
+        breadcrumbJsonLd(trail),
+        /* No address, no telephone, no geo. The page describes an area the
+           firm serves from Lucknow, and the schema says exactly that. */
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: city.h1,
+          description: city.description,
+          url: DOMAIN + canonical,
+          inLanguage: "en-IN",
+          isPartOf: { "@id": DOMAIN + "/#practice" }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Legal and tax assistance for clients in " + city.name,
+          serviceType: "Legal services",
+          description: city.description,
+          url: DOMAIN + canonical,
+          provider: { "@id": DOMAIN + "/#practice" },
+          areaServed: [
+            { "@type": "City", name: city.name },
+            { "@type": "AdministrativeArea", name: "Uttar Pradesh" }
+          ]
+        }
+      ];
+
+  return page({
+    depth: 2,
+    canonical,
+    noindex: !city.index,
+    sourceNote: city.index
+      ? null
+      : "TODO: Add independently verified city-specific content before changing to index,follow.",
+    remoteImages: city.isOffice,
+    cta: false,
+    title: city.title,
+    description: city.description,
+    jsonLd,
+    body:
+      (city.isOffice
+        ? sectionHero(P, { imageKey: "lucknow", h1: city.h1, lead: city.lead, trail })
+        : cityHero(P, city, trail)) +
+      "\n\n" +
+      officeStatement(P, city) +
+      `
+
+  <section class="section${city.isOffice ? " section--soft" : ""}" aria-labelledby="loc-overview">
+    <div class="container container--reading prose">
+${sectionHead({ eyebrow: "Overview", title: "How the Firm Assists Clients Here", id: "loc-overview" })}
+      <p>${city.region}</p>
+${city.intro.map((t) => `      <p>${t}</p>`).join("\n")}
+    </div>
+  </section>
+
+${serviceSections}
+
+  <section class="section" aria-labelledby="loc-consultation">
+    <div class="container container--reading">
+${sectionHead({
+  eyebrow: "Getting started",
+  title: "How Consultation and Document Review Work",
+  id: "loc-consultation"
+})}
+      <p>${city.consultation}</p>
+${processSteps([
+  ["First discussion", "What has happened, what is sought and whether anything is running against time."],
+  ["Document review", "The papers already held are read, and anything still to be obtained is identified."],
+  ["Scope and next steps", "The available course of action, the work it involves and its likely stages are set out before it is begun."]
+])}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="loc-remote">
+    <div class="container container--reading">
+${sectionHead({
+  eyebrow: "Remote",
+  title: "Matters That May Begin Remotely",
+  lead: "Whether a particular matter can be taken this far without a meeting depends on the papers, and is settled at the outset rather than assumed.",
+  id: "loc-remote"
+})}
+${markerList(REMOTE_START)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="loc-in-person">
+    <div class="container container--reading">
+${sectionHead({
+  eyebrow: "In person",
+  title: "Matters That May Require Physical Appearance",
+  lead: "Some steps cannot be completed remotely. Where attendance is required, that is said in advance rather than discovered on the day.",
+  id: "loc-in-person"
+})}
+${markerList(IN_PERSON)}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="loc-advocates">
+    <div class="container">
+${sectionHead({
+  eyebrow: "The practice",
+  title: "Advocates",
+  lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice. All three work from the Lucknow office.",
+  id: "loc-advocates"
+})}
+      <div class="grid grid--3" data-reveal-group>
+${ADVOCATES.map((a) => advocateCard(P, a)).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="loc-guides">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Reading", title: "Related Guides", id: "loc-guides" })}
+${relatedLinks(P, LOCATION_GUIDES)}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="loc-faq">
+    <div class="container">
+${sectionHead({ eyebrow: "Questions", title: "Frequently Asked Questions", id: "loc-faq" })}
+${accordion("loc-faq-" + city.slug, city.faqs, true)}
+    </div>
+  </section>
+
+  <section class="section section--navy" aria-labelledby="loc-contact">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Contact",
+  light: true,
+  title: "Contact the Lucknow Office",
+  lead: city.isOffice
+    ? "Please arrange a time before attending, so that the papers can be looked at properly. Sending an enquiry does not create an advocate&ndash;client relationship, and confidential documents should not be sent through this website."
+    : "Enquiries from " + city.name + " are answered from the Lucknow office; there is no separate local number. Sending an enquiry does not create an advocate&ndash;client relationship, and confidential documents should not be sent through this website.",
+  id: "loc-contact"
+})}
+${contactPanel(P)}
+      <div class="cta-band__actions" data-reveal>
+        <a class="btn btn--inverse" href="${P}contact/index.html">Go to the contact form</a>
+        <a class="btn btn--outline-light" data-config="phone" data-config-role="tel" data-config-text="keep" data-pending-label="Telephone to be published">${ICON.phone()}<span>Call the office</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container container--reading">
+${disclaimerBlock(P)}
+${lastReviewed()}
+    </div>
+  </section>`
+  });
+}
+
+CITIES.forEach((city) => {
+  files["locations/" + city.slug + "/index.html"] = locationPage(city);
+});
+
+/* --- Locations index -------------------------------------------------------
+   Grouped rather than listed flat, so the office, the pages that are
+   indexable at launch and the pages still being developed are not
+   presented as equivalent. */
+
+const locationIndexCard = (city) =>
+  locationCard(
+    city.name,
+    city.isOffice ? "Office" : "Service area",
+    city.lead,
+    city.slug + "/index.html"
+  );
 
 files["locations/index.html"] = page({
   depth: 1,
   canonical: "/locations/",
   remoteImages: true,
-  title: "Locations | " + FIRM,
-  description: FIRM + " is based in Lucknow and attends to matters across Uttar Pradesh.",
+  title: "Locations Across Uttar Pradesh | " + FIRM,
+  description:
+    FIRM + " is based in Lucknow and assists clients with appropriate matters across Uttar Pradesh. One office, in Lucknow; no branch office elsewhere.",
+  jsonLd: breadcrumbJsonLd([
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: "Locations", canonical: "locations/" }
+  ]),
   body:
     pageHeader("../", {
-      title: "Locations",
-      lead: "Based in Lucknow, attending to matters across Uttar Pradesh.",
+      title: "Locations Across Uttar Pradesh",
+      lead: "One office, in Lucknow. Matters arising elsewhere in the state are conducted from it.",
       trail: [{ label: "Home", href: "index.html" }, { label: "Locations" }]
     }) +
     `
@@ -1833,29 +2269,59 @@ files["locations/index.html"] = page({
     <div class="container">
 ${splitSection("../", {
   imageKey: "photos.lucknow",
+  ratio: "3x2",
   body: `        <p class="eyebrow">The office</p>
         <h2>Lucknow, Uttar Pradesh</h2>
+        <p>
+          The firm has one office and it is in Lucknow. There is no branch
+          office in any other district. The pages below describe districts
+          the firm assists clients in; none of them is a second office, and
+          none carries a local address or a local telephone number.
+        </p>
         <address class="stack">
           <p class="is-pending" data-config="address" data-pending-label="Office address to be published"></p>
           <p><a data-config="phone" data-config-role="tel" data-pending-label="Telephone to be published"><span data-config-slot>Telephone to be published</span></a></p>
           <p><a data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Map link to be published">View on Google Maps</a></p>
-        </address>`
+        </address>
+        <p class="cluster">${btnSecondary("The Lucknow page", "lucknow/index.html")}</p>`
 })}
     </div>
   </section>
 
-  <section class="section section--soft">
+  <section class="section section--soft" aria-labelledby="loc-primary">
     <div class="container">
 ${sectionHead({
-  eyebrow: "Areas covered",
-  title: "Matters attended to across Uttar Pradesh",
-  lead: "Individual location pages are being prepared."
+  eyebrow: "Primary launch locations",
+  title: "Districts With Published Location Pages",
+  lead: "These pages are complete and describe how matters from each district are usually taken forward.",
+  id: "loc-primary"
 })}
-      <div class="grid grid--4" data-reveal-group data-reveal-step="60">
-${UP_LOCATIONS.map(([name, meta]) =>
-  locationCard(name, meta, meta === "Office" ? "The firm's office is in Lucknow." : "Matters attended to in this district.")
-).join("\n")}
+      <div class="grid grid--cities" data-reveal-group data-reveal-step="60">
+${TIER_1.map(locationIndexCard).join("\n")}
       </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="loc-additional">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Additional Uttar Pradesh service areas",
+  title: "Further Districts the Firm Assists Clients In",
+  lead: "These pages are being developed. They are published for reference and are not submitted for indexing until their content has been independently reviewed.",
+  id: "loc-additional"
+})}
+      <div class="grid grid--cities" data-reveal-group data-reveal-step="60">
+${TIER_2.map(locationIndexCard).join("\n")}
+      </div>
+    </div>
+  </section>
+
+${coverageBlock("loc-coverage")}
+
+  <section class="section">
+    <div class="container container--reading">
+${disclaimerBlock("../")}
+${lastReviewed()}
     </div>
   </section>`
 });
@@ -2349,8 +2815,8 @@ ${articleCard("../", {
 })}
           </div>
           <div class="grid grid--4" style="margin-top:1.5rem">
-${locationCard("Lucknow", "Office", "The firm's office is in Lucknow.")}
-${locationCard("Prayagraj", "Uttar Pradesh", "Matters attended to in this district.")}
+${locationCard("Lucknow", "Office", "The firm's office is in Lucknow.", "../locations/lucknow/index.html")}
+${locationCard("Prayagraj", "Service area", "Assistance for clients in Prayagraj, conducted from the Lucknow office.", "../locations/prayagraj/index.html")}
           </div>`
 )}
 

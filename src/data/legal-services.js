@@ -33,16 +33,12 @@
  * ---------------------------------------------------------------------
  * LINKS WAITING ON PAGES NOT YET WRITTEN
  * ---------------------------------------------------------------------
- * These references currently point at the /practice-areas/ page for the
- * topic, because no dedicated service page exists yet. Repoint them when
- * the tax and business-registration sections are built:
+ * The tax and business-registration references that were waiting are now
+ * pointed at their own pages in /tax-and-gst/ and /business-registration/.
  *
- *   partnership-deed-drafting-lucknow  -> firm registration
- *   corporate-lawyer-lucknow           -> firm registration, income tax, GST
- *   business-legal-retainer-lucknow    -> tax and registration work
- *
- * The three legal-guide references on the hub pages point at the guides
- * index for the same reason: the individual guides are not written yet.
+ * Still outstanding: the legal-guide references on the hub pages point at
+ * the guides index, because the individual guides are not written yet.
+ * Repoint them when those pages exist.
  * ---------------------------------------------------------------------
  *
  * After editing, run:  node tools/build-pages.js
@@ -1203,7 +1199,7 @@ window.legalServices = {
             ["Title verification", "property-law-and-registration/property-title-verification-lucknow/index.html"],
             ["Sale deed drafting and registration", "property-law-and-registration/sale-deed-drafting-registration-lucknow/index.html"],
             ["Mutation and dakhil kharij", "property-law-and-registration/mutation-dakhil-kharij-lucknow/index.html"],
-            ["Property disputes", "property-law-and-registration/property-dispute-lawyer-lucknow/index.html"]
+            ["Income-tax on a property transaction", "tax-and-gst/income-tax-consultant-lucknow/index.html"]
           ],
           faqs: [
             [
@@ -1434,7 +1430,7 @@ window.legalServices = {
             ["Agreement to sell", "property-law-and-registration/agreement-to-sell-lawyer-lucknow/index.html"],
             ["Title verification", "property-law-and-registration/property-title-verification-lucknow/index.html"],
             ["Mutation and dakhil kharij", "property-law-and-registration/mutation-dakhil-kharij-lucknow/index.html"],
-            ["Gift deed registration", "property-law-and-registration/gift-deed-registration-lucknow/index.html"]
+            ["Income-tax on a property sale", "tax-and-gst/income-tax-consultant-lucknow/index.html"]
           ],
           faqs: [
             [
@@ -1582,13 +1578,13 @@ window.legalServices = {
             ["Executing without attestation", "A gift of immovable property requires attestation by at least two witnesses. Their details should be complete and correct."],
             ["Leaving reserved rights unstated", "If the donor intends to continue residing in the property, or to retain any right, the deed must say so."],
             ["Assuming a gift can be revoked at will", "A completed gift cannot ordinarily be taken back. Revocation is possible only in limited circumstances, and a deed that purports to reserve a general power to revoke may be problematic."],
-            ["Overlooking the tax position", "Gifts have consequences under tax law that depend on the relationship between the parties. Confirm the position for your circumstances before executing."]
+            ["Overlooking the tax position", "Gifts have consequences under tax law that depend on the relationship between the parties. Confirm the <a href=\"../../tax-and-gst/income-tax-consultant-lucknow/index.html\">tax position</a> for your circumstances before executing."]
           ],
           related: [
             ["Sale deed drafting and registration", "property-law-and-registration/sale-deed-drafting-registration-lucknow/index.html"],
             ["Mutation and dakhil kharij", "property-law-and-registration/mutation-dakhil-kharij-lucknow/index.html"],
             ["Property disputes", "property-law-and-registration/property-dispute-lawyer-lucknow/index.html"],
-            ["Title verification", "property-law-and-registration/property-title-verification-lucknow/index.html"]
+            ["Tax position on a gift", "tax-and-gst/income-tax-consultant-lucknow/index.html"]
           ],
           faqs: [
             [
@@ -1938,7 +1934,8 @@ window.legalServices = {
           related: [
             ["Contract drafting", "corporate-and-contracts/contract-drafting-lawyer-lucknow/index.html"],
             ["Partnership deed drafting", "corporate-and-contracts/partnership-deed-drafting-lucknow/index.html"],
-            ["Business legal retainer", "corporate-and-contracts/business-legal-retainer-lucknow/index.html"],
+            ["Business registration", "business-registration/index.html"],
+            ["Tax and GST", "tax-and-gst/index.html"],
             ["Contract disputes", "civil-litigation/contract-dispute-lawyer-lucknow/index.html"]
           ],
           faqs: [
@@ -1952,7 +1949,7 @@ window.legalServices = {
             ],
             [
               "Can you assist with company registration and tax registrations?",
-              "Yes. <a href=\"../../practice-areas/firm-business-registration/index.html\">Firm and business registration</a> and tax compliance &mdash; <a href=\"../../practice-areas/income-tax/index.html\">income tax</a> and <a href=\"../../practice-areas/gst/index.html\">GST</a> &mdash; are handled within the firm's other practice areas, and the work is coordinated with the documentation so that the two are consistent."
+              "Yes. See <a href=\"../../business-registration/index.html\">business registration</a> for company, LLP and firm formation, and <a href=\"../../tax-and-gst/index.html\">tax and GST</a> for income-tax and GST work. Both are coordinated with the documentation so that the agreements and the filings are consistent with each other."
             ],
             [
               "What does corporate compliance actually involve day to day?",
@@ -2091,8 +2088,9 @@ window.legalServices = {
           ],
           related: [
             ["Contract drafting", "corporate-and-contracts/contract-drafting-lawyer-lucknow/index.html"],
+            ["Partnership firm registration", "business-registration/partnership-firm-registration-lucknow/index.html"],
+            ["Deed and registration together", "business-registration/partnership-deed-and-firm-registration-lucknow/index.html"],
             ["Corporate lawyer in Lucknow", "corporate-and-contracts/corporate-lawyer-lucknow/index.html"],
-            ["Business legal retainer", "corporate-and-contracts/business-legal-retainer-lucknow/index.html"],
             ["Contract disputes", "civil-litigation/contract-dispute-lawyer-lucknow/index.html"]
           ],
           faqs: [
@@ -2110,7 +2108,7 @@ window.legalServices = {
             ],
             [
               "Do you also handle registration of the firm?",
-              "Yes. <a href=\"../../practice-areas/firm-business-registration/index.html\">Firm and business registration</a> is handled within the firm's other practice areas, and the deed is drafted so that it supports the registration application rather than having to be revised for it."
+              "Yes. See <a href=\"../../business-registration/partnership-firm-registration-lucknow/index.html\">partnership firm registration</a>, or have both done together as <a href=\"../../business-registration/partnership-deed-and-firm-registration-lucknow/index.html\">one exercise</a> so that the deed and the registered particulars are consistent from the outset."
             ]
           ]
         },
@@ -2296,7 +2294,7 @@ window.legalServices = {
             "Advice on employment documentation and on exits",
             "Questions on the constitutional documents, resolutions and records the business must keep",
             "Preliminary assessment of disputes, and advice on whether and how to escalate",
-            "Coordination with the firm's tax and registration work where a matter touches both"
+            "Coordination with the firm's <a href=\"../../tax-and-gst/index.html\">tax</a> and <a href=\"../../business-registration/index.html\">registration</a> work where a matter touches both"
           ],
           process: [
             ["Understanding the business", "What it does, the volume and type of documentation, and where difficulties have arisen previously."],
@@ -2323,8 +2321,9 @@ window.legalServices = {
           related: [
             ["Corporate lawyer in Lucknow", "corporate-and-contracts/corporate-lawyer-lucknow/index.html"],
             ["Contract drafting", "corporate-and-contracts/contract-drafting-lawyer-lucknow/index.html"],
-            ["Employment agreement drafting", "corporate-and-contracts/employment-agreement-drafting-lucknow/index.html"],
-            ["Vendor and service agreements", "corporate-and-contracts/vendor-service-agreement-lucknow/index.html"]
+            ["Tax and GST compliance", "tax-and-gst/index.html"],
+            ["GST return filing", "tax-and-gst/gst-return-filing-lucknow/index.html"],
+            ["Business registration", "business-registration/index.html"]
           ],
           faqs: [
             [

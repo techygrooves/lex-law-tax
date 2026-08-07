@@ -57,6 +57,12 @@ function loadData(relative, globalName) {
 const IMAGES = loadData("src/data/images.js", "siteImages");
 const ADVOCATE_DATA = loadData("src/data/advocates.js", "advocateData");
 const LEGAL = loadData("src/data/legal-services.js", "legalServices");
+const TAXBIZ = loadData("src/data/tax-business.js", "taxBusinessServices");
+
+/* Both content files use the same page model, so the renderer treats
+   them as one list. The coverage statement and the review date are
+   site-wide and come from the legal-services file. */
+const SECTION_HUBS = LEGAL.hubs.concat(TAXBIZ.hubs);
 
 /* A withheld detail is still {{TO_BE_PROVIDED}}. Those rows are dropped
    from the page rather than rendered empty, so nothing unverified is
@@ -128,7 +134,10 @@ const PRACTICE_AREA_HUBS = {
   "property-law": "property-law-and-registration",
   "property-registration": "property-law-and-registration",
   "corporate-law": "corporate-and-contracts",
-  "contractual-agreements": "corporate-and-contracts"
+  "contractual-agreements": "corporate-and-contracts",
+  "income-tax": "tax-and-gst",
+  "gst": "tax-and-gst",
+  "firm-business-registration": "business-registration"
 };
 
 const UP_LOCATIONS = [
@@ -248,7 +257,7 @@ function megaPractice(P) {
               <p>Legal and tax matters handled by the firm across Uttar Pradesh.</p>
               <p class="mega__group-label">Detailed sections</p>
               <ul class="mega__hubs">
-${LEGAL.hubs.map((h) => `                <li><a href="${P}${h.slug}/index.html">${h.name}</a></li>`).join("\n")}
+${SECTION_HUBS.map((h) => `                <li><a href="${P}${h.slug}/index.html">${h.name}</a></li>`).join("\n")}
               </ul>
               <a class="arrow-link" href="${P}practice-areas/index.html">View all areas ${ICON.arrow()}</a>
             </div>
@@ -332,7 +341,7 @@ function mobileNav(P) {
       return `        <li>
           <button class="mobile-nav__link" type="button" data-drawer-sub aria-expanded="false" aria-controls="m-practice-areas">${label}<span class="nav__chevron">${ICON.chevron()}</span></button>
           <ul class="mobile-nav__sub" id="m-practice-areas" hidden>
-${LEGAL.hubs.map((h) => `            <li><a href="${P}${h.slug}/index.html">${h.name}</a></li>`).join("\n")}
+${SECTION_HUBS.map((h) => `            <li><a href="${P}${h.slug}/index.html">${h.name}</a></li>`).join("\n")}
             <li><a href="${P}practice-areas/index.html">All practice areas</a></li>
 ${sub}
           </ul>
@@ -1733,7 +1742,7 @@ PRACTICE_AREAS.forEach(([slug, name, blurb]) => {
   const hubPointer = hubSlug
     ? `          <div class="notice">
             <p>This area has a detailed section with its own service pages.
-            <a href="../../${hubSlug}/index.html">Go to ${LEGAL.hubs.find((h) => h.slug === hubSlug).name}</a>.</p>
+            <a href="../../${hubSlug}/index.html">Go to ${SECTION_HUBS.find((h) => h.slug === hubSlug).name}</a>.</p>
           </div>
 `
     : "";
@@ -2516,6 +2525,72 @@ ${breadcrumb(P, o.trail).replace(/class="breadcrumb"/, 'class="breadcrumb breadc
   </section>`;
 }
 
+/* --- Scope of assistance -------------------------------------------
+   Tax and registration matters mix work an advocate does with work only
+   another professional may sign. The block below states which kinds are
+   involved on the page, so the division is explicit rather than implied.
+   No page claims that a named person will certify, audit or appear. */
+
+const SCOPE_KINDS = {
+  advisory: [
+    "Legal advisory",
+    "Advice on the legal position, the options open and the consequences of each."
+  ],
+  drafting: [
+    "Document drafting",
+    "Preparation and review of the agreements, deeds and written replies the matter requires."
+  ],
+  returns: [
+    "Return preparation",
+    "Carried out with, or coordinated with, a chartered accountant. Audit and any certificate that only a chartered accountant may sign is their work."
+  ],
+  registration: [
+    "Registration assistance",
+    "Assembling the application and its supporting documents, filing it with the authority and answering queries raised on it."
+  ],
+  representation: [
+    "Response and representation before an authority",
+    "Written replies and appearance before the authority concerned, where an advocate may act as authorised representative."
+  ],
+  coordination: [
+    "Coordination with other professionals",
+    "Where a matter requires audit, or a certificate or filing that only a specified professional may sign, it is coordinated with a chartered accountant or company secretary."
+  ]
+};
+
+function scopeBlock(keys, id) {
+  const items = keys
+    .filter((k) => SCOPE_KINDS[k])
+    .map(
+      (k) => `        <li>
+          <span class="scope-list__marker" aria-hidden="true">${ICON.check(16)}</span>
+          <span><strong>${SCOPE_KINDS[k][0]}</strong><span>${SCOPE_KINDS[k][1]}</span></span>
+        </li>`
+    )
+    .join("\n");
+
+  return `  <section class="section" aria-labelledby="${id}">
+    <div class="container container--reading">
+${sectionHead({
+  eyebrow: "Scope of assistance",
+  title: "What this work involves, and what it does not",
+  lead: "Different parts of a matter of this kind are different kinds of work. This is how they divide.",
+  id
+})}
+      <ul class="scope-list">
+${items}
+      </ul>
+      <div class="notice" data-reveal>
+        <p>Nothing on this page is an offer to audit accounts or to issue any
+        certificate that only a chartered accountant or company secretary may
+        issue. No professional designation is claimed for anyone at the firm
+        beyond enrolment as an advocate, and no undertaking is given that any
+        particular person will certify, audit or appear in a given matter.</p>
+      </div>
+    </div>
+  </section>`;
+}
+
 /* Plain bulleted list with a gold marker, used for matters handled. */
 function markerList(items) {
   return `      <ul class="marker-list">
@@ -2546,7 +2621,7 @@ ${items.map(([label, href]) => `        <li><a href="${P}${href}">${label}</a></
 
 function coverageBlock(id) {
   return `  <section class="section section--soft" aria-labelledby="${id}">
-    <div class="container container--narrow">
+    <div class="container container--reading">
 ${sectionHead({ eyebrow: "Where the firm works", title: "Lucknow and Uttar Pradesh Coverage", id })}
       <p>${LEGAL.coverage}</p>
     </div>
@@ -2613,7 +2688,7 @@ function hubPage(hub) {
       `
 
   <section class="section" aria-labelledby="hub-about">
-    <div class="container container--narrow prose">
+    <div class="container container--reading prose">
 ${sectionHead({ eyebrow: hub.name, title: "About this area of practice", id: "hub-about" })}
 ${hub.intro.map((t) => `      <p>${t}</p>`).join("\n")}
     </div>
@@ -2655,7 +2730,7 @@ ${ADVOCATES.map((a) => advocateCard(P, a)).join("\n")}
   </section>
 
   <section class="section" aria-labelledby="hub-guides">
-    <div class="container container--narrow">
+    <div class="container container--reading">
 ${sectionHead({ eyebrow: "Reading", title: "Related guides", id: "hub-guides" })}
 ${relatedLinks(P, hub.relatedGuides)}
     </div>
@@ -2664,7 +2739,7 @@ ${relatedLinks(P, hub.relatedGuides)}
 ${coverageBlock("hub-coverage")}
 
   <section class="section">
-    <div class="container container--narrow">
+    <div class="container container--reading">
 ${disclaimerBlock(P)}
 ${lastReviewed()}
     </div>
@@ -2676,6 +2751,14 @@ ${lastReviewed()}
 
 function servicePage(hub, svc) {
   const P = "../../";
+  const L = Object.assign(
+    {
+      matters: "Typical matters handled",
+      risks: "Common risks and mistakes",
+      related: "Related services"
+    },
+    hub.labels || {}
+  );
   const canonical = "/" + hub.slug + "/" + svc.slug + "/";
   const trail = [
     { label: "Home", href: "index.html", canonical: "" },
@@ -2695,12 +2778,13 @@ function servicePage(hub, svc) {
       `
 
   <section class="section" aria-labelledby="svc-intro">
-    <div class="container container--narrow prose">
+    <div class="container container--reading prose">
 ${sectionHead({ eyebrow: hub.name, title: "What this covers", id: "svc-intro" })}
 ${svc.intro.map((t) => `      <p>${t}</p>`).join("\n")}
     </div>
   </section>
 
+${svc.scope ? scopeBlock(svc.scope, "svc-scope") + "\n" : ""}
   <section class="section section--soft" aria-labelledby="svc-who">
     <div class="container">
 ${sectionHead({
@@ -2714,8 +2798,8 @@ ${pillars(svc.whoFor.map(([label, note]) => [ICON.check(20), label, note]), "fou
   </section>
 
   <section class="section" aria-labelledby="svc-matters">
-    <div class="container container--narrow">
-${sectionHead({ eyebrow: "Scope", title: "Typical matters handled", id: "svc-matters" })}
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Scope", title: L.matters, id: "svc-matters" })}
 ${markerList(svc.matters)}
     </div>
   </section>
@@ -2733,7 +2817,7 @@ ${processSteps(svc.process)}
   </section>
 
   <section class="section" aria-labelledby="svc-docs">
-    <div class="container container--narrow">
+    <div class="container container--reading">
 ${sectionHead({
   eyebrow: "Preparation",
   title: "Documents commonly required",
@@ -2745,15 +2829,15 @@ ${markerList(svc.documents)}
   </section>
 
   <section class="section section--soft" aria-labelledby="svc-risks">
-    <div class="container container--narrow">
-${sectionHead({ eyebrow: "Cautions", title: "Common risks and mistakes", id: "svc-risks" })}
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Cautions", title: L.risks, id: "svc-risks" })}
 ${riskList(svc.risks)}
     </div>
   </section>
 
   <section class="section" aria-labelledby="svc-related">
-    <div class="container container--narrow">
-${sectionHead({ eyebrow: "See also", title: "Related services", id: "svc-related" })}
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "See also", title: L.related, id: "svc-related" })}
 ${relatedLinks(P, svc.related)}
     </div>
   </section>
@@ -2782,7 +2866,7 @@ ${accordion("svc-faq-" + svc.slug, svc.faqs, true)}
 ${coverageBlock("svc-coverage")}
 
   <section class="section">
-    <div class="container container--narrow">
+    <div class="container container--reading">
 ${disclaimerBlock(P)}
 ${lastReviewed()}
     </div>
@@ -2790,7 +2874,7 @@ ${lastReviewed()}
   });
 }
 
-LEGAL.hubs.forEach((hub) => {
+SECTION_HUBS.forEach((hub) => {
   files[hub.slug + "/index.html"] = hubPage(hub);
   hub.services.forEach((svc) => {
     files[hub.slug + "/" + svc.slug + "/index.html"] = servicePage(hub, svc);

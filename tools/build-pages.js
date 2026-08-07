@@ -43,18 +43,29 @@ const esc = (value) => String(value).replace(/&(?!#?\w+;)/g, "&amp;");
 /* Image registry — loaded from the one file that holds the URLs        */
 /* ------------------------------------------------------------------ */
 
-function loadImages() {
-  const file = path.join(ROOT, "src", "data", "images.js");
+function loadData(relative, globalName) {
+  const file = path.join(ROOT, relative);
   const sandbox = { window: {} };
   vm.createContext(sandbox);
   vm.runInContext(fs.readFileSync(file, "utf8"), sandbox, { filename: file });
-  if (!sandbox.window.siteImages) {
-    throw new Error("src/data/images.js did not define window.siteImages");
+  if (!sandbox.window[globalName]) {
+    throw new Error(relative + " did not define window." + globalName);
   }
-  return sandbox.window.siteImages;
+  return sandbox.window[globalName];
 }
 
-const IMAGES = loadImages();
+const IMAGES = loadData("src/data/images.js", "siteImages");
+const ADVOCATE_DATA = loadData("src/data/advocates.js", "advocateData");
+
+/* A withheld detail is still {{TO_BE_PROVIDED}}. Those rows are dropped
+   from the page rather than rendered empty, so nothing unverified is
+   ever published beside an advocate's name. */
+const isWithheld = (value) =>
+  typeof value !== "string" || value.trim() === "" || /^\{\{[A-Z0-9_]+\}\}$/.test(value.trim());
+
+/* True only when the firm has actually supplied the photograph. */
+const advocatePhotoExists = (slug) =>
+  fs.existsSync(path.join(ROOT, IMAGES.advocates[slug].src));
 
 /* ------------------------------------------------------------------ */
 /* Site data                                                            */
@@ -97,11 +108,9 @@ const EMPLOYMENT_LAW_SCOPE = [
   "Confidentiality and non-disclosure agreements"
 ];
 
-const ADVOCATES = [
-  { slug: "mohammad-kamran", name: "Advocate Mohammad Kamran", short: "Mohammad Kamran", experience: "10+ Years of Legal Experience" },
-  { slug: "hamid-razzaq", name: "Advocate Hamid Razzaq", short: "Hamid Razzaq", experience: "15+ Years of Legal Experience" },
-  { slug: "irfan-ahmad-khan", name: "Advocate Irfan Ahmad Khan", short: "Irfan Ahmad Khan", experience: "20+ Years of Legal Experience" }
-];
+const ADVOCATES = ADVOCATE_DATA.order.map((slug) =>
+  Object.assign({ slug }, ADVOCATE_DATA.advocates[slug])
+);
 
 const CREDENTIALS = [
   "Enrolled with the Bar Council of Uttar Pradesh",
@@ -411,15 +420,17 @@ function media(o) {
   if (!record) throw new Error("Unknown image key: " + o.imageKey);
 
   const isAdvocate = o.imageKey.indexOf("advocates.") === 0;
-  /* Advocate photographs are local paths; the silhouette stands in until
-     the firm supplies the file, so the markup ships pointing at it. */
+  /* Advocate photographs are local. Ship the real file once it exists so
+     the page is right without JavaScript; until then ship the silhouette
+     and let site.js retry the photograph on each visit. */
+  const hasPhoto = isAdvocate && advocatePhotoExists(o.imageKey.split(".")[1]);
   const src = isAdvocate
-    ? o.base + IMAGES.fallbacks.advocate
+    ? o.base + (hasPhoto ? record.src : IMAGES.fallbacks.advocate)
     : record.url;
 
   const loading = o.priority ? "" : ' loading="lazy"';
   const priority = o.priority ? ' fetchpriority="high"' : "";
-  const placeholderClass = isAdvocate ? ' class="is-placeholder"' : "";
+  const placeholderClass = isAdvocate && !hasPhoto ? ' class="is-placeholder"' : "";
 
   return `<figure class="${cls.join(" ")}">
 ${o.pad || ""}  <img${placeholderClass} data-image="${o.imageKey}" src="${src}" alt="${record.alt}" width="${record.width}" height="${record.height}"${loading} decoding="async"${priority}>
@@ -610,8 +621,8 @@ ${items
 
 /* --- Homepage: positioning pillars ----------------------------------------- */
 
-function pillars(items) {
-  return `      <ul class="pillars" data-reveal-group data-reveal-step="70">
+function pillars(items, modifier) {
+  return `      <ul class="pillars${modifier ? " pillars--" + modifier : ""}" data-reveal-group data-reveal-step="70">
 ${items
   .map(
     ([icon, title, text]) => `        <li class="pillar" data-reveal>
@@ -1227,84 +1238,338 @@ files["about/index.html"] = page({
   depth: 1,
   canonical: "/about/",
   remoteImages: true,
-  title: "About the firm | " + FIRM,
-  description: "About " + FIRM + ", a firm of advocates based in Lucknow, Uttar Pradesh.",
+  title: "About " + FIRM + " | Lucknow Legal and Tax Practice",
+  description:
+    "H.R. Legal Associate is a legal and tax practice based in Lucknow, assisting individuals, property owners, professionals and businesses with matters across Uttar Pradesh.",
   body:
     pageHeader("../", {
-      title: "About the firm",
-      lead: "Advocates based in Lucknow, attending to matters across Uttar Pradesh.",
+      title: "About " + FIRM,
+      lead: "A legal and tax practice based in Lucknow, assisting clients across Uttar Pradesh.",
       trail: [{ label: "Home", href: "index.html" }, { label: "About" }]
     }) +
     `
 
-  <section class="section">
+  <section class="section" aria-labelledby="overview-title">
     <div class="container">
 ${splitSection("../", {
   imageKey: "photos.about",
-  body: `        <p class="eyebrow">The practice</p>
-        <h2>Legal, property, corporate and tax matters</h2>
+  ratio: "3x2",
+  body: `        <p class="eyebrow">Firm overview</p>
+        <h2 id="overview-title">A practice built around related legal and tax work</h2>
         <p class="lead">
-          ${FIRM} is a firm of advocates based in Lucknow. The firm attends to legal
-          and tax matters across Uttar Pradesh.
+          ${FIRM} is a practice of advocates in Lucknow. It assists with
+          litigation, documentation, registration, taxation and regulatory
+          matters, and appears before the courts, tribunals and authorities
+          concerned with them.
         </p>
         <p>
-          The firm&rsquo;s work covers civil and criminal litigation, property and
-          corporate matters, service and employment matters, and direct and indirect
-          tax matters.
+          The work of the firm falls into four broad groups: contested matters
+          before civil and criminal courts; property documentation, registration
+          and the disputes that arise from them; corporate, contractual and
+          registration work for businesses; and direct and indirect tax
+          compliance and proceedings.
         </p>
-        <p>${arrowLink("View all practice areas", "../practice-areas/index.html")}</p>`
+        <p>
+          Each advocate of the firm is enrolled with the Bar Council of Uttar
+          Pradesh and holds a Certificate of Practice.
+        </p>`
 })}
     </div>
   </section>
 
-${trustStrip()}
+  <section class="section section--soft" aria-labelledby="base-title">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Where the firm works",
+  title: "Lucknow Base and Uttar Pradesh Coverage",
+  lead: "One office, and matters attended to across the state from it.",
+  id: "base-title"
+})}
+      <div class="grid grid--2" data-reveal-group>
+        <div class="prose" data-reveal>
+          <h3>The office</h3>
+          <p>
+            The firm has a single principal office, in Lucknow. There is no
+            branch office anywhere else, and none is described on this website.
+          </p>
+          <address class="stack">
+            <p class="is-pending" data-config="address" data-pending-label="Office address to be published"></p>
+            <p><a data-config="phone" data-config-role="tel" data-pending-label="Telephone to be published"><span data-config-slot>Telephone to be published</span></a></p>
+          </address>
+        </div>
+        <div class="prose" data-reveal>
+          <h3>Matters elsewhere in the state</h3>
+          <p>
+            Matters arising in other districts of Uttar Pradesh are conducted
+            from Lucknow before the court, tribunal or authority that has
+            jurisdiction over them. Where a matter requires attendance
+            elsewhere, that is arranged for the particular hearing.
+          </p>
+          <p>${arrowLink("Service locations", "../locations/index.html")}</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <section class="section section--soft">
-    <div class="container prose">
-${sectionHead({ eyebrow: "The advocates", title: "Enrolment and practice" })}
-      <p>
-        The advocates associated with the firm are enrolled with the Bar Council of
-        Uttar Pradesh and hold a Certificate of Practice.
-      </p>
-      <p>${arrowLink("View advocate profiles", "../advocates/index.html")}</p>
-${PREP_NOTE}
+  <section class="section" aria-labelledby="integrated-title">
+    <div class="container">
+${splitSection("../", {
+  reverse: true,
+  imageKey: "photos.contracts",
+  ratio: "3x2",
+  body: `        <p class="eyebrow">Approach</p>
+        <h2 id="integrated-title">An Integrated Legal and Tax Approach</h2>
+        <p>
+          Legal and tax questions frequently arise from the same set of facts. A
+          sale of property carries stamp duty and capital gains consequences; a
+          new firm needs both a partnership deed and its tax registrations; a
+          recovery matter turns on documents that also have to stand up to a tax
+          assessment.
+        </p>
+        <p>
+          Because both sides of that work are handled within the same practice,
+          the drafting and the filings can be kept consistent with each other,
+          and a client is not left to carry information between separate
+          advisers.
+        </p>`
+})}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="clients-title">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Who the firm assists",
+  title: "Clients Assisted",
+  lead: "Instructions are accepted from private individuals as well as from businesses.",
+  id: "clients-title"
+})}
+${pillars([
+  [ICON.handshake(22), "Individuals",
+   "Personal matters before civil and criminal courts, family property questions, recovery of dues and responses to notices."],
+  [ICON.key(22), "Property owners",
+   "Purchase and sale documentation, registration, mutation of records, tenancy questions and title disputes."],
+  [ICON.file(22), "Professionals",
+   "Engagement and confidentiality agreements, income-tax and GST compliance, and responses to departmental correspondence."],
+  [ICON.building(22), "Businesses",
+   "Firm and company registration, commercial contracts, statutory compliance and commercial disputes."]
+], "four")}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="areas-title">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Scope",
+  title: "Areas of Assistance",
+  lead: "The twelve areas the firm handles. Each links to its own page.",
+  id: "areas-title"
+})}
+      <ul class="link-list" data-reveal>
+${PRACTICE_AREAS.map(
+  ([slug, name]) => `        <li><a href="../practice-areas/${slug}/index.html">${name}</a></li>`
+).join("\n")}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="process-title">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Working process",
+  title: "How a Matter Is Taken Forward",
+  lead: "The stages vary with the nature of the matter and the forum involved.",
+  id: "process-title"
+})}
+${processSteps([
+  ["Initial discussion", "A first conversation about what has happened, what is sought and what timelines apply."],
+  ["Document review", "The papers already available are examined, and anything still required is identified."],
+  ["Scope and next steps", "The available course of action, the work involved and the likely stages are set out."],
+  ["Representation, drafting, filing or compliance assistance", "The agreed work is carried out, whether that is appearance, drafting, filing or continuing compliance."]
+])}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="advocates-title">
+    <div class="container">
+${sectionHead({
+  eyebrow: "The practice",
+  title: "Advocates",
+  lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
+  id: "advocates-title"
+})}
+      <div class="grid grid--3" data-reveal-group>
+${ADVOCATES.map((a) => advocateCard("../", a)).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="conduct-title">
+    <div class="container container--narrow">
+${sectionHead({
+  eyebrow: "Professional conduct",
+  title: "A Note on What This Website Is",
+  id: "conduct-title"
+})}
+      <div class="disclaimer-note" data-reveal>
+        <p>
+          The rules of the Bar Council of India prohibit advocates from
+          advertising or soliciting work. This website is published for
+          information only, for the benefit of persons who seek it of their own
+          accord. It is not an advertisement, an inducement or a solicitation.
+        </p>
+        <p>
+          Nothing on this page is a promise or prediction of any outcome. No
+          result can be assured in any matter: outcomes depend on the facts, the
+          evidence and the law applied to them.
+        </p>
+        <p>
+          Nothing here is legal advice, and reading it creates no
+          advocate&ndash;client relationship. Please take advice on your own
+          matter before acting.
+        </p>
+        <p>${arrowLink("Read the full disclaimer", "../disclaimer/index.html")}</p>
+      </div>
     </div>
   </section>`
 });
 
 /* --- Advocates index ------------------------------------------------------ */
 
+/* Premium profile card used on the advocates index. */
+function advocateProfileCard(P, a, href) {
+  return `      <article class="advocate-card-lg" data-reveal>
+        <a class="advocate-card-lg__link" href="${href}">
+          ${media({ imageKey: "advocates." + a.slug, className: "advocate-photo", base: P, pad: "          " })}
+          <div class="advocate-card-lg__body">
+            <p class="advocate-card-lg__years">${a.experience}</p>
+            <h3 class="advocate-card-lg__name">${a.name}</h3>
+            <ul class="credentials">
+              <li>${CREDENTIALS[0]}</li>
+              <li>${CREDENTIALS[1]}</li>
+            </ul>
+            <span class="arrow-link advocate-card-lg__cta">View profile ${ICON.arrow()}</span>
+          </div>
+        </a>
+      </article>`;
+}
+
 files["advocates/index.html"] = page({
   depth: 1,
   canonical: "/advocates/",
-  title: "Advocates | " + FIRM,
-  description: "Profiles of the advocates associated with " + FIRM + ", Lucknow, Uttar Pradesh.",
+  title: "Advocates | " + FIRM + " Lucknow",
+  description:
+    "The advocates of H.R. Legal Associate, Lucknow. Each is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
   body:
     pageHeader("../", {
-      title: "Advocates",
-      lead: "Advocates associated with the firm.",
+      title: "Advocates at " + FIRM,
+      lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
       trail: [{ label: "Home", href: "index.html" }, { label: "Advocates" }]
     }) +
     `
 
-  <section class="section">
-    <div class="container">
-      <div class="grid grid--3" data-reveal-group>
-${ADVOCATES.map((a) => advocateCard("../", a)).join("\n")}
+  <section class="section" aria-label="Advocates of the firm">
+    <div class="grid-advocates container" data-reveal-group>
+${ADVOCATES.map((a) => advocateProfileCard("../", a, a.slug + "/index.html")).join("\n")}
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container container--narrow">
+      <div class="disclaimer-note" data-reveal>
+        <p>
+          The details on these pages are limited to what the firm has verified:
+          years in practice, enrolment with the Bar Council of Uttar Pradesh and
+          the holding of a Certificate of Practice. No specialisation,
+          court list, qualification or result is claimed for any advocate.
+        </p>
+        <p>
+          This website is not an advertisement or a solicitation of work, and
+          nothing on it is legal advice.
+          ${arrowLink("Read the full disclaimer", "../disclaimer/index.html")}
+        </p>
       </div>
     </div>
   </section>`
 });
 
-/* --- Advocate profiles ------------------------------------------------------ */
+/* --- Advocate profiles ------------------------------------------------------
+   Only supplied facts are published. Anything still {{TO_BE_PROVIDED}} in
+   src/data/advocates.js is omitted from the markup altogether — no empty
+   row, no "to be updated" label. */
+
+function advocateDetails(a) {
+  const rows = Object.keys(a.details || {})
+    .filter((key) => !isWithheld(a.details[key]))
+    .map(
+      (key) => `            <div class="detail-row">
+              <dt>${ADVOCATE_DATA.detailLabels[key] || key}</dt>
+              <dd>${a.details[key]}</dd>
+            </div>`
+    );
+
+  if (!rows.length) return "";
+
+  return `          <dl class="detail-list">
+${rows.join("\n")}
+          </dl>
+`;
+}
+
+function personJsonLd(a) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: a.name,
+    jobTitle: "Advocate",
+    url: DOMAIN + "/advocates/" + a.slug + "/",
+    description: a.experience + ". " + CREDENTIALS[0] + ". " + CREDENTIALS[1] + ".",
+    worksFor: {
+      "@type": "LegalService",
+      name: FIRM,
+      url: DOMAIN + "/"
+    },
+    workLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Lucknow",
+        addressRegion: "Uttar Pradesh",
+        addressCountry: "IN"
+      }
+    },
+    /* Stated as credentials rather than membership: the supplied wording
+       is "enrolled with", and no membership of any other body is claimed. */
+    hasCredential: [
+      {
+        "@type": "EducationalOccupationalCredential",
+        credentialCategory: "Bar enrolment",
+        recognizedBy: { "@type": "Organization", name: "Bar Council of Uttar Pradesh" }
+      },
+      {
+        "@type": "EducationalOccupationalCredential",
+        credentialCategory: "Certificate of Practice"
+      }
+    ]
+  };
+
+  /* Only claim a photograph once the file is actually there. */
+  if (advocatePhotoExists(a.slug)) {
+    data.image = DOMAIN + "/" + IMAGES.advocates[a.slug].src;
+  }
+
+  return data;
+}
 
 ADVOCATES.forEach((a) => {
   files["advocates/" + a.slug + "/index.html"] = page({
     depth: 2,
     canonical: "/advocates/" + a.slug + "/",
-    title: a.name + " | " + FIRM,
+    title: a.name + " | Advocate at " + FIRM + ", Lucknow",
     description:
-      a.name + ", " + a.experience.toLowerCase() + ", enrolled with the Bar Council of Uttar Pradesh.",
+      a.name + " practises with " + FIRM + " in Lucknow. " + a.experience +
+      ", enrolled with the Bar Council of Uttar Pradesh and holding a Certificate of Practice.",
+    jsonLd: personJsonLd(a),
     body:
       pageHeader("../../", {
         title: a.name,
@@ -1317,27 +1582,85 @@ ADVOCATES.forEach((a) => {
       }) +
       `
 
-  <section class="section">
+  <section class="section" aria-labelledby="profile-title">
     <div class="container">
       <div class="split">
         <div class="split__media" data-reveal>
           ${media({ imageKey: "advocates." + a.slug, className: "advocate-photo media--framed", base: "../../", pad: "          " })}
-        </div>
-        <div class="split__content prose" data-reveal>
-          <p class="eyebrow">Profile</p>
-          <h2>${a.name}</h2>
-          <ul class="credentials credentials--lead">
+          <ul class="credentials credentials--lead advocate-side-facts">
             <li>${a.experience}</li>
             <li>${CREDENTIALS[0]}</li>
             <li>${CREDENTIALS[1]}</li>
           </ul>
-          <hr class="rule">
-${PREP_NOTE}
-          <p class="cluster">
-            ${btnSecondary("All advocates", "../index.html")}
-            ${btnPrimary("Contact the office", "../../contact/index.html")}
+${advocateDetails(a)}        </div>
+
+        <div class="split__content prose" data-reveal>
+          <p class="eyebrow">Profile</p>
+          <h2 id="profile-title">Professional summary</h2>
+          <p class="lead">
+            ${a.name} practises with ${FIRM}, a legal and tax practice based in
+            Lucknow, and has ${a.years}+ years in practice.
           </p>
+          <p>
+            ${a.short} is enrolled with the Bar Council of Uttar Pradesh and
+            holds a Certificate of Practice. Work is undertaken as part of the
+            firm, across the areas the firm handles, and before the courts,
+            tribunals and authorities having jurisdiction over the matter
+            concerned.
+          </p>
+          <p class="text-muted">
+            No specialisation is claimed. Whether a particular matter is taken
+            up, and by which advocate of the firm, depends on its subject and
+            the forum involved.
+          </p>
+
+          <h2>Consultation approach</h2>
+          <p>
+            A first discussion covers what has happened, what is sought and what
+            timelines apply. The papers already available are examined, anything
+            further that is needed is identified, and the available course of
+            action is then set out along with the work it involves.
+          </p>
+          <p>
+            Advice is given on the facts and documents of the particular matter.
+            No outcome is promised or predicted, in this or any matter.
+          </p>
+
+          <h2>Practice areas of the firm</h2>
+          <p>
+            ${a.short} works within the firm&rsquo;s practice areas, each of which
+            is set out on its own page.
+          </p>
+          <ul class="link-list link-list--compact">
+${PRACTICE_AREAS.map(
+  ([slug, name]) => `            <li><a href="../../practice-areas/${slug}/index.html">${name}</a></li>`
+).join("\n")}
+          </ul>
+
+          <div class="cluster">
+            ${btnPrimary("Discuss a matter", "../../contact/index.html")}
+            ${btnSecondary("All advocates", "../index.html")}
+          </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container container--narrow">
+      <div class="disclaimer-note" data-reveal>
+        <p>
+          This page is published for information only. It is not an
+          advertisement, an inducement or a solicitation of work, and reading it
+          creates no advocate&ndash;client relationship.
+        </p>
+        <p>
+          The particulars given above are limited to the years in practice,
+          enrolment with the Bar Council of Uttar Pradesh and the holding of a
+          Certificate of Practice. No qualification, court list, membership,
+          designation, reported matter or result is claimed.
+        </p>
+        <p>${arrowLink("Read the full disclaimer", "../../disclaimer/index.html")}</p>
       </div>
     </div>
   </section>`

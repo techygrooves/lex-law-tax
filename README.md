@@ -78,6 +78,7 @@ image registry.
 │   ├── js/site.js                 Behaviour
 │   └── images/
 ├── src/data/images.js             Image registry — every URL lives here
+├── src/data/advocates.js          Advocate registry, incl. withheld details
 ├── tools/build-pages.js           Page generator (authoring aid)
 ├── robots.txt
 ├── sitemap.xml
@@ -250,6 +251,33 @@ because those pages are not written yet:
 Neither is a dead link. When the city and guide pages are written, update the
 `href`s in `tools/build-pages.js` (`cityLinks` and the `GUIDES` array).
 
+## Advocate details
+
+`src/data/advocates.js` holds the advocates' particulars. Only the four
+verified facts are published: name, years in practice, Bar Council of Uttar
+Pradesh enrolment and the Certificate of Practice.
+
+Everything under `details` is still `{{TO_BE_PROVIDED}}`:
+
+| Field | Published? |
+| --- | --- |
+| `enrolmentNumber` | withheld |
+| `copNumber` | withheld |
+| `education` | withheld |
+| `languages` | withheld |
+| `courtsAndForums` | withheld |
+
+The builder **omits a withheld row from the HTML entirely** — no empty row, no
+"coming soon" label, no placeholder text reaching a visitor. Supply a real
+value and the row appears on the next build; leave it and nothing is claimed.
+The same rule governs `Person` structured data, which also only claims an
+`image` once the photograph file actually exists on disk.
+
+Do not fill these in from assumption. An enrolment number or qualification
+published in error is a professional-conduct problem, not a content gap.
+
+After editing, run `node tools/build-pages.js`.
+
 ## First-visit acknowledgement
 
 The disclaimer acknowledgement opens automatically on the homepage only, and
@@ -262,4 +290,6 @@ a blank page. The footer link reopens it on any page.
 - Replace the placeholders in `assets/js/site-config.js`
 - Add the three advocate photographs
 - Verify and rewrite the provisional image alt text
-- Write the about, practice area, location and guide page content
+- Write the practice area, location and guide page content
+- Supply the withheld advocate details in `src/data/advocates.js`, if the firm
+  wishes to publish them

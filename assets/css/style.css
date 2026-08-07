@@ -2424,6 +2424,12 @@ textarea:disabled {
   padding: 0;
 }
 
+/* Four items instead of five: 15rem gives one row at desktop and 2x2 at
+   tablet, rather than 3 across with the fourth stranded. */
+.pillars--four {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+
 .pillar {
   padding: var(--space-m);
   background-color: var(--color-white);
@@ -2599,6 +2605,163 @@ textarea:disabled {
 
 .guide-card__category svg {
   color: var(--color-gold);
+}
+
+/* --- Advocate index: premium profile cards --- */
+
+.grid-advocates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: var(--space-l);
+}
+
+.advocate-card-lg {
+  background-color: var(--color-white);
+  border: var(--hairline);
+  border-top: 2px solid var(--color-gold);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition:
+    box-shadow var(--dur-base) var(--ease),
+    border-color var(--dur-base) var(--ease);
+}
+
+.advocate-card-lg:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-gold-soft);
+  border-top-color: var(--color-gold);
+}
+
+.advocate-card-lg__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.advocate-card-lg .media {
+  border-radius: 0;
+}
+
+.advocate-card-lg .media img {
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.advocate-card-lg:hover .media img:not(.is-placeholder) {
+  transform: scale(1.03);
+}
+
+.advocate-card-lg__body {
+  padding: var(--space-m);
+}
+
+.advocate-card-lg__years {
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+  margin: 0 0 var(--space-3xs);
+}
+
+.advocate-card-lg__name {
+  font-size: var(--fs-lg);
+  margin: 0 0 var(--space-xs);
+}
+
+.advocate-card-lg:hover .advocate-card-lg__name {
+  color: var(--color-teal);
+}
+
+.advocate-card-lg__cta {
+  margin-top: var(--space-s);
+}
+
+.advocate-card-lg:hover .advocate-card-lg__cta svg {
+  transform: translateX(4px);
+}
+
+/* --- Advocate profile: side facts and supplied-detail list --- */
+
+.advocate-side-facts {
+  margin-top: var(--space-m);
+}
+
+/* Rendered only when a detail has actually been supplied; withheld rows
+   are omitted from the markup entirely by the build. */
+.detail-list {
+  margin: var(--space-m) 0 0;
+  padding: var(--space-s) 0 0;
+  border-top: var(--hairline);
+  font-size: var(--fs-sm);
+}
+
+.detail-row + .detail-row {
+  margin-top: var(--space-2xs);
+}
+
+.detail-row dt {
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.detail-row dd {
+  margin: 0;
+  color: var(--color-navy);
+}
+
+/* --- Link list -----------------------------------------------------
+   Used for the practice-area lists on the about and profile pages. The
+   `ul.` qualifier is deliberate: `.prose ul` sets a list padding, and a
+   bare `.link-list` would lose to it and render as plain bullets. */
+
+ul.link-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xs);
+  /* Twelve practice areas: 16rem resolves to four columns at full width
+     (3 clean rows) and two inside a split column (6 rows). */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
+/* Inside .prose, `li + li` adds a top margin. In a grid that shifts every
+   item except the first, leaving the first row 4px out of line. */
+ul.link-list li,
+ul.link-list li + li {
+  margin: 0;
+}
+
+.link-list a {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: var(--space-2xs) var(--space-s);
+  background-color: var(--color-warm-white);
+  border: var(--hairline);
+  border-left: 2px solid var(--color-teal);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: var(--fs-sm);
+  color: var(--color-navy);
+  text-decoration: none;
+  transition:
+    border-left-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.link-list a:hover {
+  border-left-color: var(--color-gold);
+  background-color: var(--color-ivory);
+  color: var(--color-teal);
+}
+
+.link-list--compact a {
+  font-size: var(--fs-sm);
+  padding-block: var(--space-3xs);
 }
 
 /* --- Contact panel --- */

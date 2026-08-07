@@ -3,9 +3,9 @@
 Static website for **H.R. Legal Associate**, a firm of advocates based in
 Lucknow, Uttar Pradesh.
 
-This repository currently holds the site structure, the design system and the
-shared components. Full page content is written in a later stage — pages carry
-scaffolding and a visible "being prepared" notice where content is outstanding.
+This repository holds the site structure, the design system, the shared
+components and the completed homepage. The remaining pages carry scaffolding and
+a visible "being prepared" notice where their content is still outstanding.
 
 ## Technology
 
@@ -230,9 +230,36 @@ Configure the host to serve `404.html` for missing pages and `index.html` for
 folder URLs (most static hosts do this by default). `sitemap.xml` lists
 production URLs in their clean `/folder/` form.
 
+## Homepage
+
+`index.html` is written in full: hero, nine practice-area cards, property and
+tax/business feature sections, advocates, positioning, a four-step process,
+Lucknow and Uttar Pradesh coverage, legal-guide cards and a contact section.
+
+It carries `LegalService` structured data built from the same `{{PLACEHOLDER}}`
+values as the rest of the site. `site.js` substitutes the resolved ones and
+**deletes any that are still unresolved**, so search engines are never told
+that `{{PHONE_NUMBER}}` is a telephone number.
+
+Two things on the homepage point at index pages rather than their own URLs,
+because those pages are not written yet:
+
+- the eight city links and *View All Service Locations* all go to `/locations/`
+- the three legal-guide cards all go to `/legal-guides/`
+
+Neither is a dead link. When the city and guide pages are written, update the
+`href`s in `tools/build-pages.js` (`cityLinks` and the `GUIDES` array).
+
+## First-visit acknowledgement
+
+The disclaimer acknowledgement opens automatically on the homepage only, and
+records acceptance in `localStorage` under `hrla.disclaimer.accepted`. *Exit
+Website* closes the tab where the browser permits it and otherwise navigates to
+a blank page. The footer link reopens it on any page.
+
 ## Still to do
 
 - Replace the placeholders in `assets/js/site-config.js`
 - Add the three advocate photographs
 - Verify and rewrite the provisional image alt text
-- Write the homepage, about, practice area, location and guide content
+- Write the about, practice area, location and guide page content

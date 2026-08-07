@@ -3006,6 +3006,208 @@ a.contact-method__value:hover {
 }
 
 
+/* --- Location pages --- */
+
+/* There is one verified photograph of Lucknow and none of any other
+   district, so only the Lucknow page and the locations index carry a
+   photograph. Every other city gets a typographic hero: ivory ground,
+   a fine map-line pattern, the city name and the state. Nothing here
+   asserts what a place looks like. */
+.hero--city {
+  position: relative;
+  background-color: var(--color-ivory);
+  color: var(--text-body);
+  border-bottom: var(--hairline);
+  overflow: hidden;
+}
+
+.hero--city h1,
+.hero--city .hero__lead {
+  color: var(--text-heading);
+}
+
+.hero--city .hero__lead {
+  color: var(--color-slate);
+}
+
+.hero--city .hero__inner {
+  position: relative;
+  z-index: 1;
+  padding-block: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.hero--city h1 {
+  font-size: var(--fs-3xl);
+  max-width: 20ch;
+}
+
+.hero--city .hero__lead {
+  margin-bottom: 0;
+}
+
+/* Map lines: two hairline grids at different pitches, one of them
+   rotated, so the pattern reads as contour rather than graph paper.
+   Drawn in CSS gradients rather than an image request. */
+.hero--city__lines {
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(16, 42, 67, 0.14) 0 1px,
+      transparent 1px 3.25rem
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(16, 42, 67, 0.14) 0 1px,
+      transparent 1px 3.25rem
+    ),
+    repeating-linear-gradient(
+      24deg,
+      rgba(183, 139, 74, 0.3) 0 1px,
+      transparent 1px 9rem
+    ),
+    repeating-linear-gradient(
+      -63deg,
+      rgba(183, 139, 74, 0.26) 0 1px,
+      transparent 1px 13rem
+    );
+  /* Densest over the open ground to the right of the heading, fading out
+     before it reaches the wording so nothing is read through a grid. */
+  -webkit-mask-image: radial-gradient(90% 105% at 68% 45%, #000 0%, rgba(0, 0, 0, 0.5) 48%, transparent 88%);
+  mask-image: radial-gradient(90% 105% at 68% 45%, #000 0%, rgba(0, 0, 0, 0.5) 48%, transparent 88%);
+}
+
+.hero--city__grid {
+  display: grid;
+  gap: var(--space-l);
+  align-items: center;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+}
+
+.city-plate {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2xs);
+  margin: 0;
+  padding: var(--space-l) var(--space-m);
+  background-color: var(--color-warm-white);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.city-plate__icon {
+  display: inline-flex;
+  color: var(--color-gold);
+}
+
+.city-plate__name {
+  font-family: var(--font-heading);
+  font-size: var(--fs-2xl);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-heading);
+}
+
+.city-plate__region {
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+}
+
+/* Seven cards per group on the locations index. An auto-fit grid passes
+   through a three-across band on the way down, which leaves the seventh
+   card alone at the end of a row; explicit counts step 4 -> 2 -> 1 and
+   skip it. Two-across ends 2+2+2+1, which reads as a short last row
+   rather than a stray card. */
+.grid--cities {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 64em) {
+  .grid--cities {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 40em) {
+  .grid--cities {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* The one statement that has to be read before anything else on a
+   non-office page: this is a service area, not a branch. */
+.service-area-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  padding: var(--space-m) var(--space-l);
+  background-color: var(--color-teal-tint);
+  border: var(--hairline);
+  border-left: 3px solid var(--color-teal);
+  border-radius: var(--radius-sm);
+}
+
+.service-area-note__icon {
+  flex: none;
+  color: var(--color-teal);
+  margin-top: 2px;
+}
+
+.service-area-note__title {
+  font-size: var(--fs-lg);
+  margin-bottom: var(--space-2xs);
+}
+
+.service-area-note__statement {
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.service-area-note p {
+  margin-bottom: var(--space-xs);
+}
+
+.service-area-note p:last-child {
+  margin-bottom: 0;
+}
+
+/* Same panel on the Lucknow page, where it holds the address rather than
+   a disclaimer, so it reads as the office note and not as a caution. */
+.service-area-note--office {
+  background-color: var(--color-ivory);
+  border-left-color: var(--color-gold);
+}
+
+.service-area-note--office .service-area-note__icon {
+  color: var(--color-gold-ink);
+}
+
+.service-area-note address {
+  font-style: normal;
+  margin-top: var(--space-s);
+}
+
+@media (max-width: 36em) {
+  .service-area-note {
+    padding: var(--space-m);
+  }
+
+  .city-plate__name {
+    font-size: var(--fs-xl);
+  }
+}
+
+
 /* 27. 404 layout
    ------------------------------------------------------------------ */
 
@@ -3260,6 +3462,19 @@ a.contact-method__value:hover {
 
   .split--reverse .split__media {
     order: 0;
+  }
+
+  /* The city plate reads as a caption under the heading rather than
+     beside it once there is no room for two columns. */
+  .hero--city__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-m);
+  }
+
+  .city-plate {
+    justify-items: start;
+    text-align: left;
+    padding: var(--space-m);
   }
 }
 

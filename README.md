@@ -4,9 +4,9 @@ Static website for **H.R. Legal Associate**, a firm of advocates based in
 Lucknow, Uttar Pradesh.
 
 This repository holds the site structure, the design system, the shared
-components, the homepage, the about and advocate pages, and seven practice
-sections with their Lucknow service pages. The location and guide pages still
-carry scaffolding and a visible "being prepared" notice.
+components, the homepage, the about and advocate pages, seven practice sections
+with their Lucknow service pages, and the Uttar Pradesh location pages. The
+guide pages still carry scaffolding and a visible "being prepared" notice.
 
 ## Technology
 
@@ -36,8 +36,8 @@ python3 -m http.server 8000
 
 ### Regenerating pages
 
-Seventy-five pages share one header, footer, navigation and card set. Rather
-than maintain seventy-five copies, the markup is generated:
+Eighty-nine pages share one header, footer, navigation and card set. Rather
+than maintain eighty-nine copies, the markup is generated:
 
 ```
 node tools/build-pages.js
@@ -66,7 +66,7 @@ image registry.
 │   ├── contractual-agreements/    service-law/
 │   ├── employment-law/            income-tax/
 │   └── gst/                       firm-business-registration/
-├── locations/                     Office and areas covered
+├── locations/                     Index + 14 Uttar Pradesh city pages
 ├── legal-guides/                  General information notes
 ├── contact/                       Office details and enquiry form
 ├── disclaimer/                    Website disclaimer
@@ -89,6 +89,7 @@ image registry.
 ├── src/data/advocates.js          Advocate registry, incl. withheld details
 ├── src/data/legal-services.js     Legal hub and service page content
 ├── src/data/tax-business.js       Tax, GST and registration page content
+├── src/data/locations.js          Per-city wording for the location pages
 ├── tools/build-pages.js           Page generator (authoring aid)
 ├── robots.txt
 ├── sitemap.xml
@@ -252,14 +253,10 @@ values as the rest of the site. `site.js` substitutes the resolved ones and
 **deletes any that are still unresolved**, so search engines are never told
 that `{{PHONE_NUMBER}}` is a telephone number.
 
-Two things on the homepage point at index pages rather than their own URLs,
-because those pages are not written yet:
-
-- the eight city links and *View All Service Locations* all go to `/locations/`
-- the three legal-guide cards all go to `/legal-guides/`
-
-Neither is a dead link. When the city and guide pages are written, update the
-`href`s in `tools/build-pages.js` (`cityLinks` and the `GUIDES` array).
+One thing on the homepage still points at an index page rather than its own
+URL, because those pages are not written yet: the three legal-guide cards all
+go to `/legal-guides/`. It is not a dead link. When the individual guides
+exist, update the `href`s in the `GUIDES` array in `tools/build-pages.js`.
 
 ## Practice hubs and service pages
 
@@ -316,6 +313,63 @@ title and deed pages, `contracts` for agreement pages, `corporate` for
 corporate and retainer pages, `tax` for income-tax and GST pages, and
 `registration` for firm, LLP, company, proprietorship and Udyam pages.
 
+## Location pages
+
+`/locations/` plus fourteen city pages. All of their wording lives in
+`src/data/locations.js`; the generator only decides layout.
+
+**One office.** The firm has a single office, in Lucknow. Only
+`/locations/lucknow/` carries an address, a telephone number, a map link or
+`LegalService` structured data — and that node reuses the homepage's
+`@id`, so it is the same organisation with its address stated, not a second
+one. Every other city page carries, immediately under the heading, this
+sentence with its own city name substituted:
+
+> H.R. Legal Associate is based in Lucknow and assists clients with
+> appropriate matters across Uttar Pradesh. This page does not represent a
+> separate office in *[city]*.
+
+Those pages carry `WebPage`, `Service` and `BreadcrumbList` and nothing else.
+No page names a local office, a local number, a local advocate, a branch, a
+local client or a court building, and none claims to be near one. No court or
+authority address appears anywhere in the section. The contact block on every
+city page is explicitly labelled *Lucknow office*.
+
+**Not doorway pages.** Each city carries its own region description,
+introduction, emphasis for each of the six service areas, consultation wording
+and three questions. A test measures sentence overlap between every pair of
+city pages and fails above 75%; the closest pair currently shares 61%, which is
+the firm-wide material (advocates, disclaimer, contact) that is supposed to
+repeat.
+
+**Indexing.** `index: true` in the data file makes a page indexable. Seven are
+— Lucknow, Kanpur, Prayagraj, Varanasi, Gorakhpur, Bareilly and Agra. The other
+seven carry `<meta name="robots" content="noindex,follow">` and this comment in
+the source:
+
+```
+TODO: Add independently verified city-specific content before changing to index,follow.
+```
+
+They are also left out of `sitemap.xml`: listing a page while telling crawlers
+not to index it is a contradictory signal. Flip `index` to `true` in
+`src/data/locations.js`, rebuild, and regenerate the sitemap.
+
+Only the seven indexable cities are linked from the footer and the homepage.
+The locations index links all fourteen, grouped as *Primary launch locations*
+and *Additional Uttar Pradesh service areas*.
+
+**Images.** The registry holds one verified photograph of Lucknow and none of
+any other district, so that photograph appears on exactly three pages — the
+homepage location section, the locations index and the Lucknow page. Every
+other city gets a typographic hero instead: ivory ground, a fine map-line
+pattern drawn in CSS, the city name, an *Uttar Pradesh* label and a location
+mark. A stock photograph that may show somewhere else is not used to stand in
+for a city.
+
+There are no service-by-city pages. `/locations/kanpur/` links through to the
+Lucknow service pages rather than duplicating them per district.
+
 ## Advocate details
 
 `src/data/advocates.js` holds the advocates' particulars. Only the four
@@ -355,7 +409,10 @@ a blank page. The footer link reopens it on any page.
 - Replace the placeholders in `assets/js/site-config.js`
 - Add the three advocate photographs
 - Verify and rewrite the provisional image alt text
-- Write the location and guide page content
+- Write the guide page content
+- Review the seven `noindex` city pages, add independently verified local
+  content, then set `index: true` in `src/data/locations.js` and regenerate
+  the sitemap
 - When the individual guides exist, repoint the `relatedGuides` links on the
   hub pages, which currently go to the guides index
 - Supply the withheld advocate details in `src/data/advocates.js`, if the firm

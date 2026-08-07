@@ -844,6 +844,36 @@ a.is-pending {
   margin-bottom: var(--space-s);
 }
 
+.mega__group-label {
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+  margin: var(--space-s) 0 var(--space-2xs);
+}
+
+.mega__hubs {
+  list-style: none;
+  margin: 0 0 var(--space-s);
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.mega__hubs a {
+  display: block;
+  padding: var(--space-3xs) 0;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--color-navy);
+  text-decoration: none;
+}
+
+.mega__hubs a:hover {
+  color: var(--color-teal);
+}
+
 .mega__columns {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2762,6 +2792,118 @@ ul.link-list li + li {
 .link-list--compact a {
   font-size: var(--fs-sm);
   padding-block: var(--space-3xs);
+}
+
+/* --- Practice hub and service pages --- */
+
+/* Compact hero: one photograph per page, with the navy wash that any
+   text over an image requires. */
+.hero--page .hero__inner {
+  padding-block: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.hero--page h1 {
+  font-size: var(--fs-3xl);
+  max-width: 20ch;
+}
+
+.hero--page .hero__lead {
+  margin-bottom: 0;
+}
+
+.breadcrumb--light ol {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.breadcrumb--light a {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.breadcrumb--light a:hover {
+  color: var(--color-gold-soft);
+}
+
+.breadcrumb--light li + li::before {
+  background-color: var(--color-gold-soft);
+}
+
+.breadcrumb--light [aria-current="page"] {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Matters handled, documents required */
+.marker-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xs);
+  max-width: var(--measure);
+}
+
+.marker-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  line-height: var(--lh-snug);
+}
+
+.marker-list svg {
+  flex: none;
+  margin-top: 4px;
+  color: var(--color-teal);
+}
+
+/* Risks and mistakes — a distinct marker so it is not mistaken for the
+   checklist above it when skimming. */
+.risk-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-s);
+  max-width: var(--measure);
+}
+
+.risk-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding-left: var(--space-s);
+  border-left: 2px solid var(--color-gold);
+}
+
+.risk-list__marker {
+  flex: none;
+  margin-top: 3px;
+  color: var(--color-gold-ink);
+}
+
+.risk-list strong {
+  display: block;
+  color: var(--color-navy);
+}
+
+.risk-list span span {
+  color: var(--color-slate);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+}
+
+/* Hub service cards carry no photograph — the page has one hero image
+   and icons elsewhere. */
+.svc-card .card__body {
+  gap: var(--space-2xs);
+}
+
+.svc-card .card__title {
+  font-size: var(--fs-md);
+}
+
+.last-reviewed {
+  margin-top: var(--space-m);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
 }
 
 /* --- Contact panel --- */

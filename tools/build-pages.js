@@ -56,6 +56,7 @@ function loadData(relative, globalName) {
 
 const IMAGES = loadData("src/data/images.js", "siteImages");
 const ADVOCATE_DATA = loadData("src/data/advocates.js", "advocateData");
+const LEGAL = loadData("src/data/legal-services.js", "legalServices");
 
 /* A withheld detail is still {{TO_BE_PROVIDED}}. Those rows are dropped
    from the page rather than rendered empty, so nothing unverified is
@@ -117,6 +118,19 @@ const CREDENTIALS = [
   "Certificate of Practice holder"
 ];
 
+/* The five detailed hubs are the developed pages for these topics. The
+   practice-area page for each links straight through, so the two do not
+   compete for the same reader. */
+const PRACTICE_AREA_HUBS = {
+  "civil-litigation": "civil-litigation",
+  "criminal-law": "criminal-law",
+  "cheque-bounce-recovery": "cheque-bounce-and-recovery",
+  "property-law": "property-law-and-registration",
+  "property-registration": "property-law-and-registration",
+  "corporate-law": "corporate-and-contracts",
+  "contractual-agreements": "corporate-and-contracts"
+};
+
 const UP_LOCATIONS = [
   ["Lucknow", "Office"],
   ["Kanpur", "Uttar Pradesh"],
@@ -170,7 +184,8 @@ const ICON = {
   building: (s) => ico('<path d="M4 21V6.5L12 3l8 3.5V21"/><path d="M3 21h18"/><path d="M9.5 21v-4.5h5V21"/><path d="M9 10h1.5M13.5 10H15M9 13.5h1.5M13.5 13.5H15"/>', s || 20),
   compass: (s) => ico('<circle cx="12" cy="12" r="8.5"/><path d="m15 9-1.8 4.2L9 15l1.8-4.2L15 9Z"/>', s || 20),
   key: (s) => ico('<circle cx="8" cy="12" r="3.5"/><path d="M11.5 12H21"/><path d="M17.5 12v3M20 12v2"/>', s || 20),
-  receipt: (s) => ico('<path d="M6 3h12v18l-3-1.6-3 1.6-3-1.6L6 21V3Z"/><path d="M9.5 8h5M9.5 12h5"/>', s || 20)
+  receipt: (s) => ico('<path d="M6 3h12v18l-3-1.6-3 1.6-3-1.6L6 21V3Z"/><path d="M9.5 8h5M9.5 12h5"/>', s || 20),
+  alert: (s) => ico('<path d="M12 4.5 2.8 20h18.4L12 4.5Z"/><path d="M12 10v4"/><path d="M12 17h.01"/>', s || 16)
 };
 
 /* --- Legal guides ---------------------------------------------------
@@ -231,6 +246,10 @@ function megaPractice(P) {
             <div class="mega__intro">
               <h2>Practice areas</h2>
               <p>Legal and tax matters handled by the firm across Uttar Pradesh.</p>
+              <p class="mega__group-label">Detailed sections</p>
+              <ul class="mega__hubs">
+${LEGAL.hubs.map((h) => `                <li><a href="${P}${h.slug}/index.html">${h.name}</a></li>`).join("\n")}
+              </ul>
               <a class="arrow-link" href="${P}practice-areas/index.html">View all areas ${ICON.arrow()}</a>
             </div>
             <ul class="mega__columns">
@@ -313,6 +332,7 @@ function mobileNav(P) {
       return `        <li>
           <button class="mobile-nav__link" type="button" data-drawer-sub aria-expanded="false" aria-controls="m-practice-areas">${label}<span class="nav__chevron">${ICON.chevron()}</span></button>
           <ul class="mobile-nav__sub" id="m-practice-areas" hidden>
+${LEGAL.hubs.map((h) => `            <li><a href="${P}${h.slug}/index.html">${h.name}</a></li>`).join("\n")}
             <li><a href="${P}practice-areas/index.html">All practice areas</a></li>
 ${sub}
           </ul>
@@ -890,10 +910,16 @@ function page(o) {
      site; site.js substitutes the real values once site-config.js is
      filled in, and drops any property still unresolved so the markup is
      never published claiming a placeholder is a telephone number. */
-  const structuredData = o.jsonLd
-    ? '\n  <script type="application/ld+json" data-config-json>\n' +
-      JSON.stringify(o.jsonLd, null, 2).replace(/^/gm, "  ") +
-      "\n  </script>\n"
+  const ldBlocks = o.jsonLd ? [].concat(o.jsonLd) : [];
+  const structuredData = ldBlocks.length
+    ? ldBlocks
+        .map(
+          (block) =>
+            '\n  <script type="application/ld+json" data-config-json>\n' +
+            JSON.stringify(block, null, 2).replace(/^/gm, "  ") +
+            "\n  </script>\n"
+        )
+        .join("")
     : "";
 
   return `<!DOCTYPE html>
@@ -1703,6 +1729,15 @@ PRACTICE_AREAS.forEach(([slug, name, blurb]) => {
   let scope = "";
   let related = "";
 
+  const hubSlug = PRACTICE_AREA_HUBS[slug];
+  const hubPointer = hubSlug
+    ? `          <div class="notice">
+            <p>This area has a detailed section with its own service pages.
+            <a href="../../${hubSlug}/index.html">Go to ${LEGAL.hubs.find((h) => h.slug === hubSlug).name}</a>.</p>
+          </div>
+`
+    : "";
+
   if (slug === "service-law") {
     scope = `          <h2>Scope</h2>
           <p>The following matters fall within this practice area.</p>
@@ -1751,7 +1786,7 @@ ${splitSection("../../", {
   body: `        <p class="eyebrow">Practice area</p>
         <h2>${name}</h2>
         <p class="lead">${blurb}</p>
-${scope}
+${hubPointer}${scope}
 ${related}`
 })}
     </div>
@@ -2420,6 +2455,346 @@ ${previewBlock(
       </div>
     </div>
   </section>`
+});
+
+
+/* ================================================================== */
+/* LEGAL PRACTICE HUBS AND LUCKNOW SERVICE PAGES                       */
+/* ================================================================== */
+
+/* BreadcrumbList built from the same trail that renders the visible
+   breadcrumb, so the two can never drift apart. */
+function breadcrumbJsonLd(trail) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: trail.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.label,
+      item: DOMAIN + "/" + (item.canonical || "")
+    }))
+  };
+}
+
+/* Service schema. `provider` is a reference to the LegalService node
+   defined once on the homepage, so the organisation is not restated on
+   every page in the section. */
+function serviceJsonLd(service, canonical) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: service.name,
+    serviceType: service.name.replace(/ in Lucknow$/, ""),
+    description: service.description,
+    url: DOMAIN + canonical,
+    provider: { "@id": DOMAIN + "/#practice" },
+    areaServed: [
+      { "@type": "City", name: "Lucknow" },
+      { "@type": "AdministrativeArea", name: "Uttar Pradesh" }
+    ]
+  };
+}
+
+/* Compact hero used at the top of every page in this section: one
+   photograph, a navy wash so the text is legible over it, breadcrumb
+   and heading. No other section on these pages carries a large image. */
+function sectionHero(P, o) {
+  const record = IMAGES.photos[o.imageKey];
+  return `  <section class="hero hero--page">
+    <div class="media hero__media media--overlay">
+      <img data-image="photos.${o.imageKey}" src="${record.url}" alt="${record.alt}" width="${record.width}" height="${record.height}" decoding="async" fetchpriority="high">
+      <span class="media__fallback" aria-hidden="true">${ICON.image()}<span>Image unavailable</span></span>
+    </div>
+    <div class="container hero__inner">
+      <div class="hero__content">
+${breadcrumb(P, o.trail).replace(/class="breadcrumb"/, 'class="breadcrumb breadcrumb--light"')}
+        <h1>${o.h1}</h1>
+        <p class="hero__lead">${o.lead}</p>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* Plain bulleted list with a gold marker, used for matters handled. */
+function markerList(items) {
+  return `      <ul class="marker-list">
+${items.map((t) => `        <li>${ICON.check(15)}<span>${t}</span></li>`).join("\n")}
+      </ul>`;
+}
+
+/* Risks and mistakes: same shape as the checklist but with a distinct
+   marker, so the two are not confused when skimming. */
+function riskList(items) {
+  return `      <ul class="risk-list">
+${items
+  .map(
+    ([label, note]) => `        <li>
+          <span class="risk-list__marker" aria-hidden="true">${ICON.alert(16)}</span>
+          <span><strong>${label}</strong><span>${note}</span></span>
+        </li>`
+  )
+  .join("\n")}
+      </ul>`;
+}
+
+function relatedLinks(P, items) {
+  return `      <ul class="link-list">
+${items.map(([label, href]) => `        <li><a href="${P}${href}">${label}</a></li>`).join("\n")}
+      </ul>`;
+}
+
+function coverageBlock(id) {
+  return `  <section class="section section--soft" aria-labelledby="${id}">
+    <div class="container container--narrow">
+${sectionHead({ eyebrow: "Where the firm works", title: "Lucknow and Uttar Pradesh Coverage", id })}
+      <p>${LEGAL.coverage}</p>
+    </div>
+  </section>`;
+}
+
+function disclaimerBlock(P) {
+  return `      <div class="disclaimer-note" data-reveal>
+        <p>
+          This page is general information about an area of practice. It is not
+          legal advice, and it is not an advertisement or a solicitation of
+          work. Reading it creates no advocate&ndash;client relationship.
+        </p>
+        <p>
+          Procedures, limitation periods, court fees, stamp duty and government
+          charges change, and what applies depends on the facts of the
+          particular matter. Nothing here should be acted on without advice on
+          your own documents, and no outcome is promised or predicted.
+        </p>
+        <p>${arrowLink("Read the full disclaimer", P + "disclaimer/index.html")}</p>
+      </div>`;
+}
+
+function lastReviewed() {
+  const d = new Date(LEGAL.lastReviewed + "T00:00:00Z");
+  const shown = d.toLocaleDateString("en-GB", {
+    day: "numeric", month: "long", year: "numeric", timeZone: "UTC"
+  });
+  return `      <p class="last-reviewed">
+        Last reviewed: <time datetime="${LEGAL.lastReviewed}">${shown}</time>
+      </p>`;
+}
+
+/* --- Hub page --------------------------------------------------------- */
+
+function hubPage(hub) {
+  const P = "../";
+  const trail = [
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: hub.name, canonical: hub.slug + "/" }
+  ];
+
+  const serviceCards = hub.services
+    .map(
+      (s) => `      <article class="card svc-card" data-reveal>
+        <div class="card__body">
+          <h3 class="card__title"><a href="${P}${hub.slug}/${s.slug}/index.html">${s.navLabel}</a></h3>
+          <p class="card__text">${s.lead}</p>
+          <p class="card__foot">${arrowLink("Read more", P + hub.slug + "/" + s.slug + "/index.html")}</p>
+        </div>
+      </article>`
+    )
+    .join("\n");
+
+  return page({
+    depth: 1,
+    canonical: "/" + hub.slug + "/",
+    remoteImages: true,
+    title: hub.title,
+    description: hub.description,
+    jsonLd: breadcrumbJsonLd(trail),
+    body:
+      sectionHero(P, { imageKey: hub.image, h1: hub.h1, lead: hub.lead, trail }) +
+      `
+
+  <section class="section" aria-labelledby="hub-about">
+    <div class="container container--narrow prose">
+${sectionHead({ eyebrow: hub.name, title: "About this area of practice", id: "hub-about" })}
+${hub.intro.map((t) => `      <p>${t}</p>`).join("\n")}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="hub-services">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Services",
+  title: "Services in this area",
+  lead: "Each page below deals with one service and the questions it raises.",
+  id: "hub-services"
+})}
+      <div class="grid grid--3" data-reveal-group data-reveal-step="70">
+${serviceCards}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="hub-faq">
+    <div class="container">
+${sectionHead({ eyebrow: "Questions", title: "Frequently asked questions", id: "hub-faq" })}
+${accordion("hub-faq-" + hub.slug, hub.faqs, true)}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="hub-advocates">
+    <div class="container">
+${sectionHead({
+  eyebrow: "The practice",
+  title: "Advocates",
+  lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
+  id: "hub-advocates"
+})}
+      <div class="grid grid--3" data-reveal-group>
+${ADVOCATES.map((a) => advocateCard(P, a)).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="hub-guides">
+    <div class="container container--narrow">
+${sectionHead({ eyebrow: "Reading", title: "Related guides", id: "hub-guides" })}
+${relatedLinks(P, hub.relatedGuides)}
+    </div>
+  </section>
+
+${coverageBlock("hub-coverage")}
+
+  <section class="section">
+    <div class="container container--narrow">
+${disclaimerBlock(P)}
+${lastReviewed()}
+    </div>
+  </section>`
+  });
+}
+
+/* --- Service page ----------------------------------------------------- */
+
+function servicePage(hub, svc) {
+  const P = "../../";
+  const canonical = "/" + hub.slug + "/" + svc.slug + "/";
+  const trail = [
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: hub.name, href: hub.slug + "/index.html", canonical: hub.slug + "/" },
+    { label: svc.navLabel, canonical: hub.slug + "/" + svc.slug + "/" }
+  ];
+
+  return page({
+    depth: 2,
+    canonical,
+    remoteImages: true,
+    title: svc.title,
+    description: svc.description,
+    jsonLd: [breadcrumbJsonLd(trail), serviceJsonLd(svc, canonical)],
+    body:
+      sectionHero(P, { imageKey: svc.image, h1: svc.h1, lead: svc.lead, trail }) +
+      `
+
+  <section class="section" aria-labelledby="svc-intro">
+    <div class="container container--narrow prose">
+${sectionHead({ eyebrow: hub.name, title: "What this covers", id: "svc-intro" })}
+${svc.intro.map((t) => `      <p>${t}</p>`).join("\n")}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="svc-who">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Who this may assist",
+  title: "Who this service may assist",
+  lead: "If your situation is not listed, it does not mean it cannot be dealt with. It means it should be discussed.",
+  id: "svc-who"
+})}
+${pillars(svc.whoFor.map(([label, note]) => [ICON.check(20), label, note]), "four")}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="svc-matters">
+    <div class="container container--narrow">
+${sectionHead({ eyebrow: "Scope", title: "Typical matters handled", id: "svc-matters" })}
+${markerList(svc.matters)}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="svc-process">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Process",
+  title: "How the work generally proceeds",
+  lead: "The sequence varies with the facts and the forum. This is the usual shape of it.",
+  id: "svc-process"
+})}
+${processSteps(svc.process)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="svc-docs">
+    <div class="container container--narrow">
+${sectionHead({
+  eyebrow: "Preparation",
+  title: "Documents commonly required",
+  lead: "Bringing what you have makes the first discussion considerably more useful. Missing items can be obtained later.",
+  id: "svc-docs"
+})}
+${markerList(svc.documents)}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="svc-risks">
+    <div class="container container--narrow">
+${sectionHead({ eyebrow: "Cautions", title: "Common risks and mistakes", id: "svc-risks" })}
+${riskList(svc.risks)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="svc-related">
+    <div class="container container--narrow">
+${sectionHead({ eyebrow: "See also", title: "Related services", id: "svc-related" })}
+${relatedLinks(P, svc.related)}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="svc-advocates">
+    <div class="container">
+${sectionHead({
+  eyebrow: "The practice",
+  title: "Advocates",
+  lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
+  id: "svc-advocates"
+})}
+      <div class="grid grid--3" data-reveal-group>
+${ADVOCATES.map((a) => advocateCard(P, a)).join("\n")}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="svc-faq">
+    <div class="container">
+${sectionHead({ eyebrow: "Questions", title: "Frequently asked questions", id: "svc-faq" })}
+${accordion("svc-faq-" + svc.slug, svc.faqs, true)}
+    </div>
+  </section>
+
+${coverageBlock("svc-coverage")}
+
+  <section class="section">
+    <div class="container container--narrow">
+${disclaimerBlock(P)}
+${lastReviewed()}
+    </div>
+  </section>`
+  });
+}
+
+LEGAL.hubs.forEach((hub) => {
+  files[hub.slug + "/index.html"] = hubPage(hub);
+  hub.services.forEach((svc) => {
+    files[hub.slug + "/" + svc.slug + "/index.html"] = servicePage(hub, svc);
+  });
 });
 
 /* ================================================================== */

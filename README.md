@@ -77,8 +77,14 @@ image registry.
 │   ├── js/image-data.js           Adapter over the image registry
 │   ├── js/site.js                 Behaviour
 │   └── images/
+├── civil-litigation/              Practice hub + 4 Lucknow service pages
+├── criminal-law/                  Practice hub + 4 Lucknow service pages
+├── cheque-bounce-and-recovery/    Practice hub + 4 Lucknow service pages
+├── property-law-and-registration/ Practice hub + 9 Lucknow service pages
+├── corporate-and-contracts/       Practice hub + 6 Lucknow service pages
 ├── src/data/images.js             Image registry — every URL lives here
 ├── src/data/advocates.js          Advocate registry, incl. withheld details
+├── src/data/legal-services.js     Hub and service page content
 ├── tools/build-pages.js           Page generator (authoring aid)
 ├── robots.txt
 ├── sitemap.xml
@@ -251,6 +257,37 @@ because those pages are not written yet:
 Neither is a dead link. When the city and guide pages are written, update the
 `href`s in `tools/build-pages.js` (`cityLinks` and the `GUIDES` array).
 
+## Practice hubs and service pages
+
+Five hubs, each with its Lucknow service pages beneath it, live at the site
+root. All of their content is in `src/data/legal-services.js`, which carries
+the writing rules at the top of the file. In short: name statutes rather than
+sections, never state a court fee or stamp duty rate, never promise a timeline
+or an outcome, never cite a judgment, and mark limitation periods and
+procedures as the general position to be confirmed on the facts.
+
+Every service page follows the same fifteen-part model — breadcrumbs, a
+service-and-location H1, introduction, who it may assist, typical matters,
+process, documents required, risks, related services, advocate cards, FAQs, a
+coverage statement, contact CTA, disclaimer, and a last-reviewed date driven by
+`lastReviewed` in the data file.
+
+### Relationship to `/practice-areas/`
+
+`/practice-areas/` remains the index of all twelve areas. Seven of those pages
+cover a topic that now has a developed hub, and each links straight through to
+it so the two do not compete for the same reader. The mega menu and the mobile
+drawer list the five hubs above the twelve areas.
+
+### Images
+
+One hero photograph per page, eager with `fetchpriority="high"` and a navy
+overlay behind the text. Every other section uses icons. Images follow the
+mapping in the data file: `civil` for civil litigation and recovery, `criminal`
+for criminal pages, `chequeBounce` for cheque matters, `property` for property,
+title and deed pages, `contracts` for agreement pages, `corporate` for
+corporate and retainer pages.
+
 ## Advocate details
 
 `src/data/advocates.js` holds the advocates' particulars. Only the four
@@ -290,6 +327,9 @@ a blank page. The footer link reopens it on any page.
 - Replace the placeholders in `assets/js/site-config.js`
 - Add the three advocate photographs
 - Verify and rewrite the provisional image alt text
-- Write the practice area, location and guide page content
+- Write the tax, business-registration, location and guide page content
+- When those exist, update the links noted in `src/data/legal-services.js`
+  (partnership deed → firm registration; the corporate pages' references to tax
+  and registration work)
 - Supply the withheld advocate details in `src/data/advocates.js`, if the firm
   wishes to publish them

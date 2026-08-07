@@ -4,8 +4,9 @@ Static website for **H.R. Legal Associate**, a firm of advocates based in
 Lucknow, Uttar Pradesh.
 
 This repository holds the site structure, the design system, the shared
-components and the completed homepage. The remaining pages carry scaffolding and
-a visible "being prepared" notice where their content is still outstanding.
+components, the homepage, the about and advocate pages, and seven practice
+sections with their Lucknow service pages. The location and guide pages still
+carry scaffolding and a visible "being prepared" notice.
 
 ## Technology
 
@@ -35,8 +36,8 @@ python3 -m http.server 8000
 
 ### Regenerating pages
 
-Twenty-six pages share one header, footer, navigation and card set. Rather than
-maintain twenty-six copies, the markup is generated:
+Seventy-five pages share one header, footer, navigation and card set. Rather
+than maintain seventy-five copies, the markup is generated:
 
 ```
 node tools/build-pages.js
@@ -82,9 +83,12 @@ image registry.
 ├── cheque-bounce-and-recovery/    Practice hub + 4 Lucknow service pages
 ├── property-law-and-registration/ Practice hub + 9 Lucknow service pages
 ├── corporate-and-contracts/       Practice hub + 6 Lucknow service pages
+├── tax-and-gst/                   Hub + 9 income-tax and GST pages
+├── business-registration/         Hub + 6 registration pages
 ├── src/data/images.js             Image registry — every URL lives here
 ├── src/data/advocates.js          Advocate registry, incl. withheld details
-├── src/data/legal-services.js     Hub and service page content
+├── src/data/legal-services.js     Legal hub and service page content
+├── src/data/tax-business.js       Tax, GST and registration page content
 ├── tools/build-pages.js           Page generator (authoring aid)
 ├── robots.txt
 ├── sitemap.xml
@@ -272,12 +276,35 @@ process, documents required, risks, related services, advocate cards, FAQs, a
 coverage statement, contact CTA, disclaimer, and a last-reviewed date driven by
 `lastReviewed` in the data file.
 
+### Tax, GST and business registration
+
+`/tax-and-gst/` and `/business-registration/` use the same page model, with
+their content in `src/data/tax-business.js`. Two rules apply there that do not
+apply elsewhere.
+
+**Nothing numeric that the government sets.** No fee, rate, threshold, penalty
+amount, filing due date or processing time appears on any of those pages. These
+are notified and revised, and a figure that is right today is wrong next year.
+Every page says the position for the particular matter must be checked against
+the current notification and portal. Nothing describes how a government portal
+behaves, and no approval or notice outcome is promised.
+
+**Who does what.** This is a firm of advocates. Every service page in that
+section carries a *scope of assistance* block stating which kinds of work a
+matter involves — legal advisory, drafting, return preparation, registration
+assistance, representation before an authority, and coordination with other
+professionals. It states plainly that audit, and any certificate only a
+chartered accountant or company secretary may sign, is coordinated rather than
+performed here, and that no designation is claimed for anyone at the firm
+beyond enrolment as an advocate. A test asserts that block is present on every
+page and that no page claims an in-house CA, an audit or a certification.
+
 ### Relationship to `/practice-areas/`
 
-`/practice-areas/` remains the index of all twelve areas. Seven of those pages
+`/practice-areas/` remains the index of all twelve areas. Ten of those pages
 cover a topic that now has a developed hub, and each links straight through to
 it so the two do not compete for the same reader. The mega menu and the mobile
-drawer list the five hubs above the twelve areas.
+drawer list the seven hubs above the twelve areas.
 
 ### Images
 
@@ -286,7 +313,8 @@ overlay behind the text. Every other section uses icons. Images follow the
 mapping in the data file: `civil` for civil litigation and recovery, `criminal`
 for criminal pages, `chequeBounce` for cheque matters, `property` for property,
 title and deed pages, `contracts` for agreement pages, `corporate` for
-corporate and retainer pages.
+corporate and retainer pages, `tax` for income-tax and GST pages, and
+`registration` for firm, LLP, company, proprietorship and Udyam pages.
 
 ## Advocate details
 
@@ -327,9 +355,8 @@ a blank page. The footer link reopens it on any page.
 - Replace the placeholders in `assets/js/site-config.js`
 - Add the three advocate photographs
 - Verify and rewrite the provisional image alt text
-- Write the tax, business-registration, location and guide page content
-- When those exist, update the links noted in `src/data/legal-services.js`
-  (partnership deed → firm registration; the corporate pages' references to tax
-  and registration work)
+- Write the location and guide page content
+- When the individual guides exist, repoint the `relatedGuides` links on the
+  hub pages, which currently go to the guides index
 - Supply the withheld advocate details in `src/data/advocates.js`, if the firm
   wishes to publish them

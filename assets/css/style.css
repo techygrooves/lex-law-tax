@@ -398,6 +398,15 @@ small {
   max-width: var(--wrap-narrow);
 }
 
+/* Reading-width content that keeps the page's own left margin. The
+   section pages alternate prose with full-width grids; centring the
+   prose in a narrower container made consecutive sections start at two
+   different left edges, which reads as a ragged margin rather than as a
+   deliberate change of measure. */
+.container--reading > * {
+  max-width: var(--wrap-narrow);
+}
+
 .section {
   padding-block: var(--section-y);
 }
@@ -2885,6 +2894,42 @@ ul.link-list li + li {
 }
 
 .risk-list span span {
+  color: var(--color-slate);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+}
+
+/* Scope of assistance: same shape as the risk list, teal marker rather
+   than gold, so the two read as different kinds of information. */
+.scope-list {
+  list-style: none;
+  margin: 0 0 var(--space-m);
+  padding: 0;
+  display: grid;
+  gap: var(--space-s);
+  max-width: var(--measure);
+}
+
+.scope-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding-left: var(--space-s);
+  border-left: 2px solid var(--color-teal);
+}
+
+.scope-list__marker {
+  flex: none;
+  margin-top: 3px;
+  color: var(--color-teal);
+}
+
+.scope-list strong {
+  display: block;
+  color: var(--color-navy);
+}
+
+.scope-list span span {
   color: var(--color-slate);
   font-size: var(--fs-sm);
   line-height: var(--lh-snug);

@@ -3,10 +3,11 @@
 Static website for **H.R. Legal Associate**, a firm of advocates based in
 Lucknow, Uttar Pradesh.
 
-This repository holds the site structure, the design system, the shared
-components, the homepage, the about and advocate pages, seven practice sections
-with their Lucknow service pages, and the Uttar Pradesh location pages. The
-guide pages still carry scaffolding and a visible "being prepared" notice.
+This repository holds the whole site: the structure, the design system, the
+shared components, the homepage, the about and advocate pages, seven practice
+sections with their Lucknow service pages, the Uttar Pradesh location pages,
+twelve legal guides, the frequently asked questions, and the contact,
+disclaimer and privacy pages.
 
 ## Technology
 
@@ -36,8 +37,8 @@ python3 -m http.server 8000
 
 ### Regenerating pages
 
-Eighty-nine pages share one header, footer, navigation and card set. Rather
-than maintain eighty-nine copies, the markup is generated:
+One hundred and two pages share one header, footer, navigation and card set. Rather
+than maintain a hundred copies, the markup is generated:
 
 ```
 node tools/build-pages.js
@@ -67,7 +68,8 @@ image registry.
 │   ├── employment-law/            income-tax/
 │   └── gst/                       firm-business-registration/
 ├── locations/                     Index + 14 Uttar Pradesh city pages
-├── legal-guides/                  General information notes
+├── legal-guides/                  Index + 12 guide articles
+├── frequently-asked-questions/    9 categories of common questions
 ├── contact/                       Office details and enquiry form
 ├── disclaimer/                    Website disclaimer
 ├── privacy-policy/                Privacy policy
@@ -253,10 +255,10 @@ values as the rest of the site. `site.js` substitutes the resolved ones and
 **deletes any that are still unresolved**, so search engines are never told
 that `{{PHONE_NUMBER}}` is a telephone number.
 
-One thing on the homepage still points at an index page rather than its own
-URL, because those pages are not written yet: the three legal-guide cards all
-go to `/legal-guides/`. It is not a dead link. When the individual guides
-exist, update the `href`s in the `GUIDES` array in `tools/build-pages.js`.
+The three legal-guide cards on the homepage and the guide list in the footer
+are both derived from the real articles in `src/data/guides.js` (see
+`HOME_GUIDE_SLUGS` in `tools/build-pages.js`), so a card cannot advertise a
+guide that does not exist.
 
 ## Practice hubs and service pages
 
@@ -312,6 +314,90 @@ for criminal pages, `chequeBounce` for cheque matters, `property` for property,
 title and deed pages, `contracts` for agreement pages, `corporate` for
 corporate and retainer pages, `tax` for income-tax and GST pages, and
 `registration` for firm, LLP, company, proprietorship and Udyam pages.
+
+## Legal guides
+
+Twelve notes at `/legal-guides/<slug>/`, all written in `src/data/guides.js`,
+which carries the writing rules at the top of the file.
+
+**Nothing numeric that the law or a notification sets.** No guide states a
+court fee, a stamp duty rate, a tax rate, a limitation period, a notice period,
+a filing deadline or a processing time. A provision may be *named* — section
+138 of the Negotiable Instruments Act, 1881, for example — and the period it
+prescribes may be described as one the statute fixes; it may never be given a
+number. A figure in a note like this reads as advice and goes stale without
+anyone noticing. No case, citation, statutory quotation, portal procedure or
+assured outcome appears either.
+
+Each guide instead carries its own `verify` sentence saying what has to be
+checked against the current law and the facts of the matter. It is rendered
+from the data onto the page and the template cannot omit it. A test asserts
+every guide renders its own.
+
+**Nothing is attributed to anyone who has not been assigned to it.** Each
+article has `author`, `reviewedBy` and `reviewStatus`. While `reviewStatus` is
+`"pending"` the page:
+
+- names no author and no reviewer — the builder omits a withheld name
+  entirely, and never prints a placeholder;
+- displays *"Drafted for general information and pending final professional
+  review."*;
+- carries `<meta name="robots" content="noindex,follow">` and is left out of
+  `sitemap.xml`.
+
+**All twelve are currently `pending`.** To publish one: have an advocate read
+it, put their name in `reviewedBy`, set `reviewStatus: "approved"`, rebuild and
+regenerate the sitemap. Do not set `approved` without naming the reviewer — a
+test fails if you do.
+
+Each guide follows the same fourteen-part model: breadcrumbs, category, H1,
+summary, table of contents, main explanation, practical checklist, common
+mistakes, related services, related guides, an authorship-and-review section,
+both dates, the disclaimer with its verification sentence, and a contact CTA.
+The table of contents is generated from the section headings, so the two
+cannot drift apart.
+
+### Category filter
+
+The index filters by the seven categories in the browser. It is progressive
+enhancement over a list that is already complete: **all twelve cards are in the
+markup, unhidden**, and the filter bar is displayed only under the `js` class
+that `site.js` adds, so without JavaScript the full list is readable and
+crawlable and no dead control is shown. A category chip on an article links to
+`/legal-guides/#property`, and the index applies that filter on load and on
+`hashchange`.
+
+A card the filter reveals is marked revealed explicitly — while it is hidden
+its bounding box is zero, so neither the IntersectionObserver nor the safety
+net in `initReveal` would ever bring it back.
+
+## Frequently asked questions
+
+`/frequently-asked-questions/`, from `src/data/faqs.js`: nine categories,
+fifty-four questions. Every answer describes how something generally works and
+what a position depends on. **None of them advises anyone.** No answer tells a
+reader what to do in their own matter, addresses their facts or predicts an
+outcome, and a test scans for exactly those constructions.
+
+## Contact page and the enquiry form
+
+The form asks for name, telephone, email, city, service category, a brief
+description, a preferred contact method and a consent acknowledgement.
+
+**It is deliberately inert.** `formEndpoint` in `assets/js/site-config.js` is
+`{{FORM_ENDPOINT}}`, so `site.js` disables every control, shows the notice
+saying online submission is being configured, and prevents submission. The
+markup ships with no `action` attribute at all. Nothing typed into it is
+transmitted or stored, and nothing on the page suggests a message was sent.
+Telephone, WhatsApp and email stay available throughout, because those are the
+routes that actually work today.
+
+Supply a real `formEndpoint` and `site.js` sets the `action`, re-enables the
+controls and hides the notice. **Update the privacy policy to say where
+submissions go before doing that.**
+
+The map is a placeholder rather than an embed. No address has been confirmed,
+and an embedded map would have to point somewhere.
 
 ## Location pages
 
@@ -409,11 +495,16 @@ a blank page. The footer link reopens it on any page.
 - Replace the placeholders in `assets/js/site-config.js`
 - Add the three advocate photographs
 - Verify and rewrite the provisional image alt text
-- Write the guide page content
+- **Have an advocate read each of the twelve guides**, then name them as
+  `reviewedBy` and set `reviewStatus: "approved"` in `src/data/guides.js`.
+  Until that happens every guide is `noindex`
+- Supply `formEndpoint` in `assets/js/site-config.js` so the enquiry form can
+  send, and update the privacy policy to say where submissions go **before**
+  enabling it
 - Review the seven `noindex` city pages, add independently verified local
   content, then set `index: true` in `src/data/locations.js` and regenerate
   the sitemap
-- When the individual guides exist, repoint the `relatedGuides` links on the
-  hub pages, which currently go to the guides index
+- Repoint the `relatedGuides` links on the practice hub pages at the guides
+  that now exist; they still go to the guides index
 - Supply the withheld advocate details in `src/data/advocates.js`, if the firm
   wishes to publish them

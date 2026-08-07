@@ -766,6 +766,92 @@
   }
 
   /* ---------------------------------------------------------------
+     Guide category filter
+     ---------------------------------------------------------------
+     Progressive enhancement over a list that is already complete in the
+     markup. Without JavaScript the filter bar is not displayed (CSS
+     gates it on `.js`) and every guide stays visible and crawlable, so
+     nothing here is load-bearing for reading the page.
+
+     A card revealed by the filter is marked revealed explicitly: while
+     it is hidden its bounding box is zero, so neither the observer nor
+     the safety net in initReveal would ever bring it back.            */
+
+  function initGuideFilters() {
+    var bar = $("[data-guide-filters]");
+    if (!bar) return;
+
+    var buttons = $$("[data-guide-filter]", bar);
+    var cards = $$("[data-guide-card]");
+    var count = $("[data-guide-count]", bar);
+    var empty = $("[data-guide-empty]");
+    if (!buttons.length || !cards.length) return;
+
+    var valid = {};
+    buttons.forEach(function (b) {
+      valid[b.getAttribute("data-guide-filter")] = true;
+    });
+
+    function apply(value, updateHash) {
+      var shown = 0;
+
+      cards.forEach(function (card) {
+        var cats = (card.getAttribute("data-guide-categories") || "").split(/\s+/);
+        var match = value === "all" || cats.indexOf(value) !== -1;
+        card.hidden = !match;
+        if (match) {
+          shown += 1;
+          card.classList.add("is-revealed");
+        }
+      });
+
+      buttons.forEach(function (b) {
+        var on = b.getAttribute("data-guide-filter") === value;
+        b.classList.toggle("is-active", on);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+
+      if (count) {
+        count.textContent =
+          value === "all"
+            ? "Showing all " + cards.length + " guides."
+            : "Showing " + shown + " of " + cards.length + " guides.";
+      }
+      if (empty) empty.hidden = shown !== 0;
+
+      if (updateHash && window.history && window.history.replaceState) {
+        window.history.replaceState(
+          null,
+          "",
+          value === "all"
+            ? window.location.pathname + window.location.search
+            : "#" + value
+        );
+      }
+    }
+
+    buttons.forEach(function (b) {
+      b.addEventListener("click", function () {
+        apply(b.getAttribute("data-guide-filter"), true);
+      });
+    });
+
+    function fromHash() {
+      var value = (window.location.hash || "").replace("#", "");
+      return valid[value] && value !== "all" ? value : "all";
+    }
+
+    /* A category chip on an article links here with #property, so the
+       index opens on that category rather than ignoring it. The same
+       link followed from this page changes only the fragment, which does
+       not reload anything, so the change is listened for as well. */
+    apply(fromHash(), false);
+    window.addEventListener("hashchange", function () {
+      apply(fromHash(), false);
+    });
+  }
+
+  /* ---------------------------------------------------------------
      Start
      --------------------------------------------------------------- */
 
@@ -789,6 +875,7 @@
     initDisclaimerGate();
     initStructuredData();
     initForms();
+    initGuideFilters();
   }
 
   if (document.readyState === "loading") {

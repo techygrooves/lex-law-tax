@@ -59,6 +59,8 @@ const ADVOCATE_DATA = loadData("src/data/advocates.js", "advocateData");
 const LEGAL = loadData("src/data/legal-services.js", "legalServices");
 const TAXBIZ = loadData("src/data/tax-business.js", "taxBusinessServices");
 const LOCATIONS = loadData("src/data/locations.js", "siteLocations");
+const GUIDES = loadData("src/data/guides.js", "siteGuides");
+const FAQS = loadData("src/data/faqs.js", "siteFaqs");
 
 /* Both content files use the same page model, so the renderer treats
    them as one list. The coverage statement and the review date are
@@ -201,32 +203,33 @@ const ICON = {
 };
 
 /* --- Legal guides ---------------------------------------------------
-   The individual guide pages are not written yet, so each card points at
-   the guides index rather than a URL that does not exist. */
+   The three cards shown on the homepage and the guide list in the footer
+   are taken from the real articles in src/data/guides.js, so a card
+   cannot advertise a guide that does not exist. Only the first carries a
+   photograph; the other two use a colour-block header with an icon, so
+   the legal-guides image does not repeat across the row. */
 
-const GUIDES = [
-  {
-    title: "Property Documents to Review Before a Purchase",
-    category: "Property",
-    text: "Which title documents, encumbrance records and approvals are usually examined before an agreement is signed.",
-    imageKey: "photos.legalGuides",
-    href: "legal-guides/index.html"
-  },
-  {
-    title: "Responding to a Cheque-Bounce Matter",
-    category: "Recovery",
-    text: "The notice period, the limitation involved and the steps that follow dishonour of a cheque.",
-    icon: () => ICON.receipt(44),
-    href: "legal-guides/index.html"
-  },
-  {
-    title: "Legal and Tax Checklist for Starting a Firm",
-    category: "Business",
-    text: "Registration, partnership documentation and the tax registrations a new firm generally has to consider.",
-    icon: () => ICON.building(44),
-    href: "legal-guides/index.html"
-  }
+const HOME_GUIDE_SLUGS = [
+  "property-documents-to-check-before-buying-in-lucknow",
+  "steps-after-a-cheque-is-dishonoured",
+  "legal-and-tax-checklist-for-starting-a-firm"
 ];
+
+const HOME_GUIDE_ICONS = [null, () => ICON.receipt(44), () => ICON.building(44)];
+
+const HOME_GUIDES = HOME_GUIDE_SLUGS.map((slug, i) => {
+  const a = GUIDES.articles.filter((x) => x.slug === slug)[0];
+  if (!a) throw new Error("Unknown guide slug on the homepage: " + slug);
+  const category = GUIDES.categories.filter((c) => c[0] === a.categories[0])[0][1];
+  return {
+    title: a.h1,
+    category: category,
+    text: a.summary,
+    imageKey: HOME_GUIDE_ICONS[i] ? null : "photos.legalGuides",
+    icon: HOME_GUIDE_ICONS[i],
+    href: "legal-guides/" + a.slug + "/index.html"
+  };
+});
 
 /* --- 1. Skip link -------------------------------------------------- */
 
@@ -779,8 +782,8 @@ function footer(P) {
     (c) => `            <li><a href="${P}locations/${c.slug}/index.html">${c.name}</a></li>`
   ).join("\n");
 
-  const guides = GUIDES.map(
-    (g) => `            <li><a href="${P}legal-guides/index.html">${g.title}</a></li>`
+  const guides = HOME_GUIDES.map(
+    (g) => `            <li><a href="${P}${g.href}">${g.title}</a></li>`
   ).join("\n");
 
   return `<footer class="site-footer">
@@ -813,6 +816,8 @@ ${advocates}
         <h2 class="footer-heading footer-heading--stacked">Legal guides</h2>
         <ul class="footer-list">
 ${guides}
+            <li><a href="${P}legal-guides/index.html">All legal guides</a></li>
+            <li><a href="${P}frequently-asked-questions/index.html">Frequently asked questions</a></li>
         </ul>
       </div>
 
@@ -1255,7 +1260,7 @@ ${sectionHead({
   id: "guides-title"
 })}
       <div class="grid grid--3" data-reveal-group>
-${GUIDES.map((g) => guideCard("", g)).join("\n")}
+${HOME_GUIDES.map((g) => guideCard("", g)).join("\n")}
       </div>
       <p class="cluster mt-l">${arrowLink("All legal guides", "legal-guides/index.html")}</p>
     </div>
@@ -2326,304 +2331,1049 @@ ${lastReviewed()}
   </section>`
 });
 
-/* --- Legal guides ----------------------------------------------------------------- */
+/* --- Legal guides ----------------------------------------------------------
+   Twelve notes, each written in src/data/guides.js. Three rules govern how
+   they are rendered:
 
-const FAQ = [
-  [
-    "Does using this website create an advocate&ndash;client relationship?",
-    "No. Reading this website, or sending an enquiry through it, does not create an advocate&ndash;client relationship with the firm or any of its advocates."
-  ],
-  [
-    "Is the information published here legal advice?",
-    "No. The notes in this section are general information about procedure. They are not legal advice and should not be relied upon in place of advice taken on the facts of a particular matter."
-  ],
-  [
-    "Which matters does the firm attend to?",
-    "The firm attends to civil and criminal litigation, property and corporate matters, service and employment matters, and direct and indirect tax matters. The full list is set out under practice areas."
-  ],
-  [
-    "Where is the firm based?",
-    "The office is in Lucknow, and the firm attends to matters across Uttar Pradesh."
-  ]
-];
+     - an article is attributed to nobody until an advocate has actually
+       been assigned to it. `author` and `reviewedBy` stay
+       {{TO_BE_ASSIGNED}}, the builder omits a withheld name entirely, and
+       the page says in terms that it is pending review;
+     - an article whose reviewStatus is not "approved" carries
+       <meta name="robots" content="noindex,follow">, so nothing goes into
+       the index before a person has read it;
+     - every article carries its own `verify` sentence saying what has to
+       be checked against the current law and the facts. It is rendered
+       from the data and cannot be omitted by the template.
+
+   The index filters by category in the browser. The filter bar is hidden
+   until JavaScript is present, and every card is in the markup either way,
+   so the full list is readable and crawlable without it. */
+
+const GUIDE_CATEGORY_NAME = {};
+GUIDES.categories.forEach(([slug, name]) => {
+  GUIDE_CATEGORY_NAME[slug] = name;
+});
+
+const GUIDE_BY_SLUG = {};
+GUIDES.articles.forEach((a) => {
+  GUIDE_BY_SLUG[a.slug] = a;
+});
+
+const isApproved = (a) => a.reviewStatus === "approved";
+
+/* Label-and-note list with a check marker. Same shape as riskList, which
+   carries the warning marker, so a checklist and a list of mistakes are
+   not confused when skimming. */
+function checkPairList(items) {
+  return `      <ul class="scope-list">
+${items
+  .map(
+    ([label, note]) => `        <li>
+          <span class="scope-list__marker" aria-hidden="true">${ICON.check(16)}</span>
+          <span><strong>${label}</strong><span>${note}</span></span>
+        </li>`
+  )
+  .join("\n")}
+      </ul>`;
+}
+
+/* Long date, for the published and reviewed lines. */
+function longDate(iso) {
+  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", {
+    day: "numeric", month: "long", year: "numeric", timeZone: "UTC"
+  });
+}
+
+/* Who wrote it and who read it. A name is printed only where the data
+   assigns one; where it does not, the page says so rather than implying
+   that an advocate has been through it. */
+function reviewBlock(a) {
+  const rows = [];
+  if (!isWithheld(a.author)) {
+    rows.push(`        <p class="review-note__row"><span>Written by</span><strong>${a.author}</strong></p>`);
+  }
+  if (isApproved(a) && !isWithheld(a.reviewedBy)) {
+    rows.push(`        <p class="review-note__row"><span>Reviewed by</span><strong>${a.reviewedBy}</strong></p>`);
+  }
+
+  const status = isApproved(a) && !isWithheld(a.reviewedBy)
+    ? ""
+    : `        <p class="review-note__status">${GUIDES.pendingReviewNote}</p>\n`;
+
+  return `      <div class="review-note" data-reveal>
+        <p class="review-note__label">About this note</p>
+        <p>Published by ${FIRM}, advocates, Lucknow, for general information.</p>
+${rows.length ? rows.join("\n") + "\n" : ""}${status}        <p class="review-note__row"><span>Date published</span><time datetime="${a.datePublished}">${longDate(a.datePublished)}</time></p>
+        <p class="review-note__row"><span>Date reviewed</span><time datetime="${a.dateReviewed}">${longDate(a.dateReviewed)}</time></p>
+      </div>`;
+}
+
+/* Table of contents, built from the section headings so the two cannot
+   drift apart. */
+function guideToc(a) {
+  return `      <nav class="toc" aria-labelledby="toc-title" data-reveal>
+        <h2 class="toc__title" id="toc-title">On this page</h2>
+        <ol class="toc__list">
+${a.sections.map((s) => `          <li><a href="#${s.id}">${s.heading}</a></li>`).join("\n")}
+          <li><a href="#checklist">Practical checklist</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+        </ol>
+      </nav>`;
+}
+
+function guideCategoryChips(P, a) {
+  return `      <p class="chip-row">
+${a.categories
+  .map(
+    (c) => `        <a class="chip" href="${P}legal-guides/index.html#${c}">${GUIDE_CATEGORY_NAME[c]}</a>`
+  )
+  .join("\n")}
+      </p>`;
+}
+
+function guidePage(a) {
+  const P = "../../";
+  const canonical = "/legal-guides/" + a.slug + "/";
+  const trail = [
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: "Legal Guides", href: "legal-guides/index.html", canonical: "legal-guides/" },
+    { label: a.h1, canonical: "legal-guides/" + a.slug + "/" }
+  ];
+
+  const body = a.sections
+    .map(
+      (s) => `      <h2 id="${s.id}">${s.heading}</h2>
+${s.paras.map((t) => `      <p>${t}</p>`).join("\n")}${
+        s.list
+          ? "\n" + `      <ul>\n${s.list.map((t) => `        <li>${t}</li>`).join("\n")}\n      </ul>`
+          : ""
+      }`
+    )
+    .join("\n\n");
+
+  const related = a.relatedGuides
+    .filter((slug) => GUIDE_BY_SLUG[slug])
+    .map((slug) => [GUIDE_BY_SLUG[slug].h1, "legal-guides/" + slug + "/index.html"]);
+
+  /* Article schema. No author is claimed while the article is
+     unattributed; the publisher is the firm node defined on the
+     homepage. */
+  const article = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: a.h1,
+    description: a.description,
+    url: DOMAIN + canonical,
+    datePublished: a.datePublished,
+    dateModified: a.dateReviewed,
+    inLanguage: "en-IN",
+    isAccessibleForFree: true,
+    publisher: { "@id": DOMAIN + "/#practice" },
+    about: a.categories.map((c) => ({ "@type": "Thing", name: GUIDE_CATEGORY_NAME[c] }))
+  };
+  if (!isWithheld(a.author)) {
+    article.author = { "@type": "Person", name: a.author };
+  }
+
+  return page({
+    depth: 2,
+    canonical,
+    noindex: !isApproved(a),
+    sourceNote: isApproved(a)
+      ? null
+      : "TODO: This guide is awaiting professional review. Set reviewStatus to \"approved\" and name the reviewing advocate in src/data/guides.js before it is indexed.",
+    cta: false,
+    title: a.title,
+    description: a.description,
+    jsonLd: [breadcrumbJsonLd(trail), article],
+    body:
+      `  <section class="page-header page-header--article">
+    <div class="container container--reading">
+      <div class="page-header__inner">
+${breadcrumb(P, trail)}
+${guideCategoryChips(P, a)}
+        <h1>${a.h1}</h1>
+        <p class="page-header__lead">${a.summary}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container container--reading">
+${guideToc(a)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="guide-body">
+    <div class="container container--reading prose">
+      <h2 class="visually-hidden" id="guide-body">Guide</h2>
+${body}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="checklist">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Checklist", title: "Practical Checklist", id: "checklist" })}
+${checkPairList(a.checklist)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="mistakes">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Cautions", title: "Common Mistakes", id: "mistakes" })}
+${riskList(a.mistakes)}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="guide-services">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "See also", title: "Related Services", id: "guide-services" })}
+${relatedLinks(P, a.relatedServices)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="guide-related">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Reading", title: "Related Guides", id: "guide-related" })}
+${relatedLinks(P, related)}
+      <p class="cluster">${arrowLink("All legal guides", P + "legal-guides/index.html")}</p>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="guide-review">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Provenance", title: "Authorship and Review", id: "guide-review" })}
+${reviewBlock(a)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="guide-disclaimer">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Important", title: "Disclaimer", id: "guide-disclaimer" })}
+      <div class="disclaimer-note" data-reveal>
+        <p>
+          This note is general information about an area of law. It is not legal
+          advice, it is not an advertisement or a solicitation of work, and reading
+          it creates no advocate&ndash;client relationship.
+        </p>
+        <p><strong>${a.verify}</strong></p>
+        <p>
+          Procedures, limitation periods, court fees, stamp duty, government charges
+          and tax rates change, and what applies depends on the facts of the
+          particular matter. Nothing here should be acted on without advice taken on
+          your own documents, and no outcome is promised or predicted.
+        </p>
+        <p>${arrowLink("Read the full disclaimer", P + "disclaimer/index.html")}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--navy" aria-labelledby="guide-contact">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Contact",
+  light: true,
+  title: "Discuss a Matter With the Office",
+  lead: "If a question on this page touches something you are dealing with, it should be looked at on your own documents. Sending an enquiry does not create an advocate&ndash;client relationship, and confidential documents should not be sent through this website.",
+  id: "guide-contact"
+})}
+      <div class="cta-band__actions" data-reveal>
+        <a class="btn btn--inverse" href="${P}contact/index.html">Go to the contact form</a>
+        <a class="btn btn--outline-light" data-config="phone" data-config-role="tel" data-config-text="keep" data-pending-label="Telephone to be published">${ICON.phone()}<span>Call the office</span></a>
+      </div>
+    </div>
+  </section>`
+  });
+}
+
+GUIDES.articles.forEach((a) => {
+  files["legal-guides/" + a.slug + "/index.html"] = guidePage(a);
+});
+
+/* --- Legal guides index ----------------------------------------------- */
+
+function guideIndexCard(a) {
+  return `      <article class="card guide-card" data-reveal data-guide-card data-guide-categories="${a.categories.join(" ")}">
+        <div class="card__body">
+          <p class="card__meta"><span>${GUIDE_CATEGORY_NAME[a.categories[0]]}</span>${
+            isApproved(a) ? "" : "<span>Pending review</span>"
+          }</p>
+          <h3 class="card__title"><a href="${a.slug}/index.html">${a.h1}</a></h3>
+          <p class="card__text">${a.summary}</p>
+          <p class="card__foot">${arrowLink("Read the guide", a.slug + "/index.html")}</p>
+        </div>
+      </article>`;
+}
+
+const guideFilterBar = `      <div class="guide-filters" data-guide-filters>
+        <p class="guide-filters__label" id="guide-filter-label">Filter by category</p>
+        <div class="guide-filters__row" role="group" aria-labelledby="guide-filter-label">
+          <button class="chip chip--button is-active" type="button" data-guide-filter="all" aria-pressed="true">All</button>
+${GUIDES.categories
+  .map(
+    ([slug, name]) =>
+      `          <button class="chip chip--button" type="button" data-guide-filter="${slug}" aria-pressed="false">${name}</button>`
+  )
+  .join("\n")}
+        </div>
+        <p class="guide-filters__count" data-guide-count role="status" aria-live="polite"></p>
+      </div>`;
 
 files["legal-guides/index.html"] = page({
   depth: 1,
   canonical: "/legal-guides/",
   remoteImages: true,
-  title: "Legal Guides | " + FIRM,
-  description: "General information notes on legal and tax procedure in Uttar Pradesh, published by " + FIRM + ".",
+  title: "Legal Guides for Uttar Pradesh | " + FIRM,
+  description:
+    "General information notes on property, litigation, cheque bounce, contracts, income tax, GST and business registration in Uttar Pradesh, published by " +
+    FIRM + ".",
+  jsonLd: breadcrumbJsonLd([
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: "Legal Guides", canonical: "legal-guides/" }
+  ]),
   body:
-    pageHeader("../", {
-      title: "Legal guides",
-      lead: "General information notes on legal and tax procedure.",
+    sectionHero("../", {
+      imageKey: "legalGuides",
+      h1: "Legal, Property, Tax and Business Guides",
+      lead: "General information notes on procedure and documents. They are not legal advice.",
       trail: [{ label: "Home", href: "index.html" }, { label: "Legal Guides" }]
     }) +
     `
 
-  <section class="section">
+  <section class="section" aria-labelledby="guides-about">
+    <div class="container container--reading prose">
+${sectionHead({ eyebrow: "About these notes", title: "What This Section Is For", id: "guides-about" })}
+      <p>
+        These notes explain how things generally work &mdash; what a document does,
+        what a proceeding involves, what is usually examined and what commonly goes
+        wrong. They are written for people trying to understand a situation before
+        taking advice on it, not as a substitute for that advice.
+      </p>
+      <p>
+        No note here states a court fee, a stamp duty rate, a tax rate, a limitation
+        period or a filing deadline. Those are set by statute and notification, they
+        are revised, and a figure published on a website is wrong as soon as it
+        changes. Each note says instead what has to be verified for the particular
+        matter and against what.
+      </p>
+      <p>
+        Every note also records when it was published and when it was last reviewed,
+        and says whether an advocate has read it. Notes still awaiting that review say
+        so at the top and are not submitted for indexing until it has happened.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="guides-list">
     <div class="container">
 ${sectionHead({
-  eyebrow: "Notes",
-  title: "Guides being prepared",
-  lead: "This section will carry general information notes on procedure and commonly asked questions."
+  eyebrow: "Guides",
+  title: "All Guides",
+  lead: "Twelve notes across property, litigation, cheque bounce, contracts, tax and business registration.",
+  id: "guides-list"
 })}
-      <div class="grid grid--3" data-reveal-group>
-${articleCard("../", {
-  imageKey: "photos.legalGuides",
-  category: "Guide",
-  meta: "In preparation",
-  title: "Procedure notes",
-  text: "Short notes explaining the stages of common proceedings."
-})}
-${articleCard("../", {
-  imageKey: "photos.contracts",
-  category: "Guide",
-  meta: "In preparation",
-  title: "Documents and drafting",
-  text: "What a matter of each kind usually requires by way of documents."
-})}
-${articleCard("../", {
-  imageKey: "photos.tax",
-  category: "Guide",
-  meta: "In preparation",
-  title: "Tax compliance notes",
-  text: "General notes on notices, returns and appellate timelines."
-})}
+${guideFilterBar}
+      <div class="grid grid--3" data-reveal-group data-reveal-step="60" data-guide-grid>
+${GUIDES.articles.map(guideIndexCard).join("\n")}
       </div>
+      <p class="guide-empty" data-guide-empty hidden>No guide in this category yet.</p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="guides-faq">
+    <div class="container container--reading">
+${sectionHead({
+  eyebrow: "Questions",
+  title: "Frequently Asked Questions",
+  lead: "Common questions about consultations, civil and criminal matters, property, agreements, tax and where the firm works are answered in their own section.",
+  id: "guides-faq"
+})}
+      <p class="cluster">
+        ${btnSecondary("Go to frequently asked questions", "../frequently-asked-questions/index.html")}
+      </p>
     </div>
   </section>
 
   <section class="section section--soft">
-    <div class="container">
-${sectionHead({ eyebrow: "Questions", title: "Commonly asked questions" })}
-${accordion("faq", FAQ, false)}
+    <div class="container container--reading">
+${disclaimerBlock("../")}
+${lastReviewed()}
     </div>
   </section>`
 });
 
-/* --- Contact ------------------------------------------------------------------------- */
+/* --- Frequently asked questions ---------------------------------------
+   Answers explain how something generally works and what a position
+   depends on. None of them applies a rule to a reader's facts, because
+   an answer written that way would be advice given without the papers. */
+
+files["frequently-asked-questions/index.html"] = page({
+  depth: 1,
+  canonical: "/frequently-asked-questions/",
+  title: "Frequently Asked Questions | " + FIRM,
+  description:
+    "Common questions about consultations, civil and criminal matters, cheque bounce, property, agreements, tax and GST, business registration and where " +
+    FIRM + " works in Uttar Pradesh.",
+  jsonLd: [
+    breadcrumbJsonLd([
+      { label: "Home", href: "index.html", canonical: "" },
+      { label: "Frequently Asked Questions", canonical: "frequently-asked-questions/" }
+    ]),
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [].concat.apply(
+        [],
+        FAQS.categories.map((cat) =>
+          cat.items.map(([q, aTxt]) => ({
+            "@type": "Question",
+            name: q.replace(/&ndash;/g, "–").replace(/&[a-z]+;/g, " "),
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: aTxt.replace(/&ndash;/g, "–").replace(/&[a-z]+;/g, " ")
+            }
+          }))
+        )
+      )
+    }
+  ],
+  body:
+    pageHeader("../", {
+      title: "Frequently Asked Questions",
+      lead: "General answers about how matters are usually dealt with. Nothing here is legal advice on a particular matter.",
+      trail: [{ label: "Home", href: "index.html" }, { label: "Frequently Asked Questions" }]
+    }) +
+    `
+
+  <section class="section section--tight">
+    <div class="container container--reading">
+      <div class="notice" data-reveal>
+        <p>
+          The answers below describe how something generally works and what a
+          position usually depends on. They are not advice on any particular
+          matter, and they are not written for anyone's facts. Where an answer
+          says that something depends on the documents, that is not a
+          formality: it means the answer for your matter cannot be given
+          without them.
+        </p>
+      </div>
+      <nav class="toc" aria-labelledby="faq-toc-title" data-reveal>
+        <h2 class="toc__title" id="faq-toc-title">Categories</h2>
+        <ol class="toc__list toc__list--columns">
+${FAQS.categories.map((c) => `          <li><a href="#${c.slug}">${c.name}</a></li>`).join("\n")}
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+${FAQS.categories
+  .map(
+    (cat, i) => `  <section class="section${i % 2 === 0 ? " section--soft" : ""}" aria-labelledby="${cat.slug}">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Questions", title: cat.name, lead: cat.lead, id: cat.slug })}
+${accordion("faq-" + cat.slug, cat.items, false)}
+    </div>
+  </section>`
+  )
+  .join("\n\n")}
+
+  <section class="section" aria-labelledby="faq-more">
+    <div class="container container--reading">
+${sectionHead({
+  eyebrow: "Reading",
+  title: "If a Question Needs More Than a Paragraph",
+  lead: "The guides set out the longer explanations, with checklists and the mistakes that recur.",
+  id: "faq-more"
+})}
+      <p class="cluster">
+        ${btnSecondary("Go to the legal guides", "../legal-guides/index.html")}
+        ${btnPrimary("Contact the office", "../contact/index.html")}
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container container--reading">
+${disclaimerBlock("../")}
+      <p class="last-reviewed">
+        Last reviewed: <time datetime="${FAQS.lastReviewed}">${longDate(FAQS.lastReviewed)}</time>
+      </p>
+    </div>
+  </section>`
+});
+
+/* --- Contact -----------------------------------------------------------
+   The form is deliberately inert until an endpoint is configured. It does
+   not post anywhere, it does not pretend to have sent anything, and it
+   says so before a visitor starts typing rather than after. Telephone,
+   WhatsApp and email stay available throughout, since those are the
+   routes that actually work today. */
+
+const CONTACT_SERVICE_GROUPS = [
+  ["Litigation", [
+    ["civil", "Civil matter"],
+    ["criminal", "Criminal matter"],
+    ["cheque-bounce", "Cheque bounce or recovery"]
+  ]],
+  ["Property", [
+    ["property-title", "Property title or documents"],
+    ["property-registration", "Sale deed, gift deed or registration"],
+    ["property-dispute", "Property dispute"],
+    ["lease", "Lease or rent agreement"]
+  ]],
+  ["Business and contracts", [
+    ["contract", "Contract drafting or review"],
+    ["corporate", "Corporate or commercial matter"],
+    ["business-registration", "Firm, LLP or company registration"]
+  ]],
+  ["Tax", [
+    ["income-tax", "Income tax"],
+    ["gst", "GST"]
+  ]],
+  ["Other", [
+    ["service-employment", "Service or employment matter"],
+    ["other", "Something else"]
+  ]]
+];
 
 files["contact/index.html"] = page({
   depth: 1,
   canonical: "/contact/",
-  title: "Contact | " + FIRM,
-  description: "Contact details for " + FIRM + ", advocates in Lucknow, Uttar Pradesh.",
+  cta: false,
+  title: "Contact the Lucknow Office | " + FIRM,
+  description:
+    "Contact details for " + FIRM + ", advocates in Lucknow, Uttar Pradesh. Telephone, WhatsApp, email and an enquiry form.",
+  jsonLd: breadcrumbJsonLd([
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: "Contact", canonical: "contact/" }
+  ]),
   body:
     pageHeader("../", {
-      title: "Contact",
-      lead: "Office details and enquiry form.",
+      title: "Contact the Office",
+      lead: "The firm has one office, in Lucknow. Enquiries from anywhere in Uttar Pradesh are answered from it.",
       trail: [{ label: "Home", href: "index.html" }, { label: "Contact" }]
     }) +
     `
 
-  <section class="section">
+  <section class="section" aria-labelledby="contact-ways">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Get in touch",
+  title: "Telephone, WhatsApp or Email",
+  lead: "These reach the office directly and are the quickest routes while the enquiry form is being configured.",
+  id: "contact-ways"
+})}
+      <div class="contact-actions" data-reveal-group data-reveal-step="70">
+        <a class="contact-action" data-reveal data-config="phone" data-config-role="tel" data-config-text="keep" data-pending-label="Telephone to be published">
+          <span class="contact-action__icon">${ICON.phone(22)}</span>
+          <span class="contact-action__body">
+            <span class="contact-action__label">Telephone</span>
+            <span class="contact-action__value" data-config="phone" data-pending-label="To be published">To be published</span>
+          </span>
+        </a>
+        <a class="contact-action" data-reveal data-config="whatsapp" data-config-role="whatsapp" data-config-text="keep" data-pending-label="WhatsApp to be published">
+          <span class="contact-action__icon">${ICON.chat(22)}</span>
+          <span class="contact-action__body">
+            <span class="contact-action__label">WhatsApp</span>
+            <span class="contact-action__value" data-config="whatsapp" data-pending-label="To be published">To be published</span>
+          </span>
+        </a>
+        <a class="contact-action" data-reveal data-config="email" data-config-role="email" data-config-text="keep" data-pending-label="Email to be published">
+          <span class="contact-action__icon">${ICON.mail(22)}</span>
+          <span class="contact-action__body">
+            <span class="contact-action__label">Email</span>
+            <span class="contact-action__value" data-config="email" data-pending-label="To be published">To be published</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="contact-office">
     <div class="container">
       <div class="split">
-
         <div class="split__content prose" data-reveal>
           <p class="eyebrow">The office</p>
-          <h2>Lucknow, Uttar Pradesh</h2>
+          <h2 id="contact-office">Lucknow, Uttar Pradesh</h2>
+          <p>
+            This is the firm's principal and only office. There is no branch office
+            in any other district. Matters arising elsewhere in Uttar Pradesh are
+            conducted from here before the court, tribunal or authority concerned.
+          </p>
           <address class="stack">
             <p class="is-pending" data-config="address" data-pending-label="Office address to be published"></p>
             <p>Telephone: <a data-config="phone" data-config-role="tel" data-pending-label="to be published"><span data-config-slot>to be published</span></a></p>
             <p>WhatsApp: <a data-config="whatsapp" data-config-role="whatsapp" data-pending-label="to be published"><span data-config-slot>to be published</span></a></p>
             <p>Email: <a data-config="email" data-config-role="email" data-pending-label="to be published"><span data-config-slot>to be published</span></a></p>
-            <p><a data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Map link to be published">View on Google Maps</a></p>
           </address>
-          <div class="disclaimer-note">
-            <p>Sending an enquiry does not create an advocate&ndash;client relationship.
-            Please do not send confidential documents through this website.</p>
-          </div>
+          <p>
+            Please arrange a time before attending, so that a period can be set aside
+            to look at the papers properly.
+          </p>
         </div>
 
         <div data-reveal>
-          <p class="eyebrow">Enquiry</p>
-          <h2>Write to the office</h2>
+          <div class="map-placeholder" data-map-placeholder>
+            <span class="map-placeholder__icon" aria-hidden="true">${ICON.map(32)}</span>
+            <p class="map-placeholder__title">Map</p>
+            <p class="map-placeholder__text">
+              The map link is published once the office address has been confirmed.
+              No map is embedded here in the meantime, so that nothing on this page
+              points at a location that has not been verified.
+            </p>
+            <p><a class="btn btn--secondary" data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Map link to be published">Open in Google Maps</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-          <form class="form" data-form="enquiry" method="post" novalidate>
-            <div class="notice" data-form-notice hidden>
-              <p>The enquiry form is not active yet. Please use the telephone or email
-              details listed on this page.</p>
-            </div>
+  <section class="section" aria-labelledby="contact-form-title">
+    <div class="container container--reading">
+${sectionHead({
+  eyebrow: "Enquiry",
+  title: "Send an Enquiry",
+  lead: "Describe the matter briefly. Please do not send confidential documents through this form.",
+  id: "contact-form-title"
+})}
 
-            <div class="field">
-              <label for="enquiry-name">Name <span class="required" aria-hidden="true">*</span></label>
-              <input id="enquiry-name" name="name" type="text" autocomplete="name" required>
-            </div>
-
-            <div class="field">
-              <label for="enquiry-phone">Telephone <span class="required" aria-hidden="true">*</span></label>
-              <input id="enquiry-phone" name="phone" type="tel" autocomplete="tel" required>
-            </div>
-
-            <div class="field">
-              <label for="enquiry-email">Email</label>
-              <input id="enquiry-email" name="email" type="email" autocomplete="email">
-            </div>
-
-            <div class="field">
-              <label for="enquiry-subject">Subject</label>
-              <select id="enquiry-subject" name="subject">
-                <option value="">Please select</option>
-${PRACTICE_AREAS.map(([slug, name]) => `                <option value="${slug}">${name}</option>`).join("\n")}
-                <option value="other">Other</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="enquiry-message">Message <span class="required" aria-hidden="true">*</span></label>
-              <textarea id="enquiry-message" name="message" aria-describedby="enquiry-message-hint" required></textarea>
-              <span class="hint" id="enquiry-message-hint">Please do not send confidential documents through this form.</span>
-            </div>
-
-            <div>
-              <button class="btn btn--primary" type="submit">Send enquiry</button>
-            </div>
-          </form>
+      <form class="form" data-form="enquiry" method="post" novalidate>
+        <div class="notice notice--warn" data-form-notice hidden>
+          <p>
+            <strong>Online form submission is being configured.</strong>
+            This form cannot send a message yet, and nothing typed into it is
+            transmitted or stored. Please use the telephone, WhatsApp or email
+            details above, all of which reach the office now.
+          </p>
         </div>
 
+        <div class="field">
+          <label for="enquiry-name">Name <span class="required" aria-hidden="true">*</span></label>
+          <input id="enquiry-name" name="name" type="text" autocomplete="name" required>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="enquiry-phone">Telephone <span class="required" aria-hidden="true">*</span></label>
+            <input id="enquiry-phone" name="phone" type="tel" autocomplete="tel" required>
+          </div>
+
+          <div class="field">
+            <label for="enquiry-email">Email</label>
+            <input id="enquiry-email" name="email" type="email" autocomplete="email">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="enquiry-city">City</label>
+            <input id="enquiry-city" name="city" type="text" autocomplete="address-level2" aria-describedby="enquiry-city-hint">
+            <span class="hint" id="enquiry-city-hint">Where you are, so the forum concerned can be identified.</span>
+          </div>
+
+          <div class="field">
+            <label for="enquiry-category">Service category</label>
+            <select id="enquiry-category" name="category">
+              <option value="">Please select</option>
+${CONTACT_SERVICE_GROUPS.map(
+  ([group, options]) => `              <optgroup label="${group}">
+${options.map(([v, label]) => `                <option value="${v}">${label}</option>`).join("\n")}
+              </optgroup>`
+).join("\n")}
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="enquiry-message">Brief description of the matter <span class="required" aria-hidden="true">*</span></label>
+          <textarea id="enquiry-message" name="message" rows="6" aria-describedby="enquiry-message-hint" required></textarea>
+          <span class="hint" id="enquiry-message-hint">A few sentences is enough. Please do not send confidential documents or attachments through this form.</span>
+        </div>
+
+        <fieldset class="field field--group">
+          <legend>Preferred method of contact</legend>
+          <div class="radio-row">
+            <label class="choice"><input type="radio" name="preferredContact" value="phone" checked><span>Telephone</span></label>
+            <label class="choice"><input type="radio" name="preferredContact" value="whatsapp"><span>WhatsApp</span></label>
+            <label class="choice"><input type="radio" name="preferredContact" value="email"><span>Email</span></label>
+          </div>
+        </fieldset>
+
+        <div class="field">
+          <label class="choice choice--consent">
+            <input id="enquiry-consent" name="consent" type="checkbox" required>
+            <span>
+              I understand that sending this enquiry does not create an
+              advocate&ndash;client relationship, that this website is not an
+              advertisement or a solicitation of work, and that my details will be
+              used only to respond to this enquiry.
+              <a href="../privacy-policy/index.html">Privacy policy</a>.
+              <span class="required" aria-hidden="true">*</span>
+            </span>
+          </label>
+        </div>
+
+        <div>
+          <button class="btn btn--primary" type="submit">Send enquiry</button>
+        </div>
+      </form>
+
+      <div class="disclaimer-note" data-reveal>
+        <p>
+          Sending an enquiry does not create an advocate&ndash;client relationship.
+          A relationship arises only when the firm has agreed to act in a matter and
+          that has been confirmed between us. Please do not send confidential
+          information or documents through this website.
+        </p>
+        <p>${arrowLink("Read the full disclaimer", "../disclaimer/index.html")}</p>
       </div>
     </div>
   </section>`
 });
 
-/* --- Disclaimer ------------------------------------------------------------------------ */
+/* --- Disclaimer -------------------------------------------------------- */
 
 files["disclaimer/index.html"] = page({
   depth: 1,
   canonical: "/disclaimer/",
   title: "Disclaimer | " + FIRM,
-  description: "Disclaimer governing the use of the " + FIRM + " website.",
+  description: "Disclaimer governing the use of the " + FIRM + " website, lexlawandtax.com.",
+  jsonLd: breadcrumbJsonLd([
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: "Disclaimer", canonical: "disclaimer/" }
+  ]),
   body:
     pageHeader("../", {
       title: "Disclaimer",
-      lead: "Terms governing the use of this website.",
+      lead: "The terms on which this website is published and may be used.",
       trail: [{ label: "Home", href: "index.html" }, { label: "Disclaimer" }]
     }) +
     `
 
   <section class="section">
-    <div class="container container--narrow prose">
+    <div class="container container--reading prose">
       <div class="disclaimer-note" data-reveal>
-        <p>By accessing this website, the user acknowledges having read and accepted
-        the terms set out below.</p>
+        <p>
+          By accessing this website, the user acknowledges having read and accepted
+          the terms set out below. If you do not accept them, please do not use this
+          website.
+        </p>
       </div>
 
-      <h2>No advertisement or solicitation</h2>
+      <h2 id="information">This website is general information</h2>
+      <p>
+        Everything published on lexlawandtax.com &mdash; the practice-area pages, the
+        location pages, the guides and the answers to frequently asked questions
+        &mdash; is general information about how matters of a particular kind are
+        usually dealt with. It is published so that a person who wants to understand
+        a situation can do so before taking advice on it.
+      </p>
+      <p>
+        It is not legal advice, it is not an opinion on anyone's matter, and it is not
+        written for anyone's facts. It should not be relied upon in place of advice
+        taken on the documents of a particular matter.
+      </p>
+
+      <h2 id="no-solicitation">No advertisement or solicitation</h2>
       <p>
         The rules of the Bar Council of India prohibit advocates from advertising or
-        soliciting work. This website is not an advertisement and is not intended to
-        solicit work. It is published for the limited purpose of providing information
-        about ${FIRM} to persons who ask for it of their own accord.
+        soliciting work. This website is not an advertisement, does not solicit work,
+        and is not intended to induce anyone to instruct the firm. It is published for
+        the limited purpose of providing information about ${FIRM} to persons who seek
+        it of their own accord and of their own volition.
       </p>
-
-      <h2>No legal advice</h2>
       <p>
-        The material on this website is general information and is not legal advice. It
-        may not reflect the most current position of law and should not be relied upon
-        in place of advice taken on the facts of a particular matter.
+        No claim is made on this website that the firm or any of its advocates is
+        better than, or should be preferred to, any other. No outcome in any matter is
+        described, promised or implied.
       </p>
 
-      <h2>No advocate&ndash;client relationship</h2>
+      <h2 id="no-relationship">No advocate&ndash;client relationship</h2>
       <p>
-        Accessing this website, or sending an enquiry through it, does not create an
-        advocate&ndash;client relationship between the user and the firm or any of its
-        advocates. Please do not send confidential information through this website.
+        Accessing this website, reading anything on it, or sending an enquiry through
+        it does not create an advocate&ndash;client relationship between the user and
+        the firm or any of its advocates. Such a relationship arises only when the
+        firm has agreed to act in a matter and that has been confirmed between the
+        firm and the client.
       </p>
-
-      <h2>Accuracy and liability</h2>
       <p>
-        While care is taken in preparing the content of this website, the firm does not
-        warrant that it is accurate, complete or current, and accepts no liability for
-        any action taken or not taken in reliance on it.
+        Because no such relationship exists at the point of an enquiry, information
+        sent through this website is not protected as a privileged communication.
+        Please do not send confidential information or documents through this website.
       </p>
 
-      <h2>External links</h2>
+      <h2 id="no-guarantee">No guarantee of outcome</h2>
       <p>
-        This website may link to other websites. The firm is not responsible for the
-        content of any external website.
+        Nothing on this website is a representation or an assurance about the result
+        of any proceeding, application or transaction. Outcomes depend on the facts,
+        the documents, the applicable law and the view taken by the court, tribunal or
+        authority concerned. No prediction of any outcome is made or should be
+        inferred from anything published here.
       </p>
 
-      <h2>Contact</h2>
+      <h2 id="changes">Information may change and may become out of date</h2>
+      <p>
+        Statutes, rules, notifications and procedures change, as do court fees, stamp
+        duty, government charges and tax rates. Material on this website reflects a
+        general understanding at the time it was written and may not reflect the
+        position now in force.
+      </p>
+      <p>
+        For that reason no page on this website states a fee, a rate, a threshold, a
+        limitation period or a filing deadline. Each page instead identifies what has
+        to be verified for the particular matter. Pages carry the date on which they
+        were last reviewed, and a review date is not a warranty that the content
+        remains current.
+      </p>
+
+      <h2 id="advice">The need for advice on your own matter</h2>
+      <p>
+        Two matters that appear similar frequently turn on facts that are not
+        apparent from a general description, and a rule that applies in one may not
+        apply in the other. No one should act, or refrain from acting, on the basis of
+        anything published here without obtaining advice on their own documents from
+        an advocate or other appropriate professional.
+      </p>
+      <p>
+        The firm accepts no liability for any action taken, or not taken, in reliance
+        on the content of this website.
+      </p>
+
+      <h2 id="third-party">Images, fonts and external links</h2>
+      <p>
+        Photographs on this website are licensed stock photographs served by a
+        third-party host. They are illustrative. They do not depict the firm's office,
+        its advocates, its clients, any court or authority, or any matter the firm has
+        acted in, and nothing should be inferred from them. Typefaces are served by
+        Google Fonts. Credits are set out in the image credits file in the site's
+        repository.
+      </p>
+      <p>
+        This website may link to other websites. Those websites are not under the
+        firm's control, the firm is not responsible for their content, and a link does
+        not imply any endorsement, association or verification.
+      </p>
+
+      <h2 id="jurisdiction">Jurisdiction and applicable law</h2>
+      <p>
+        This website is published from Lucknow, Uttar Pradesh, India, and the material
+        on it is written by reference to Indian law as it applies in Uttar Pradesh. It
+        is not directed at, and should not be relied upon by, persons in any other
+        jurisdiction, and no view is expressed on the law of any other country or of
+        any other State in India.
+      </p>
+      <p>
+        Any dispute arising out of or in connection with this website or its content
+        is governed by Indian law and is subject to the exclusive jurisdiction of the
+        courts at Lucknow, Uttar Pradesh.
+      </p>
+
+      <h2 id="contact-details">Contact information on this website</h2>
+      <p>
+        The firm has one office, in Lucknow. It has no branch office anywhere else,
+        and no page of this website represents one. The location pages describe
+        districts in which the firm assists clients; none of them carries a local
+        address or a local telephone number, because none exists.
+      </p>
+      <p>
+        Contact details are published on the contact page and in the footer, and those
+        are the only channels the firm operates. Some details may appear as
+        &ldquo;to be published&rdquo; while they are being confirmed; where that is
+        so, no address or number is being asserted. The firm is not responsible for
+        any listing, profile, directory entry or contact detail published elsewhere
+        that it has not authorised.
+      </p>
+
+      <h2 id="disclaimer-contact">Questions about this disclaimer</h2>
       <p>
         Questions about this disclaimer may be sent to
         <a data-config="email" data-config-role="email" data-pending-label="the email address to be published"><span data-config-slot>the email address to be published</span></a>.
       </p>
+${lastReviewed()}
     </div>
   </section>`
 });
 
-/* --- Privacy policy ---------------------------------------------------------------------- */
+/* --- Privacy policy ---------------------------------------------------- */
 
 files["privacy-policy/index.html"] = page({
   depth: 1,
   canonical: "/privacy-policy/",
   title: "Privacy Policy | " + FIRM,
-  description: "How " + FIRM + " handles information submitted through the lexlawandtax.com website.",
+  description:
+    "How " + FIRM + " handles information submitted through, and generated by, the lexlawandtax.com website.",
+  jsonLd: breadcrumbJsonLd([
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: "Privacy Policy", canonical: "privacy-policy/" }
+  ]),
   body:
     pageHeader("../", {
-      title: "Privacy policy",
-      lead: "How information submitted through this website is handled.",
+      title: "Privacy Policy",
+      lead: "What information this website collects, what happens to it, and what choices you have.",
       trail: [{ label: "Home", href: "index.html" }, { label: "Privacy Policy" }]
     }) +
     `
 
   <section class="section">
-    <div class="container container--narrow prose">
-      <p class="lead">
-        This policy explains what information is collected through lexlawandtax.com
-        and how it is used.
+    <div class="container container--reading prose">
+      <div class="notice" data-reveal>
+        <p>
+          This policy describes lexlawandtax.com as it currently stands. It does not
+          claim any certification, audit or standard of compliance, and it does not
+          state a fixed retention period, because neither has been established. Where
+          something has not been settled, this policy says so rather than describing
+          an arrangement that does not exist.
+        </p>
+      </div>
+
+      <h2 id="forms">Information submitted through forms</h2>
+      <p>
+        The contact page carries an enquiry form asking for a name, a telephone
+        number, an email address, a city, a service category, a brief description of
+        the matter and a preferred method of contact, together with an acknowledgement
+        that must be ticked before the form can be sent.
+      </p>
+      <p>
+        <strong>The form is not connected to any destination at present.</strong> Its
+        submission endpoint is an unresolved placeholder, the form is disabled in the
+        browser, and nothing typed into it is transmitted, received or stored
+        anywhere. A notice on the form says so. When an endpoint is configured, this
+        policy will be updated to describe where submissions go before the form is
+        enabled.
       </p>
 
-      <h2>Information collected</h2>
+      <h2 id="contact-information">Contact information you send directly</h2>
       <p>
-        The website collects only the information a visitor chooses to submit through
-        the enquiry form, such as name, telephone number, email address and a
-        description of the matter.
+        Where you telephone, send a message on WhatsApp or write by email, the firm
+        receives whatever you choose to send: your name and contact details, and
+        whatever you say about the matter. That information is used to respond to
+        your enquiry and to deal with the matter if the firm agrees to act.
       </p>
-
-      <h2>Use of information</h2>
       <p>
-        Information submitted is used only to respond to the enquiry. It is not sold,
-        rented or shared for marketing purposes.
-      </p>
-
-      <h2>Confidentiality</h2>
-      <p>
-        Enquiries are treated in confidence. Sending an enquiry does not by itself
-        create an advocate&ndash;client relationship, and visitors are asked not to send
+        It is not sold, rented or shared for marketing purposes, and it is not used to
+        send unsolicited communications. Enquiries are treated in confidence. Please
+        note that sending an enquiry does not by itself create an
+        advocate&ndash;client relationship, and communications made before such a
+        relationship exists are not protected as privileged. You are asked not to send
         confidential documents through this website.
       </p>
 
-      <h2>Cookies and storage</h2>
+      <h2 id="logs">Technical logs and analytics</h2>
       <p>
-        This website does not set cookies for tracking or advertising. A single entry is
-        kept in the browser&rsquo;s local storage to record that the disclaimer
-        acknowledgement has been shown, so that it is not repeated on every visit.
+        Any web server records technical information about requests made to it &mdash;
+        typically the IP address, the time, the page requested, the referring page and
+        the browser's user-agent string. Those records are generated by the hosting
+        arrangement rather than by anything on this website, and they are used for
+        operating and securing the site.
+      </p>
+      <p>
+        <strong>No analytics, tracking, advertising or profiling script is loaded by
+        this website.</strong> There is no analytics account, no tag manager, no pixel
+        and no third-party advertising code in its pages. If that changes, this policy
+        will be updated to say what is being collected and by whom.
       </p>
 
-      <h2>Fonts and images</h2>
+      <h2 id="cookies">Cookies and browser storage</h2>
       <p>
-        Typefaces are served by Google Fonts and some photographs are served by Pexels.
-        Requests to those services carry the visitor&rsquo;s IP address, as any request
-        to a third-party host does.
+        This website sets no cookies of its own, and it sets no cookie for tracking,
+        advertising or measurement.
+      </p>
+      <p>
+        It does use your browser's local storage for a single purpose, described in
+        the next section. Local storage stays in your browser; it is not transmitted
+        to the firm or to anyone else, and it is not readable by other websites.
       </p>
 
-      <h2>Retention</h2>
+      <h2 id="acknowledgement">The disclaimer acknowledgement</h2>
       <p>
-        Enquiry records are retained only for as long as is necessary for the purpose
-        for which they were submitted, or as required by law.
+        On a first visit the site shows the acknowledgement required by the Bar
+        Council of India's rules, which has to be accepted before the site is used.
+        When it is accepted, one entry is written to your browser's local storage
+        under the key <code>hrla.disclaimer.accepted</code> so that the
+        acknowledgement is not shown again on every page.
+      </p>
+      <p>
+        That entry records only that the acknowledgement was accepted. It contains
+        nothing that identifies you, it is not sent anywhere, and clearing your
+        browser's site data removes it, after which the acknowledgement is shown
+        again.
       </p>
 
-      <h2>Contact</h2>
+      <h2 id="images">Third-party image requests</h2>
+      <p>
+        Photographs used on this website are licensed stock photographs served by
+        Pexels rather than copied into the site. When a page carrying one is loaded,
+        your browser requests the image directly from that host, and that request
+        carries your IP address and user-agent as any request to a third-party host
+        does.
+      </p>
+      <p>
+        The firm does not receive those requests and does not see who made them. What
+        Pexels does with them is governed by its own policies, not by this one.
+      </p>
+
+      <h2 id="fonts">Google Fonts</h2>
+      <p>
+        Typefaces are served by Google Fonts. As with images, your browser requests
+        them directly from Google's servers when a page is loaded, and that request
+        carries your IP address and user-agent. The firm does not receive or see those
+        requests, and what Google does with them is governed by its own policies.
+      </p>
+      <p>
+        The site is built so that it remains fully readable if those requests fail or
+        are blocked, using typefaces already present on your device.
+      </p>
+
+      <h2 id="retention">Retention</h2>
+      <p>
+        Information you send is kept for as long as is necessary for the purpose for
+        which you sent it &mdash; to respond to the enquiry, and where the firm acts
+        in a matter, for as long as the matter and the firm's professional obligations
+        require.
+      </p>
+      <p>
+        <strong>No fixed retention period is stated here</strong>, because one has not
+        been established, and a period published without having been settled would be
+        a claim rather than a description. If a defined schedule is adopted, this
+        policy will be updated to set it out.
+      </p>
+
+      <h2 id="requests">Contact requests about your information</h2>
+      <p>
+        You may ask what information the firm holds about you, ask for it to be
+        corrected, or ask for it to be deleted. Such a request should be sent to the
+        email address published on the contact page, with enough detail to identify
+        the correspondence concerned.
+      </p>
+      <p>
+        Requests are dealt with as promptly as is practicable. Where information
+        cannot be deleted &mdash; because the firm is acting or has acted in a matter,
+        or because a professional or legal obligation requires it to be retained
+        &mdash; you will be told that, and why.
+      </p>
+
+      <h2 id="choices">Your choices</h2>
+      <ul>
+        <li>You can use the site without submitting anything. Nothing on it requires you to identify yourself.</li>
+        <li>You can contact the office by telephone instead of in writing, if you prefer not to send anything electronically.</li>
+        <li>You can clear the acknowledgement entry at any time by clearing your browser's site data for this site.</li>
+        <li>You can block third-party requests in your browser; the site remains readable without the photographs and the web fonts.</li>
+        <li>You can ask that information you have sent be corrected or deleted, as described above.</li>
+      </ul>
+
+      <h2 id="privacy-contact">Questions about this policy</h2>
       <p>
         Questions about this policy may be sent to
         <a data-config="email" data-config-role="email" data-pending-label="the email address to be published"><span data-config-slot>the email address to be published</span></a>.
+        This policy is reviewed alongside the rest of the site, and the date of the
+        last review is shown below.
       </p>
+${lastReviewed()}
     </div>
   </section>`
 });
+
 
 /* --- 404 ----------------------------------------------------------------------------------- */
 
@@ -2836,7 +3586,7 @@ ${previewBlock(
 
 ${previewBlock("trust", "Trust strip", ".trust-strip", trustStrip(), true)}
 
-${previewBlock("accordion", "FAQ accordion", ".accordion", accordion("preview-faq", FAQ, true))}
+${previewBlock("accordion", "FAQ accordion", ".accordion", accordion("preview-faq", FAQS.categories[0].items.slice(0, 3), true))}
 
 ${previewBlock(
   "forms",

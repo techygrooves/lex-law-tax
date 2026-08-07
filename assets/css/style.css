@@ -1980,6 +1980,82 @@ textarea:disabled {
   margin-top: var(--space-2xs);
 }
 
+/* The form-disabled notice has to be read before anyone starts typing,
+   so it carries more weight than the ordinary note. */
+.notice--warn {
+  border-left-color: var(--color-teal);
+  background-color: var(--color-teal-tint);
+  color: var(--text-body);
+  padding: var(--space-s) var(--space-m);
+}
+
+.notice--warn strong {
+  color: var(--text-heading);
+}
+
+/* Two fields side by side where they are short enough to share a row. */
+.field-row {
+  display: grid;
+  gap: var(--space-s);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+.field--group {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.field--group legend {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-navy);
+  padding: 0;
+  margin-bottom: var(--space-2xs);
+}
+
+.radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-m);
+}
+
+/* A checkbox or radio and its label, aligned on the first line of text
+   rather than centred on a label that may run to several lines. */
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2xs);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--text-body);
+  line-height: var(--lh-snug);
+  min-height: var(--tap);
+  padding-block: var(--space-3xs);
+  cursor: pointer;
+}
+
+/* The label is the tap target, and it is a full row tall. The control
+   itself is still sized up from the 13px browsers draw by default,
+   because a consent box that has to be read and ticked deliberately
+   should not be the smallest thing on the page. */
+.choice input {
+  width: 1.15rem;
+  height: 1.15rem;
+  min-height: 0;
+  margin-top: 0.15em;
+  flex: none;
+  accent-color: var(--color-teal);
+}
+
+.choice--consent {
+  align-items: flex-start;
+  padding: var(--space-s);
+  background-color: var(--color-ivory);
+  border: var(--hairline);
+  border-radius: var(--radius-sm);
+}
+
 
 /* 22. Footer
    ------------------------------------------------------------------ */
@@ -3141,6 +3217,321 @@ a.contact-method__value:hover {
 @media (max-width: 40em) {
   .grid--cities {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* --- Guides, FAQ and contact --- */
+
+/* Category chips. The same shape serves as a link on an article and as a
+   filter button on the index, so the two read as one control set. */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-xs);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: var(--space-3xs) var(--space-xs);
+  background-color: var(--color-white);
+  border: var(--hairline);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-navy);
+  text-decoration: none;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.chip:hover {
+  border-color: var(--color-gold);
+  color: var(--color-teal);
+}
+
+.chip--button {
+  min-height: var(--tap);
+  padding-inline: var(--space-s);
+  cursor: pointer;
+}
+
+.chip--button.is-active {
+  background-color: var(--color-navy);
+  border-color: var(--color-navy);
+  color: var(--color-white);
+}
+
+.chip--button.is-active:hover {
+  background-color: var(--color-teal);
+  border-color: var(--color-teal);
+  color: var(--color-white);
+}
+
+/* The filter bar does nothing without JavaScript, so it is not shown
+   without it. Every card stays in the markup either way. */
+.guide-filters {
+  display: none;
+  margin-bottom: var(--space-l);
+}
+
+.js .guide-filters {
+  display: block;
+}
+
+.guide-filters__label {
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+  margin-bottom: var(--space-2xs);
+}
+
+.guide-filters__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+}
+
+.guide-filters__count {
+  margin-top: var(--space-2xs);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.guide-empty {
+  margin-top: var(--space-m);
+  font-size: var(--fs-md);
+  color: var(--text-muted);
+}
+
+/* Category, then the review state where a note has not yet been read by
+   an advocate. The second is set apart rather than run on, because
+   "Property" and "Pending review" are two different kinds of fact. */
+.guide-card .card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3xs) var(--space-2xs);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+}
+
+.guide-card .card__meta span + span {
+  padding-inline: var(--space-2xs);
+  background-color: var(--color-navy-tint);
+  border-radius: 999px;
+  color: var(--color-slate);
+  letter-spacing: 0.06em;
+}
+
+/* Table of contents, on a guide and on the FAQ index. */
+.toc {
+  padding: var(--space-m) var(--space-l);
+  background-color: var(--color-ivory);
+  border: var(--hairline);
+  border-left: 3px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+}
+
+.toc__title {
+  font-size: var(--fs-2xs);
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+  margin-bottom: var(--space-2xs);
+}
+
+.toc__list {
+  margin: 0;
+  padding-left: 1.15em;
+}
+
+.toc__list li {
+  margin: 0;
+  padding-block: var(--space-3xs);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  color: var(--color-slate);
+}
+
+.toc__list a {
+  color: var(--color-navy);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.toc__list a:hover {
+  color: var(--color-teal);
+  border-bottom-color: currentColor;
+}
+
+.toc__list--columns {
+  columns: 2;
+  column-gap: var(--space-l);
+}
+
+/* Who wrote the note and who has read it. */
+.review-note {
+  padding: var(--space-m) var(--space-l);
+  background-color: var(--color-white);
+  border: var(--hairline);
+  border-top: 3px solid var(--color-navy);
+  border-radius: var(--radius-sm);
+}
+
+.review-note__label {
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+  margin-bottom: var(--space-2xs);
+}
+
+.review-note__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3xs) var(--space-2xs);
+  margin: 0;
+  padding-block: var(--space-3xs);
+  font-size: var(--fs-sm);
+  border-top: var(--hairline);
+}
+
+.review-note__row span:first-child {
+  min-width: 9rem;
+  color: var(--text-muted);
+}
+
+/* Said plainly rather than tucked away: an unreviewed note says so. */
+.review-note__status {
+  margin: var(--space-2xs) 0;
+  padding: var(--space-2xs) var(--space-s);
+  background-color: var(--color-teal-tint);
+  border-left: 2px solid var(--color-teal);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+/* Contact: the three routes that actually work today. */
+.contact-actions {
+  display: grid;
+  gap: var(--space-s);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+
+.contact-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  min-height: var(--tap);
+  padding: var(--space-m);
+  background-color: var(--color-white);
+  border: var(--hairline);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.contact-action:hover {
+  border-color: var(--color-gold);
+  box-shadow: var(--shadow-sm);
+}
+
+.contact-action__icon {
+  flex: none;
+  display: inline-flex;
+  color: var(--color-teal);
+}
+
+.contact-action__label {
+  display: block;
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+}
+
+.contact-action__value {
+  display: block;
+  font-size: var(--fs-md);
+  font-weight: 600;
+  color: var(--color-navy);
+  overflow-wrap: anywhere;
+}
+
+/* No map is embedded until an address has been confirmed, so the panel
+   says what it is waiting for rather than showing an arbitrary location. */
+.map-placeholder {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2xs);
+  padding: var(--space-l);
+  background-color: var(--color-ivory);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.map-placeholder__icon {
+  display: inline-flex;
+  color: var(--color-gold);
+}
+
+.map-placeholder__title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  color: var(--text-heading);
+  margin: 0;
+}
+
+.map-placeholder__text {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-slate);
+}
+
+/* A guide opens on ivory with its category chips rather than a
+   photograph: there is no photograph that would tell a reader anything
+   about the note underneath it. */
+.page-header--article .page-header__inner {
+  max-width: var(--wrap-narrow);
+}
+
+.page-header--article h1 {
+  font-size: var(--fs-2xl);
+}
+
+@media (max-width: 40em) {
+  .toc,
+  .review-note {
+    padding: var(--space-m);
+  }
+
+  .toc__list--columns {
+    columns: 1;
+  }
+
+  .review-note__row span:first-child {
+    min-width: 0;
+    width: 100%;
   }
 }
 

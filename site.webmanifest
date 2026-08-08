@@ -1,0 +1,29 @@
+{
+  "name": "H.R. Legal Associate",
+  "short_name": "H.R. Legal",
+  "description": "Advocates in Lucknow, assisting clients with legal, property, corporate and tax matters across Uttar Pradesh.",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "theme_color": "#102a43",
+  "background_color": "#f8f7f3",
+  "icons": [
+    {
+      "src": "/assets/images/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/assets/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

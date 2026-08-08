@@ -83,7 +83,7 @@ window.legalServices = {
         ],
         [
           "Do I have to go to court myself?",
-          "Not for every date. Appearance is generally through the advocate on record. Your personal presence is required at certain stages, most obviously when your evidence is recorded, and sometimes where the court directs it or where a settlement is being recorded."
+          "Not for every date. Appearance is generally through the advocate conducting the matter. Your personal presence is required at certain stages, most obviously when your evidence is recorded, and sometimes where the court directs it or where a settlement is being recorded."
         ],
         [
           "Is there a time limit for filing a civil case?",

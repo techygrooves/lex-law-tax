@@ -950,30 +950,56 @@ function page(o) {
         .join("")
     : "";
 
+  /* Absolute page URL, for og:url and for the sitemap. A page without a
+     canonical (404) still gets one, since a social card without a URL is
+     no use. */
+  const pageUrl = DOMAIN + (o.canonical || "/" + (o.url || ""));
+
+  /* One typographic sharing card for the whole site. There is no
+     photograph of the office or of the advocates, and putting a stock
+     photograph on a card carrying the firm's name would imply one. */
+  const OG_IMAGE = DOMAIN + "/assets/images/og-default.png";
+
   return `<!DOCTYPE html>
-<html lang="en" class="no-js" data-base="${P}">
+<html lang="en-IN" class="no-js" data-base="${P}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(o.title)}</title>
   <meta name="description" content="${esc(o.description)}">
 ${sourceNote}${robots}${canonical}  <meta name="theme-color" content="#102a43">
-  <meta property="og:type" content="website">
+
+  <meta property="og:type" content="${o.ogType || "website"}">
   <meta property="og:site_name" content="${FIRM}">
+  <meta property="og:locale" content="en_IN">
   <meta property="og:title" content="${esc(o.title)}">
   <meta property="og:description" content="${esc(o.description)}">
+  <meta property="og:url" content="${pageUrl}">
+  <meta property="og:image" content="${OG_IMAGE}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="${FIRM} &mdash; legal, property, corporate and tax services, Lucknow">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${esc(o.title)}">
+  <meta name="twitter:description" content="${esc(o.description)}">
+  <meta name="twitter:image" content="${OG_IMAGE}">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-${imgPreconnect}  <link rel="stylesheet" href="${attr(FONT_CSS)}">
+${imgPreconnect}  <link rel="preload" as="style" href="${attr(FONT_CSS)}">
+  <link rel="stylesheet" href="${attr(FONT_CSS)}">
 
-  <link rel="icon" href="${P}assets/images/advocate-placeholder.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="${P}assets/css/style.css">
+  <link rel="icon" href="${P}assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="${P}assets/images/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="${P}assets/images/favicon-180.png">
+  <link rel="manifest" href="${P}site.webmanifest">
+  <link rel="author" href="${P}humans.txt">
+  <link rel="stylesheet" href="${P}assets/css/style.min.css">
 
   <script src="${P}src/data/images.js" defer></script>
   <script src="${P}assets/js/site-config.js" defer></script>
   <script src="${P}assets/js/image-data.js" defer></script>
-  <script src="${P}assets/js/site.js" defer></script>
+  <script src="${P}assets/js/site.min.js" defer></script>
 ${structuredData}</head>
 <body>
 
@@ -1040,10 +1066,48 @@ files["index.html"] = page({
   title: "H.R. Legal Associate | Legal, Property, Corporate & Tax Services in Lucknow",
   description:
     "H.R. Legal Associate provides civil, criminal, cheque-bounce, property, registration, contractual, corporate, income-tax, GST and firm-registration assistance in Lucknow and across Uttar Pradesh.",
-  jsonLd: {
+  jsonLd: [{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": DOMAIN + "/#organization",
+    name: FIRM,
+    alternateName: DESCRIPTOR,
+    url: DOMAIN + "/",
+    logo: {
+      "@type": "ImageObject",
+      url: DOMAIN + "/assets/images/icon-512.png",
+      width: 512,
+      height: 512
+    },
+    image: DOMAIN + "/assets/images/og-default.png",
+    telephone: "{{PHONE_NUMBER}}",
+    email: "{{EMAIL_ADDRESS}}",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "{{OFFICE_ADDRESS}}",
+      addressLocality: "Lucknow",
+      addressRegion: "Uttar Pradesh",
+      addressCountry: "IN"
+    },
+    /* No sameAs: the firm has no verified profile anywhere else, and a
+       guessed one would point at somebody else. No foundingDate, no
+       award, no aggregateRating: none has been supplied. */
+    areaServed: { "@type": "AdministrativeArea", name: "Uttar Pradesh" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": DOMAIN + "/#website",
+    url: DOMAIN + "/",
+    name: FIRM,
+    inLanguage: "en-IN",
+    publisher: { "@id": DOMAIN + "/#organization" }
+  },
+  {
     "@context": "https://schema.org",
     "@type": "LegalService",
     "@id": DOMAIN + "/#practice",
+    parentOrganization: { "@id": DOMAIN + "/#organization" },
     name: FIRM,
     url: DOMAIN + "/",
     description:
@@ -1078,7 +1142,7 @@ files["index.html"] = page({
         url: DOMAIN + "/" + href.replace("index.html", "")
       }))
     }
-  },
+  }],
   body: `  <section class="hero" aria-labelledby="hero-title">
     <div class="media hero__media media--overlay">
       <img data-image="photos.hero" src="${IMAGES.photos.hero.url}" alt="${IMAGES.photos.hero.alt}" width="${IMAGES.photos.hero.width}" height="${IMAGES.photos.hero.height}" decoding="async" fetchpriority="high">
@@ -1292,6 +1356,10 @@ files["about/index.html"] = page({
   depth: 1,
   canonical: "/about/",
   remoteImages: true,
+  jsonLd: breadcrumbJsonLd([
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: "About", canonical: "about/" }
+  ]),
   title: "About " + FIRM + " | Lucknow Legal and Tax Practice",
   description:
     "H.R. Legal Associate is a legal and tax practice based in Lucknow, assisting individuals, property owners, professionals and businesses with matters across Uttar Pradesh.",
@@ -1511,6 +1579,25 @@ function advocateProfileCard(P, a, href) {
 files["advocates/index.html"] = page({
   depth: 1,
   canonical: "/advocates/",
+  jsonLd: [
+    breadcrumbJsonLd([
+      { label: "Home", href: "index.html", canonical: "" },
+      { label: "Advocates", canonical: "advocates/" }
+    ]),
+    /* The people, listed. Each entry is a reference to the Person node on
+       that advocate's own page rather than a second copy of it. */
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: "Advocates of " + FIRM,
+      itemListElement: ADVOCATES.map((a, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: DOMAIN + "/advocates/" + a.slug + "/",
+        name: a.name
+      }))
+    }
+  ],
   title: "Advocates | " + FIRM + " Lucknow",
   description:
     "The advocates of H.R. Legal Associate, Lucknow. Each is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
@@ -1522,7 +1609,15 @@ files["advocates/index.html"] = page({
     }) +
     `
 
-  <section class="section" aria-label="Advocates of the firm">
+  <section class="section" aria-labelledby="advocates-title">
+    <div class="container">
+${sectionHead({
+  eyebrow: "The practice",
+  title: "The Advocates of the Firm",
+  lead: "All three work from the Lucknow office. Only what the firm has verified is published for each of them.",
+  id: "advocates-title"
+})}
+    </div>
     <div class="grid-advocates container" data-reveal-group>
 ${ADVOCATES.map((a) => advocateProfileCard("../", a, a.slug + "/index.html")).join("\n")}
     </div>
@@ -1578,11 +1673,7 @@ function personJsonLd(a) {
     jobTitle: "Advocate",
     url: DOMAIN + "/advocates/" + a.slug + "/",
     description: a.experience + ". " + CREDENTIALS[0] + ". " + CREDENTIALS[1] + ".",
-    worksFor: {
-      "@type": "LegalService",
-      name: FIRM,
-      url: DOMAIN + "/"
-    },
+    worksFor: { "@id": DOMAIN + "/#organization" },
     workLocation: {
       "@type": "Place",
       address: {
@@ -1727,6 +1818,10 @@ files["practice-areas/index.html"] = page({
   depth: 1,
   canonical: "/practice-areas/",
   remoteImages: true,
+  jsonLd: breadcrumbJsonLd([
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: "Practice Areas", canonical: "practice-areas/" }
+  ]),
   title: "Practice Areas | " + FIRM,
   description:
     "Practice areas covered by " + FIRM + ", including civil, criminal, property, corporate, service, employment and tax matters.",
@@ -1738,8 +1833,14 @@ files["practice-areas/index.html"] = page({
     }) +
     `
 
-  <section class="section">
+  <section class="section" aria-labelledby="areas-title">
     <div class="container">
+${sectionHead({
+  eyebrow: "Practice areas",
+  title: "The Twelve Areas the Firm Covers",
+  lead: "Service law and employment law are dealt with separately, because the forums and the questions they raise are different.",
+  id: "areas-title"
+})}
       <div class="grid grid--3" data-reveal-group data-reveal-step="70">
 ${PRACTICE_AREAS.map((area, i) => practiceCard("../", area, i, true)).join("\n")}
       </div>
@@ -1794,6 +1895,26 @@ ${scopeList(EMPLOYMENT_LAW_SCOPE)}
     remoteImages: true,
     title: name + " | " + FIRM,
     description: name + " — " + blurb,
+    jsonLd: [
+      breadcrumbJsonLd([
+        { label: "Home", href: "index.html", canonical: "" },
+        { label: "Practice Areas", href: "practice-areas/index.html", canonical: "practice-areas/" },
+        { label: name, canonical: "practice-areas/" + slug + "/" }
+      ]),
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: name,
+        serviceType: name,
+        description: blurb,
+        url: DOMAIN + "/practice-areas/" + slug + "/",
+        provider: { "@id": DOMAIN + "/#practice" },
+        areaServed: [
+          { "@type": "City", name: "Lucknow" },
+          { "@type": "AdministrativeArea", name: "Uttar Pradesh" }
+        ]
+      }
+    ],
     body:
       pageHeader("../../", {
         title: name,
@@ -1831,6 +1952,56 @@ ${PREP_NOTE}
   </section>`
   });
 });
+
+/* --- Service and hub pages: links back to the guides --------------------
+   The guides declare which services they concern. That declaration is
+   inverted here so each service and hub links back to the guides that
+   name it, and the two directions can never drift apart. Where a service
+   is named by no guide, the guides that name its hub are used instead:
+   a related-reading link that is merely in the right area is honest,
+   whereas one invented to fill the section is not. */
+
+const GUIDES_BY_TARGET = {};
+GUIDES.articles.forEach((a) => {
+  a.relatedServices.forEach(([, href]) => {
+    (GUIDES_BY_TARGET[href] = GUIDES_BY_TARGET[href] || []).push(a);
+  });
+});
+
+function guideSection(P, targets, id, soft) {
+  const articles = guidesFor(targets);
+  if (!articles.length) return "";
+  return `
+  <section class="section${soft ? " section--soft" : ""}" aria-labelledby="${id}">
+    <div class="container container--reading">
+${sectionHead({
+  eyebrow: "Reading",
+  title: "Related Guides",
+  lead: "General information notes on this area. They are not legal advice.",
+  id
+})}
+${relatedLinks(P, guideLinks(articles))}
+    </div>
+  </section>
+`;
+}
+
+function guidesFor(targets, limit) {
+  const seen = {};
+  const out = [];
+  for (const t of targets) {
+    for (const a of GUIDES_BY_TARGET[t] || []) {
+      if (seen[a.slug]) continue;
+      seen[a.slug] = true;
+      out.push(a);
+      if (out.length >= (limit || 3)) return out;
+    }
+  }
+  return out;
+}
+
+const guideLinks = (articles) =>
+  articles.map((a) => [a.h1, "legal-guides/" + a.slug + "/index.html"]);
 
 /* --- Locations --------------------------------------------------------------
    The firm has one office, in Lucknow. That single fact governs everything
@@ -2475,6 +2646,13 @@ ${s.paras.map((t) => `      <p>${t}</p>`).join("\n")}${
   if (!isWithheld(a.author)) {
     article.author = { "@type": "Person", name: a.author };
   }
+  /* Never claimed while the article is pending: a reviewer property on an
+     unreviewed article is exactly the false signal reviewStatus exists to
+     prevent. */
+  if (isApproved(a) && !isWithheld(a.reviewedBy)) {
+    article.reviewedBy = { "@type": "Person", name: a.reviewedBy };
+  }
+  article.mainEntityOfPage = { "@type": "WebPage", "@id": DOMAIN + canonical };
 
   return page({
     depth: 2,
@@ -3380,6 +3558,7 @@ ${lastReviewed()}
 files["404.html"] = page({
   depth: 0,
   noindex: true,
+  url: "404.html",
   title: "Page not found | " + FIRM,
   description: "The requested page could not be found on lexlawandtax.com.",
   body: `  <section class="section">
@@ -3689,6 +3868,34 @@ ${previewBlock(
 
 /* BreadcrumbList built from the same trail that renders the visible
    breadcrumb, so the two can never drift apart. */
+function faqJsonLd(items) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map(([q, a]) => ({
+      "@type": "Question",
+      name: plain(q),
+      acceptedAnswer: { "@type": "Answer", text: plain(a) }
+    }))
+  };
+}
+
+/* Entities out of markup meant for a browser, so structured data never
+   carries a raw &ndash; into a search result. */
+function plain(html) {
+  return String(html)
+    .replace(/<[^>]+>/g, "")
+    .replace(/&mdash;/g, "\u2014")
+    .replace(/&ndash;/g, "\u2013")
+    .replace(/&rsquo;/g, "\u2019")
+    .replace(/&lsquo;/g, "\u2018")
+    .replace(/&ldquo;/g, "\u201c")
+    .replace(/&rdquo;/g, "\u201d")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function breadcrumbJsonLd(trail) {
   return {
     "@context": "https://schema.org",
@@ -3898,7 +4105,7 @@ function hubPage(hub) {
     remoteImages: true,
     title: hub.title,
     description: hub.description,
-    jsonLd: breadcrumbJsonLd(trail),
+    jsonLd: [breadcrumbJsonLd(trail), faqJsonLd(hub.faqs)],
     body:
       sectionHero(P, { imageKey: hub.image, h1: hub.h1, lead: hub.lead, trail }) +
       `
@@ -3945,13 +4152,7 @@ ${ADVOCATES.map((a) => advocateCard(P, a)).join("\n")}
     </div>
   </section>
 
-  <section class="section" aria-labelledby="hub-guides">
-    <div class="container container--reading">
-${sectionHead({ eyebrow: "Reading", title: "Related guides", id: "hub-guides" })}
-${relatedLinks(P, hub.relatedGuides)}
-    </div>
-  </section>
-
+${guideSection(P, [hub.slug + "/index.html"].concat(hub.services.map((s) => hub.slug + "/" + s.slug + "/index.html")), "hub-guides", false)}
 ${coverageBlock("hub-coverage")}
 
   <section class="section">
@@ -3988,7 +4189,7 @@ function servicePage(hub, svc) {
     remoteImages: true,
     title: svc.title,
     description: svc.description,
-    jsonLd: [breadcrumbJsonLd(trail), serviceJsonLd(svc, canonical)],
+    jsonLd: [breadcrumbJsonLd(trail), serviceJsonLd(svc, canonical), faqJsonLd(svc.faqs)],
     body:
       sectionHero(P, { imageKey: svc.image, h1: svc.h1, lead: svc.lead, trail }) +
       `
@@ -4058,7 +4259,8 @@ ${relatedLinks(P, svc.related)}
     </div>
   </section>
 
-  <section class="section section--soft" aria-labelledby="svc-advocates">
+${guideSection(P, [hub.slug + "/" + svc.slug + "/index.html", hub.slug + "/index.html"], "svc-guides", true)}
+  <section class="section" aria-labelledby="svc-advocates">
     <div class="container">
 ${sectionHead({
   eyebrow: "The practice",
@@ -4113,3 +4315,94 @@ Object.keys(files)
   });
 
 console.log("\n" + written + " pages written.");
+
+/* ================================================================== */
+/* SITEMAP                                                             */
+/* ==================================================================
+   Generated here rather than by hand, so it cannot drift from the pages
+   that exist. A page is listed only if it is canonical and indexable:
+   anything carrying a noindex directive is left out, because listing a
+   page in a sitemap while telling crawlers not to index it is a
+   contradictory signal. The component preview and 404 are excluded for
+   the same reason.                                                    */
+
+const SITEMAP_EXCLUDE = new Set(["404.html", "components/index.html"]);
+
+const sitemapEntries = Object.keys(files)
+  .filter((rel) => !SITEMAP_EXCLUDE.has(rel))
+  .filter((rel) => !/<meta name="robots" content="noindex/.test(files[rel]))
+  .map((rel) => {
+    const canonical = (files[rel].match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
+    if (!canonical) throw new Error("Indexable page without a canonical: " + rel);
+    const depth = canonical.replace(DOMAIN, "").split("/").filter(Boolean).length;
+    return {
+      loc: canonical,
+      priority: depth === 0 ? "1.0" : depth === 1 ? "0.8" : depth === 2 ? "0.7" : "0.6",
+      changefreq: depth === 0 ? "weekly" : "monthly"
+    };
+  })
+  .sort((a, b) => Number(b.priority) - Number(a.priority) || a.loc.localeCompare(b.loc));
+
+fs.writeFileSync(
+  path.join(ROOT, "sitemap.xml"),
+  '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    "<!--\n  Sitemap for lexlawandtax.com\n" +
+    "  Generated by tools/build-pages.js from the pages on disk. Pages carrying\n" +
+    "  a noindex directive, the 404 page and the component preview are excluded\n" +
+    "  deliberately. Do not edit by hand: rerun the generator instead.\n-->\n" +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n\n' +
+    sitemapEntries
+      .map(
+        (u) =>
+          "  <url>\n" +
+          "    <loc>" + u.loc + "</loc>\n" +
+          "    <lastmod>" + LEGAL.lastReviewed + "</lastmod>\n" +
+          "    <changefreq>" + u.changefreq + "</changefreq>\n" +
+          "    <priority>" + u.priority + "</priority>\n" +
+          "  </url>\n"
+      )
+      .join("\n") +
+    "\n</urlset>\n",
+  "utf8"
+);
+
+const noindexCount = Object.keys(files).filter((rel) =>
+  /<meta name="robots" content="noindex/.test(files[rel])
+).length;
+console.log(
+  "sitemap.xml: " + sitemapEntries.length + " indexable URLs (" +
+  noindexCount + " noindex pages and the component preview excluded)."
+);
+
+/* ================================================================== */
+/* MINIFIED ASSETS                                                     */
+/* ==================================================================
+   The unminified files are the editable truth; these are generated from
+   them and committed, so the published site still has no build step.
+   The JavaScript is parsed before it is written, so a minifier bug
+   cannot ship a broken file.                                          */
+
+const { minifyCss, minifyJs } = require("./minify");
+
+[
+  ["assets/css/style.css", "assets/css/style.min.css", minifyCss, false],
+  ["assets/js/site.js", "assets/js/site.min.js", minifyJs, true]
+].forEach(([from, to, minify, parseCheck]) => {
+  const source = fs.readFileSync(path.join(ROOT, from), "utf8");
+  const output = minify(source);
+
+  if (parseCheck) {
+    try {
+      new Function(output);
+    } catch (e) {
+      throw new Error(to + " failed to parse after minification: " + e.message);
+    }
+  }
+
+  fs.writeFileSync(path.join(ROOT, to), output, "utf8");
+  const saved = Math.round((1 - output.length / source.length) * 100);
+  console.log(
+    to + ": " + Math.round(source.length / 1024) + "kB -> " +
+    Math.round(output.length / 1024) + "kB (" + saved + "% smaller)"
+  );
+});

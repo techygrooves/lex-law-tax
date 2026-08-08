@@ -44,10 +44,26 @@ than maintain a hundred copies, the markup is generated:
 node tools/build-pages.js
 ```
 
-This is an **authoring aid, not a build step**. The published site has no
-dependency on it — Node is not needed to view, host or deploy anything here.
-Run it only after editing a shared component in `tools/build-pages.js` or the
-image registry.
+One run also writes three things that must never be edited by hand, because
+the next run overwrites them:
+
+- `sitemap.xml`, from the pages that actually exist and are indexable;
+- `assets/css/style.min.css` and `assets/js/site.min.js`, from their
+  unminified sources.
+
+This is an **authoring aid, not a build step**. Everything it writes is
+committed, so the published site has no dependency on it — Node is not needed
+to view, host or deploy anything here. Run it after editing a shared component
+in `tools/build-pages.js`, a data file, the stylesheet or `site.js`.
+
+```
+node tools/build-assets.js
+```
+
+A second, rarer aid: it re-renders the PNG icons and the social-sharing card
+from `assets/images/favicon.svg` and `assets/images/og-default.svg` using the
+Chromium that Playwright provides. It downloads nothing. Run it only if you
+edit one of those two SVGs; the PNGs it produces are committed.
 
 ## Structure
 
@@ -92,9 +108,19 @@ image registry.
 ├── src/data/legal-services.js     Legal hub and service page content
 ├── src/data/tax-business.js       Tax, GST and registration page content
 ├── src/data/locations.js          Per-city wording for the location pages
+├── src/data/guides.js             Legal guide articles
+├── src/data/faqs.js               Frequently asked questions
 ├── tools/build-pages.js           Page generator (authoring aid)
+├── tools/build-assets.js          Icon and social-card renderer (aid)
+├── tools/minify.js                CSS and JS minifiers used by the generator
+├── assets/css/style.min.css       Generated — do not edit
+├── assets/js/site.min.js          Generated — do not edit
+├── assets/images/favicon.svg      Placeholder mark; PNGs derived from it
+├── assets/images/og-default.svg   Social-sharing card; PNG derived from it
+├── site.webmanifest
+├── humans.txt
 ├── robots.txt
-├── sitemap.xml
+├── sitemap.xml                    Generated — do not edit
 ├── IMAGE-CREDITS.md
 └── README.md
 ```
@@ -243,6 +269,12 @@ Upload the repository contents to the web root. No build step.
 Configure the host to serve `404.html` for missing pages and `index.html` for
 folder URLs (most static hosts do this by default). `sitemap.xml` lists
 production URLs in their clean `/folder/` form.
+
+Internal links are written as `…/index.html` so the site can be opened from
+the filesystem, which was a requirement from the outset. Every page therefore
+declares a canonical in the clean `/folder/` form, which is the URL search
+engines index. If your host can also redirect `/path/index.html` to `/path/`,
+turn that on; the canonical already resolves the duplication either way.
 
 ## Homepage
 
@@ -455,6 +487,117 @@ for a city.
 
 There are no service-by-city pages. `/locations/kanpur/` links through to the
 Lucknow service pages rather than duplicating them per district.
+
+## Technical SEO
+
+### What every page carries
+
+`lang="en-IN"`, UTF-8, a viewport tag, a unique title and description, a
+canonical, exactly one H1 with no skipped heading levels, the full Open Graph
+set (`type`, `site_name`, `locale`, `title`, `description`, `url`, `image` with
+dimensions and alt), a Twitter summary card, `theme-color`, an SVG favicon with
+a PNG fallback, an apple-touch icon, the web manifest, and breadcrumbs wherever
+a page sits below the root.
+
+### Canonicals and the `index.html` question
+
+Internal links end in `index.html` because the site has to open from the
+filesystem — that was a requirement from the first stage and it has not
+changed. Canonicals are always the clean `https://lexlawandtax.com/folder/`
+form: lowercase, hyphen-separated, trailing slash, no query string. The
+canonical is what search engines index, so the two forms do not compete. A
+test asserts every one of those properties on every indexable page.
+
+### Sitemap
+
+`sitemap.xml` is written by `tools/build-pages.js` from the pages that exist,
+so it cannot drift. It contains **only indexable canonical URLs**. Excluded:
+every page carrying `noindex` (the pending-review guides and the tier-2 city
+pages), the 404 page, and the component preview. `robots.txt` points at it and
+disallows `/components/`.
+
+### Structured data
+
+| Type | Where |
+| --- | --- |
+| `Organization` | homepage, `@id` `#organization` — the entity everything else references |
+| `WebSite` | homepage, `@id` `#website` |
+| `LegalService` | homepage `@id` `#practice`; restated on the Lucknow page with the address |
+| `Person` | the three advocate profiles — name, `jobTitle: Advocate`, `worksFor`, description from verified facts only, and `image` only once the photograph file exists |
+| `Service` | every practice-area page, hub and service page |
+| `FAQPage` | hub and service pages — **only where the questions are visible on the page** |
+| `Article` | the twelve guides, with `datePublished` and `dateModified` |
+| `BreadcrumbList` | every page below the root |
+| `ItemList` | the advocates index |
+
+**What is deliberately absent**, and asserted absent by a test: `Review`,
+`AggregateRating`, any star rating, `award`, `foundingDate`, and `sameAs`. None
+has been supplied, and a guessed `sameAs` points at somebody else's profile.
+No non-Lucknow city page carries a `PostalAddress` or a `LocalBusiness` node.
+`openingHours` is absent because no hours were supplied. An `Article` gains
+`author` or `reviewedBy` only when the data assigns one — so today, none does.
+
+Every placeholder inside JSON-LD sits in a `data-config-json` block, and
+`site.js` deletes any property still unresolved rather than publishing
+`{{PHONE_NUMBER}}` as a telephone number.
+
+### Internal linking
+
+Every service page links to its hub, and every hub links to all its children.
+Guides declare the services they concern; that declaration is **inverted** by
+the generator so each service and hub links back to the guides that name it.
+The two directions therefore cannot disagree — there is no second hand-kept
+list to fall out of date.
+
+Where no guide covers an area at all, the related-reading section is omitted
+rather than padded with a guide from somewhere else. That is currently true of
+criminal law, and it is a gap in the guides, not in the linking.
+
+Advocate profiles link to all twelve practice areas. Each city page links to
+the six principal hubs and to no other city from its own content; the footer
+carries the seven launch locations as ordinary sitewide navigation, and 35
+links in total.
+
+### Performance
+
+`assets/css/style.min.css` and `assets/js/site.min.js` are generated by
+`tools/minify.js` and committed. Both minifiers are deliberately conservative:
+nothing is renamed, reordered or rewritten. The CSS one never touches space
+around `:` (`.a :hover` and `.a:hover` are different selectors) or around `+`
+and `-` (they are operators inside `calc()` and `clamp()`, where the spaces are
+required). The JS one keeps every newline, so automatic semicolon insertion
+cannot change meaning.
+
+Two things verify them rather than trusting them: the generator parses the
+minified JavaScript before writing it, and a test loads both stylesheets into
+the browser's CSSOM and compares the rule sets it actually builds — 557 rules,
+identical. Both suites also run against the minified files.
+
+Every script is deferred; there are no libraries. Preconnects go only to the
+origins a page actually uses, and the Pexels hint is emitted only on pages that
+show a Pexels photograph. One preload per page, for the font stylesheet. Every
+`<img>` carries explicit `width` and `height`, and everything except the single
+hero per page is lazy-loaded.
+
+### Images
+
+Nothing from Pexels is copied into this repository; the photographs are
+referenced by URL and every media figure carries a neutral fallback that
+appears if the request fails. The three advocate images remain local paths
+served by the silhouette placeholder until real photographs are supplied.
+
+### Prohibited phrases
+
+A test scans all 102 pages and every source, data, config and documentation
+file for: *best lawyer*, *top lawyer*, *number one lawyer*, *guaranteed
+result*, *guaranteed bail*, *guaranteed registration*, *100% success*, *member
+of Bar Council of India*, *Advocate-on-Record*, *advocate on record* and *AOR*.
+None appears.
+
+One phrase was removed in this pass: a civil-litigation FAQ said appearance is
+"through the advocate on record", meaning simply the advocate conducting the
+matter. It reads as the Supreme Court designation to anyone scanning, so it now
+says "through the advocate conducting the matter".
 
 ## Advocate details
 

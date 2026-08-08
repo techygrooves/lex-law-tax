@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="H.R. Legal Associate">
+  <!--
+    Placeholder favicon: the firm's monogram on the brand navy, with the
+    gold rule used throughout the site. It is a stand-in for a real mark
+    and is deliberately typographic rather than pictorial, so it claims
+    nothing the firm has not adopted. Replace this file and the PNGs
+    generated from it when a designed mark exists.
+  -->
+  <rect width="64" height="64" rx="8" fill="#102a43"/>
+  <rect x="12" y="46" width="40" height="2" fill="#b78b4a"/>
+  <text x="32" y="38"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="26" font-weight="700" letter-spacing="0.5"
+        text-anchor="middle" fill="#ffffff">HR</text>
+</svg>

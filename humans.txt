@@ -1,0 +1,40 @@
+/* TEAM */
+
+    Firm: H.R. Legal Associate
+    Descriptor: Legal, Property, Corporate & Tax Services
+    Location: Lucknow, Uttar Pradesh, India
+    Site: https://lexlawandtax.com
+
+    The firm has one office, in Lucknow. There is no branch office
+    elsewhere. Location pages on this site describe districts the firm
+    assists clients in, not further offices.
+
+
+/* SITE */
+
+    Language: English (en-IN)
+    Doctype: HTML5
+    Standards: HTML5, CSS3, vanilla JavaScript
+    Components: none — no framework, no bundler, no package manager,
+                no node_modules, no build step for the published site
+    Typefaces: Playfair Display and Manrope, served by Google Fonts,
+               with system fallback stacks that carry the same feel if
+               those requests fail
+    Photographs: licensed stock photography served by Pexels and
+                 referenced by URL; nothing is copied into this
+                 repository. Credits are in IMAGE-CREDITS.md
+    Accessibility: WCAG 2.1 AA contrast, keyboard-operable navigation,
+                   reduced-motion respected, and every page readable
+                   with JavaScript disabled
+
+
+/* NOTES */
+
+    This website is published for general information about the firm. It
+    is not an advertisement and is not a solicitation of work. Nothing on
+    it is legal advice, and reading it creates no advocate-client
+    relationship. See /disclaimer/.
+
+    Pages carry the date on which they were last reviewed. Guides that
+    have not yet been read by an advocate say so and are not submitted
+    for indexing.

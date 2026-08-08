@@ -4125,7 +4125,7 @@ ${sectionHead({
   lead: "Each page below deals with one service and the questions it raises.",
   id: "hub-services"
 })}
-      <div class="grid grid--3" data-reveal-group data-reveal-step="70">
+      <div class="grid ${hub.services.length % 4 === 0 ? "grid--fixed-4" : "grid--fixed-3"}" data-reveal-group data-reveal-step="70">
 ${serviceCards}
       </div>
     </div>

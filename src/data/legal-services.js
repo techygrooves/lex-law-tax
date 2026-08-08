@@ -859,7 +859,7 @@ window.legalServices = {
             ],
             [
               "What can the court order if the complaint succeeds?",
-              "The Act provides for imprisonment which may extend to two years, or fine which may extend to twice the amount of the cheque, or both, and compensation may be awarded. What is ordered in a particular matter is for the court, and no outcome can be promised."
+              "The Act provides for imprisonment, or a fine calculated by reference to the amount of the cheque, or both, and for compensation. The maximum the provision allows should be confirmed against the section as it currently stands rather than taken from a note, and what is ordered in a particular matter is for the court. No outcome can be promised."
             ],
             [
               "Do I have to attend every hearing?",

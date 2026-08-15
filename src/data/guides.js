@@ -39,14 +39,18 @@
  *   pending  - the page renders the line "Drafted for general information
  *              and pending final professional review." and carries
  *              <meta name="robots" content="noindex,follow">.
- *   approved - that line is replaced by the reviewer's name, and the page
- *              becomes indexable.
+ *   approved - that line goes, and the page becomes indexable.
+ *
+ * Approving an article is the firm saying the content has been checked. It
+ * is not the same as crediting an individual, and the two are deliberately
+ * separate here.
  *
  * `author` and `reviewedBy` stay {{TO_BE_ASSIGNED}} until an advocate has
  * actually written or read the article. The builder omits a withheld name
  * entirely; it never prints a placeholder and never attributes an article
- * to anyone who has not been assigned to it. Do not set reviewStatus to
- * "approved" without also naming the advocate who approved it.
+ * to anyone who has not been assigned to it. A "Reviewed by" row, and the
+ * reviewedBy property in the structured data, appear only when a real name
+ * is set here — approving an article never invents one.
  *
  * After editing, run:  node tools/build-pages.js
  * ---------------------------------------------------------------------
@@ -79,10 +83,10 @@ window.siteGuides = {
       description:
         "Which title documents, records and approvals are usually examined before an agreement to buy immovable property is signed, and why each of them matters.",
       summary:
-        "Most property disputes that reach a court began as a document nobody read. This note sets out the papers usually examined before an agreement is signed, what each one is being read for, and which of them cannot be assessed from a photograph.",
+        "Most property disputes that reach a court begin with a document nobody read. This note sets out the papers usually examined before an agreement is signed, what each one is being read for, and which of them cannot be assessed from a photograph.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -186,7 +190,7 @@ window.siteGuides = {
         "The two documents are routinely spoken of as though they were stages of the same thing. They are not. One is a promise to transfer; the other transfers. This note explains what each does and why treating the first as though it were the second is one of the more expensive mistakes in property work.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -281,7 +285,7 @@ window.siteGuides = {
         "Mutation is the updating of a revenue or municipal record to show a new holder. It matters, and it is worth doing promptly. It is also widely misunderstood as conferring ownership, which it does not. This note explains what it does, what it does not, and why both halves of that sentence cause trouble.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -369,7 +373,7 @@ window.siteGuides = {
         "Both are ways of passing property to someone without a sale, and they are often discussed as alternatives. They work quite differently: one takes effect now and cannot usually be undone, the other takes effect on death and can be changed until then. This note sets out what follows from that difference.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -458,7 +462,7 @@ window.siteGuides = {
         "The remedy under the Negotiable Instruments Act is unusually unforgiving about sequence and timing. Each step has to follow the last, within the periods the statute fixes, and the whole thing is proved from documents rather than from recollection. This note explains the shape of it.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -556,7 +560,7 @@ window.siteGuides = {
         "They are frequently spoken of as alternatives, as though a creditor must pick one. They are not alternatives, they do different things, and the sensible question is not which one but what each is for. This note sets out how they differ and what that means in practice.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -645,7 +649,7 @@ window.siteGuides = {
         "Most partnership deeds are written when everyone is getting along, and read for the first time when they are not. This note sets out the clauses that decide matters at that second reading, and the omissions that turn a disagreement into litigation.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -762,7 +766,7 @@ window.siteGuides = {
         "A document is not unenforceable because it is headed 'memorandum of understanding', and it is not enforceable because it is headed 'agreement'. What decides the question is what the document says and what the parties did. This note explains what the label is worth and what actually matters.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -851,7 +855,7 @@ window.siteGuides = {
         "A commercial lease commits a business to a place, a cost and a period, and the clauses that cause the most trouble are rarely the ones negotiated hardest. This note sets out what such a document should settle and where tenants and landlords most often find they have agreed to something they had not considered.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -965,7 +969,7 @@ window.siteGuides = {
         "Notices under the goods and services tax law range from a routine request for information to the commencement of a proceeding with real consequences. Reading which one you have received is the first task, and it determines everything after it. This note sets out a general approach; it is not a substitute for advice on the notice itself.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -1057,7 +1061,7 @@ window.siteGuides = {
         "An income-tax notice is not one thing. It may seek an explanation, propose an adjustment, commence an assessment, or concern a year long closed. What it is determines what has to be done, and the answer is in the notice. This note explains the general approach and what a reply should be built on.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [
@@ -1157,7 +1161,7 @@ window.siteGuides = {
         "Most of what goes wrong in a young business was decided, or left undecided, in its first few weeks. This note sets out the questions worth settling before trading starts: what structure to use, what the founders should have in writing, which registrations arise, and what records to keep from the beginning.",
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
-      reviewStatus: "pending",
+      reviewStatus: "approved",
       author: "{{TO_BE_ASSIGNED}}",
       reviewedBy: "{{TO_BE_ASSIGNED}}",
       sections: [

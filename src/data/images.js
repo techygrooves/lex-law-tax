@@ -224,9 +224,9 @@ window.siteImages = {
       width: 640,
       height: 800
     },
-    "irfan-ahmad-khan": {
-      src: "assets/images/irfan-adv.jpg",
-      alt: "Photograph of Advocate Irfan Ahmad Khan",
+    "mohd-mateen": {
+      src: "assets/images/mateen-adv.jpg",
+      alt: "Photograph of Advocate Mohd. Mateen",
       width: 640,
       height: 800
     }

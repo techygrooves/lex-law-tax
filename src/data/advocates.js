@@ -27,7 +27,7 @@
  */
 
 window.advocateData = {
-  order: ["mohammad-kamran", "hamid-razzaq", "irfan-ahmad-khan"],
+  order: ["mohammad-kamran", "hamid-razzaq", "mohd-mateen"],
 
   advocates: {
     "mohammad-kamran": {
@@ -61,9 +61,9 @@ window.advocateData = {
       }
     },
 
-    "irfan-ahmad-khan": {
-      name: "Advocate Irfan Ahmad Khan",
-      short: "Irfan Ahmad Khan",
+    "mohd-mateen": {
+      name: "Advocate Mohd. Mateen",
+      short: "Mohd. Mateen",
       experience: "20+ Years of Legal Experience",
       years: 20,
 

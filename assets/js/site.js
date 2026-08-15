@@ -331,7 +331,9 @@
     var triggers = $$("[data-menu-trigger]");
     if (!triggers.length) return;
 
-    var openTimer = null;
+    /* Long enough that the panel does not vanish when the cursor slips off
+       an edge on the way to a link inside it. */
+    var CLOSE_DELAY = 420;
 
     function panelFor(trigger) {
       return document.getElementById(trigger.getAttribute("aria-controls"));
@@ -371,11 +373,19 @@
         setOpen(trigger, !open);
       });
 
-      /* Pointer users get hover, with a short close delay so the cursor
-         can cross the gap between the trigger and the panel. */
-      if (item && window.matchMedia("(hover: hover)").matches) {
-        item.addEventListener("mouseenter", function () {
-          window.clearTimeout(openTimer);
+      /* A mouse opens the panel by pointing at it; no click needed.
+         The old gate was a (hover: hover) media query, which a tablet
+         reports as false even with a mouse attached, so on those devices
+         hover never worked and the menu could only be clicked open. Asking
+         the pointer what it is answers the actual question, and it answers
+         it per event, so a mouse plugged in after load works too. Touch and
+         pen are left to the click handler above. */
+      var closeTimer = null;
+
+      if (item) {
+        item.addEventListener("pointerenter", function (event) {
+          if (event.pointerType !== "mouse") return;
+          window.clearTimeout(closeTimer);
           if (trigger.getAttribute("aria-expanded") !== "true") {
             closeAll(trigger);
             setOpen(trigger, true);
@@ -383,12 +393,15 @@
           }
         });
 
-        item.addEventListener("mouseleave", function () {
-          window.clearTimeout(openTimer);
-          openTimer = window.setTimeout(function () {
+        /* The panel sits inside the item, so this fires only once the
+           cursor has left the trigger and the panel both. */
+        item.addEventListener("pointerleave", function (event) {
+          if (event.pointerType !== "mouse") return;
+          window.clearTimeout(closeTimer);
+          closeTimer = window.setTimeout(function () {
             setOpen(trigger, false);
             openedByHover = false;
-          }, 140);
+          }, CLOSE_DELAY);
         });
       }
 

@@ -192,7 +192,7 @@ what must be verified against current law and the facts of the matter.
 
 ## 9. Remote images
 
-**None could be verified from the build environment.** All 14
+**None could be verified from the build environment.** All 18
 photographs are referenced by URL from `images.pexels.com`, and outbound
 access to that host is blocked here — the proxy answers `403` to
 `CONNECT`, and Chromium reports `ERR_TUNNEL_CONNECTION_FAILED` for every
@@ -204,7 +204,7 @@ to be broken, and none has been shown to work.
 
 Two consequences follow, and both need attention before launch:
 
-1. **Alt text for 12 of the 14 photographs is provisional**, marked
+1. **Alt text for 12 of the 18 photographs is provisional**, marked
    `altVerified: false` in `src/data/images.js`. It was written from what
    each image is meant to depict, not from seeing it. Someone must open
    each URL, confirm the photograph is appropriate for a legal practice,
@@ -373,7 +373,7 @@ absent: `Review`, `AggregateRating`, star ratings, `award`,
    set `reviewStatus: "approved"`, rebuild, and the guides become
    indexable. Publishing legal information the firm has not read is the
    single largest professional risk on this site.
-3. **Open every one of the 14 Pexels URLs**, confirm each photograph is
+3. **Open every one of the 18 Pexels URLs**, confirm each photograph is
    appropriate, and rewrite the alt text for the 12 marked
    `altVerified: false`. Then set `altVerified: true`.
 4. **Review the disclaimer and privacy policy with the firm**, since both

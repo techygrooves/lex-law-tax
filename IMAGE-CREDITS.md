@@ -17,7 +17,9 @@ the image plays on the page, not from what the photograph actually shows.
 
 **Before the site goes live:** open each source URL, look at the photograph,
 and rewrite its `alt` in `src/data/images.js`. Then set `altVerified: true`.
-Two entries were supplied with confirmed alt text and are already correct.
+Six entries carry confirmed alt text and are already correct: two were
+supplied at the outset, and four were chosen by the firm after a visual
+review, which described what each photograph shows.
 
 Provisional alt text is not a cosmetic issue — a screen-reader user is told
 something that may not be true.
@@ -41,14 +43,32 @@ not be shown in a way that is offensive or implies endorsement.
 | `tax` | Income Tax, GST | [pexels.com/photo/6863334](https://www.pexels.com/photo/6863334/) | Unverified |
 | `serviceLaw` | Service Law | [man-signing-documents-on-desk-8152746](https://www.pexels.com/photo/man-signing-documents-on-desk-8152746/) | **Confirmed** — "Person signing official documents in a legal office" |
 | `employmentLaw` | Employment Law | [crop-business-partners-signing-contract-in-office-5673489](https://www.pexels.com/photo/crop-business-partners-signing-contract-in-office-5673489/) | **Confirmed** — "Professionals reviewing and signing workplace documents" |
-| `registration` | Property Registration, Firm and Business Registration | [pexels.com/photo/10376233](https://www.pexels.com/photo/10376233/) | Unverified |
+| `registration` | *(no longer used — kept for reference)* | [pexels.com/photo/10376233](https://www.pexels.com/photo/10376233/) | Unverified |
 | `about` | About the firm | [pexels.com/photo/8518616](https://www.pexels.com/photo/8518616/) | Unverified |
 | `lucknow` | Locations | [pexels.com/photo/34459408](https://www.pexels.com/photo/34459408/) | Unverified |
-| `legalGuides` | Legal Guides | [pexels.com/photo/8730994](https://www.pexels.com/photo/8730994/) | Unverified |
+| `legalGuides` | Legal Guides, first homepage guide card | [pexels.com/photo/8730994](https://www.pexels.com/photo/8730994/) | Unverified |
+| `propertyRegistration` | Property Registration | [pexels.com/photo/7415057](https://www.pexels.com/photo/7415057/) | **Confirmed** — "Property registration and real estate document signing" |
+| `firmRegistration` | Firm and Business Registration | [crop-business-partners-signing-contract-in-office-5673489](https://www.pexels.com/photo/crop-business-partners-signing-contract-in-office-5673489/) | **Confirmed** — "Business professionals completing firm registration documents" |
+| `guideChequeBounce` | Cheque-bounce guide card | [pexels.com/photo/6862457](https://www.pexels.com/photo/6862457/) | **Confirmed** — "Cheque and banking document related to cheque dishonour" |
+| `guideBusiness` | Business-registration guide card | [pexels.com/photo/7821913](https://www.pexels.com/photo/7821913/) | **Confirmed** — "Business registration and startup legal document signing" |
 
-`tax` and `registration` each illustrate two practice areas, so both appear
-twice on the practice-areas index. No image appears more than twice on any
-single page.
+### Photographs that appear twice on one page
+
+No photograph appears more than twice on any single page. Five pairs do
+appear twice, and two of them are worth knowing about:
+
+| Page | Photo | Why |
+| --- | --- | --- |
+| `/practice-areas/` | 5673489 | `employmentLaw` and `firmRegistration` are the **same photograph** under two records. The firm supplied this URL for the firm-registration card; the picture was already serving employment law. |
+| `/` | 6862457 | `chequeBounce` (practice card) and `guideChequeBounce` (guide card) are the **same photograph**. The firm supplied this URL for the guide card; it was already serving the cheque-bounce practice card. |
+| `/practice-areas/` | 6863334 | `tax` illustrates both Income Tax and GST. Long-standing. |
+| `/` | 12955837 | `property` appears in the property feature section and the property card. |
+| `/` | 12885861 | `corporate` appears in the corporate feature section and the corporate card. |
+
+The first two are one-line fixes in `src/data/images.js` if the firm would
+rather each card had a photograph of its own: point
+`practiceAreas["firm-business-registration"]` at a new record, or give the
+cheque-bounce guide card its own picture.
 
 ## Advocate photographs
 

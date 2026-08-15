@@ -215,7 +215,11 @@ const HOME_GUIDE_SLUGS = [
   "legal-and-tax-checklist-for-starting-a-firm"
 ];
 
-const HOME_GUIDE_ICONS = [null, () => ICON.receipt(44), () => ICON.building(44)];
+/* One photograph per card, each specific to its guide. The second and
+   third cards used to carry a colour-block header with an icon, which
+   read as placeholders beside the first card's photograph; all three are
+   now photographs so the row is one consistent set. */
+const HOME_GUIDE_IMAGES = ["photos.legalGuides", "photos.guideChequeBounce", "photos.guideBusiness"];
 
 const HOME_GUIDES = HOME_GUIDE_SLUGS.map((slug, i) => {
   const a = GUIDES.articles.filter((x) => x.slug === slug)[0];
@@ -225,8 +229,7 @@ const HOME_GUIDES = HOME_GUIDE_SLUGS.map((slug, i) => {
     title: a.h1,
     category: category,
     text: a.summary,
-    imageKey: HOME_GUIDE_ICONS[i] ? null : "photos.legalGuides",
-    icon: HOME_GUIDE_ICONS[i],
+    imageKey: HOME_GUIDE_IMAGES[i],
     href: "legal-guides/" + a.slug + "/index.html"
   };
 });
@@ -466,9 +469,16 @@ function media(o) {
   const loading = o.priority ? "" : ' loading="lazy"';
   const priority = o.priority ? ' fetchpriority="high"' : "";
   const placeholderClass = isAdvocate && !hasPhoto ? ' class="is-placeholder"' : "";
+  /* Where a photograph's subject is not in the middle of the frame, the
+     registry says where to crop from. `object-fit: cover` still comes
+     from the stylesheet; this only moves the crop window, so the card's
+     dimensions are untouched. */
+  const position = record.objectPosition
+    ? ` style="object-position:${record.objectPosition}"`
+    : "";
 
   return `<figure class="${cls.join(" ")}">
-${o.pad || ""}  <img${placeholderClass} data-image="${o.imageKey}" src="${src}" alt="${record.alt}" width="${record.width}" height="${record.height}"${loading} decoding="async"${priority}>
+${o.pad || ""}  <img${placeholderClass} data-image="${o.imageKey}" src="${src}" alt="${record.alt}" width="${record.width}" height="${record.height}"${loading} decoding="async"${priority}${position}>
 ${o.pad || ""}  <span class="media__fallback" aria-hidden="true">${ICON.image()}<span>Image unavailable</span></span>
 ${o.pad || ""}</figure>`;
 }
@@ -1044,7 +1054,7 @@ const HOME_SERVICES = [
    "Notices and complaints under the Negotiable Instruments Act, and recovery of dues."],
   ["Property Law", "property", "practice-areas/property-law/index.html",
    "Title, partition, tenancy, possession and other immovable property disputes."],
-  ["Property Registration", "registration", "practice-areas/property-registration/index.html",
+  ["Property Registration", "propertyRegistration", "practice-areas/property-registration/index.html",
    "Sale deeds, gift deeds, registration formalities and mutation of records."],
   ["Corporate Law", "corporate", "practice-areas/corporate-law/index.html",
    "Company and LLP matters, secretarial compliance and commercial disputes."],
@@ -1052,9 +1062,23 @@ const HOME_SERVICES = [
    "Drafting, review and enforcement of commercial and personal agreements."],
   ["Income Tax &amp; GST", "tax", "practice-areas/income-tax/index.html",
    "Returns, notices, assessments and appellate proceedings in direct and indirect tax."],
-  ["Firm Registration", "registration", "practice-areas/firm-business-registration/index.html",
+  ["Firm Registration", "firmRegistration", "practice-areas/firm-business-registration/index.html",
    "Formation and registration of firms, partnerships, companies and other entities."]
 ];
+
+/* The homepage service cards and the /practice-areas/ cards show the
+   same practice areas, so they must show the same photograph. This is
+   how the two lists got out of step in the first place: the homepage
+   kept its own key and nobody noticed when the registry moved on. */
+HOME_SERVICES.forEach(([name, key, href]) => {
+  const slug = (href.match(/^practice-areas\/([a-z-]+)\//) || [])[1];
+  if (!slug) return;
+  const expected = IMAGES.practiceAreas[slug];
+  if (expected && expected !== key) {
+    throw new Error("Homepage card \"" + name + "\" uses photos." + key +
+      " but src/data/images.js maps " + slug + " to photos." + expected);
+  }
+});
 
 const HOME_CITIES = TIER_1;
 

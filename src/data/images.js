@@ -142,6 +142,67 @@ window.siteImages = {
       width: 1600,
       height: 1067,
       altVerified: false
+    },
+
+    /* ------------------------------------------------------------------
+       Supplied by the firm after a visual review of the site.
+       ------------------------------------------------------------------
+       The four records below were chosen by the firm, which described
+       what each photograph shows, so their alt text is written from a
+       description of the actual image rather than from the role it plays
+       on the page. That is why they are marked altVerified: true while
+       most of the registry is not.
+
+       Their URLs are used exactly as supplied, which is why the query
+       string differs from the older records above (w=1260&h=750 rather
+       than cs=tinysrgb&w=1600). Do not "tidy" them into the house form
+       without checking the rendered result first.
+       ------------------------------------------------------------------ */
+
+    propertyRegistration: {
+      url: "https://images.pexels.com/photos/7415057/pexels-photo-7415057.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      source: "https://www.pexels.com/photo/7415057/",
+      alt: "Property registration and real estate document signing",
+      width: 1260,
+      height: 750,
+      altVerified: true
+    },
+
+    /* Photograph 5673489, which `employmentLaw` above also uses. The two
+       records exist separately because the firm supplied this URL in its
+       own form for this placement; the underlying photograph is the same
+       one, so the two must not appear in the same card grid. See the
+       note on practiceAreas at the foot of this file. */
+    firmRegistration: {
+      url: "https://images.pexels.com/photos/5673489/pexels-photo-5673489.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      source: "https://www.pexels.com/photo/crop-business-partners-signing-contract-in-office-5673489/",
+      alt: "Business professionals completing firm registration documents",
+      width: 1260,
+      height: 750,
+      altVerified: true
+    },
+
+    /* The source photograph is portrait, and the guide card is 16:9.
+       `objectPosition` pulls the crop slightly above centre so the cheque
+       itself stays in frame after the horizontal crop. */
+    guideChequeBounce: {
+      url: "https://images.pexels.com/photos/6862457/pexels-photo-6862457.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      source: "https://www.pexels.com/photo/6862457/",
+      alt: "Cheque and banking document related to cheque dishonour",
+      objectPosition: "center 45%",
+      width: 1260,
+      height: 750,
+      altVerified: true
+    },
+
+    guideBusiness: {
+      url: "https://images.pexels.com/photos/7821913/pexels-photo-7821913.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      source: "https://www.pexels.com/photo/7821913/",
+      alt: "Business registration and startup legal document signing",
+      objectPosition: "center",
+      width: 1260,
+      height: 750,
+      altVerified: true
     }
   },
 
@@ -185,13 +246,29 @@ window.siteImages = {
     "criminal-law": "criminal",
     "cheque-bounce-recovery": "chequeBounce",
     "property-law": "property",
-    "property-registration": "registration",
+    "property-registration": "propertyRegistration",
     "corporate-law": "corporate",
     "contractual-agreements": "contracts",
     "service-law": "serviceLaw",
     "employment-law": "employmentLaw",
     "income-tax": "tax",
     "gst": "tax",
-    "firm-business-registration": "registration"
+    "firm-business-registration": "firmRegistration"
   }
+
+  /* ---------------------------------------------------------------------
+     KNOWN OVERLAP, left in deliberately
+     ---------------------------------------------------------------------
+     `firmRegistration` and `employmentLaw` are the same photograph
+     (Pexels 5673489) under two records, because that URL was supplied for
+     the firm-registration card. Both cards appear together on
+     /practice-areas/, so that page shows the photograph twice.
+
+     `income-tax` and `gst` likewise share `tax`, which has always been
+     the case.
+
+     To give firm registration a photograph of its own, change
+     "firm-business-registration" above to a new record. Nothing else
+     needs to move.
+     --------------------------------------------------------------------- */
 };

@@ -588,6 +588,36 @@ a.is-pending {
   flex: none;
 }
 
+/* The service-area note that follows the address in the top bar. It is
+   the first thing to go when the bar runs out of room, since the address
+   beside it is the more useful half. */
+.topbar__aside {
+  white-space: nowrap;
+}
+
+@media (max-width: 60em) {
+  .topbar__aside {
+    display: none;
+  }
+}
+
+/* Where the office is, above the call button in the mobile menu. The
+   compact form: the full address is in the footer of the page behind
+   the drawer. */
+.mobile-nav__where {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin: 0 0 var(--space-2xs);
+  font-size: var(--fs-sm);
+  color: var(--color-slate);
+}
+
+.mobile-nav__where svg {
+  color: var(--color-gold);
+  flex: none;
+}
+
 .topbar__links {
   display: flex;
   flex-wrap: wrap;
@@ -3646,6 +3676,19 @@ a.contact-method__value:hover {
   padding: 0;
 }
 
+/* Someone who has landed on a missing page may want a person rather than
+   another link, so the office's own details sit under the navigation. */
+.error-page__contact {
+  margin: var(--space-m) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--color-slate);
+}
+
+.error-page__contact a {
+  color: var(--color-teal);
+  overflow-wrap: anywhere;
+}
+
 .error-page__links a {
   display: inline-flex;
   align-items: center;
@@ -3993,6 +4036,18 @@ a.contact-method__value:hover {
   }
 }
 
+
+/* A short label before each contact line. Telephone and WhatsApp are
+   the same number, so without it the footer reads as a repetition. */
+.footer-contact__label {
+  display: block;
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-soft);
+  margin-top: var(--space-2xs);
+}
 
 /* 30. Reduced motion and print
    ------------------------------------------------------------------ */

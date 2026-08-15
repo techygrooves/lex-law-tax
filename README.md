@@ -657,7 +657,9 @@ Two defects were found in that audit and fixed:
 
 ## Still to do
 
-- Replace the placeholders in `assets/js/site-config.js`
+- ~~Replace the placeholders in `assets/js/site-config.js`~~ — done, bar
+  `formEndpoint`. The firm's telephone, WhatsApp, email, address, postal
+  code and map link are confirmed and resolve across the site
 - Add the three advocate photographs
 - Verify and rewrite the provisional image alt text
 - **Have an advocate read each of the twelve guides**, then name them as

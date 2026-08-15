@@ -37,7 +37,7 @@ window.siteFaqs = {
       items: [
         [
           "How do I arrange a consultation?",
-          "Write to the office with a short description of the matter, or telephone during working hours, and a time will be arranged. The contact details are on the contact page and in the footer of every page of this website. Please arrange a time rather than calling in, so that a period can be set aside to look at the papers properly."
+          "Write to the office with a short description of the matter, or telephone during working hours, and a time will be arranged. The contact details are on the contact page and in the footer of every page of this website. Please fix an appointment rather than calling in without notice, so that enough time can be set aside to go through your papers properly."
         ],
         [
           "What should I bring to a first meeting?",
@@ -49,7 +49,7 @@ window.siteFaqs = {
         ],
         [
           "Does contacting the office create an advocate&ndash;client relationship?",
-          "No. Reading this website, sending an enquiry through it, or having a first discussion does not by itself create an advocate&ndash;client relationship. A relationship arises when the firm has agreed to act in a matter and that has been confirmed between us."
+          "No. Reading this website, sending an enquiry through it, or having a first discussion does not by itself create an advocate&ndash;client relationship. A relationship arises when the firm has agreed to act in a matter and that has been confirmed between the firm and you."
         ],
         [
           "Should I send documents through this website?",

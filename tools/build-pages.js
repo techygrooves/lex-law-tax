@@ -1256,7 +1256,7 @@ ${heroPanel([
 ${sectionHead({
   eyebrow: "Practice areas",
   title: "Integrated Legal and Tax Services",
-  lead: "Litigation, documentation, registration and taxation handled within one practice, so a matter that crosses more than one of them is not split between separate advisers.",
+  lead: "Litigation, documentation, registration and taxation are handled within one practice, so a matter that involves more than one of them is not split between separate advisers.",
   id: "services-title"
 })}
       <div class="grid grid--3 grid--services" data-reveal-group data-reveal-step="70">
@@ -1393,7 +1393,7 @@ ${splitSection("", {
           from Lucknow before the court, tribunal or authority concerned.
         </p>
 ${cityLinks("", HOME_CITIES)}
-        <p class="text-muted">Lucknow is the office; the remaining districts are areas the firm serves.</p>
+        <p class="text-muted">The office is in Lucknow. The other districts are areas the firm serves from it.</p>
         <p class="cluster">${btnSecondary("View All Service Locations", "locations/index.html")}</p>`
 })}
     </div>
@@ -1481,7 +1481,7 @@ ${sectionHead({
 ${sectionHead({
   eyebrow: "Enquiry",
   title: "Send an Enquiry",
-  lead: "Describe the matter briefly and the office will revert. Please do not send confidential documents through this form.",
+  lead: "Describe the matter briefly and the office will reply. Please do not send confidential documents through this form.",
   id: "enquiry-title"
 })}
 
@@ -1560,7 +1560,7 @@ ${PRACTICE_FORM_OPTIONS}
         <p class="eyebrow eyebrow--light">Contact</p>
         <h2 class="section-head__title" id="contact-title">Speak With H.R. Legal Associate</h2>
         <p class="section-head__lead">
-          Describe the matter briefly and the office will revert. Sending an
+          Describe the matter briefly and the office will reply. Sending an
           enquiry does not create an advocate&ndash;client relationship, and
           confidential documents should not be sent through this website.
         </p>
@@ -1628,7 +1628,7 @@ ${splitSection("../", {
 ${sectionHead({
   eyebrow: "Where the firm works",
   title: "Lucknow Base and Uttar Pradesh Coverage",
-  lead: "One office, and matters attended to across the state from it.",
+  lead: "One office in Lucknow, from which matters across the state are handled.",
   id: "base-title"
 })}
       <div class="grid grid--2" data-reveal-group>
@@ -1673,10 +1673,9 @@ ${splitSection("../", {
           assessment.
         </p>
         <p>
-          Because both sides of that work are handled within the same practice,
-          the drafting and the filings can be kept consistent with each other,
-          and a client is not left to carry information between separate
-          advisers.
+          Both sides of that work are handled in the same practice. The drafting
+          and the filings can therefore be kept consistent with each other, and you
+          are not left carrying information between separate advisers.
         </p>`
 })}
     </div>
@@ -1986,9 +1985,9 @@ ${advocateDetails(a)}        </div>
           <h2>Consultation approach</h2>
           <p>
             A first discussion covers what has happened, what is sought and what
-            timelines apply. The papers already available are examined, anything
-            further that is needed is identified, and the available course of
-            action is then set out along with the work it involves.
+            timelines apply. The papers you already have are examined and anything
+            further is identified. The course of action open to you is then set out,
+            along with the work it involves.
           </p>
           <p>
             Advice is given on the facts and documents of the particular matter.
@@ -2732,11 +2731,15 @@ ${lastReviewed()}
 
      - an article is attributed to nobody until an advocate has actually
        been assigned to it. `author` and `reviewedBy` stay
-       {{TO_BE_ASSIGNED}}, the builder omits a withheld name entirely, and
-       the page says in terms that it is pending review;
-     - an article whose reviewStatus is not "approved" carries
+       {{TO_BE_ASSIGNED}} and the builder omits a withheld name entirely,
+       so a "Written by" or "Reviewed by" row, and the matching property in
+       the structured data, appear only for a named person. Approving an
+       article is the firm vouching for the content; it never fills in a
+       name on anyone's behalf;
+     - an article whose reviewStatus is not "approved" says on the page
+       that it is pending review and carries
        <meta name="robots" content="noindex,follow">, so nothing goes into
-       the index before a person has read it;
+       the index before it has been checked;
      - every article carries its own `verify` sentence saying what has to
        be checked against the current law and the facts. It is rendered
        from the data and cannot be omitted by the template.
@@ -2792,7 +2795,12 @@ function reviewBlock(a) {
     rows.push(`        <p class="review-note__row"><span>Reviewed by</span><strong>${a.reviewedBy}</strong></p>`);
   }
 
-  const status = isApproved(a) && !isWithheld(a.reviewedBy)
+  /* The pending line is about the article's status, not about who signed
+     it off. Once the firm has approved an article the line would be false,
+     so it goes; the "Reviewed by" row above still appears only when an
+     advocate has actually been named, which is the claim that needs a
+     person behind it. */
+  const status = isApproved(a)
     ? ""
     : `        <p class="review-note__status">${GUIDES.pendingReviewNote}</p>\n`;
 
@@ -3263,7 +3271,7 @@ files["contact/index.html"] = page({
 ${sectionHead({
   eyebrow: "Get in touch",
   title: "Telephone, WhatsApp or Email",
-  lead: "These reach the office directly and are the quickest routes while the enquiry form is being configured.",
+  lead: "Each of these reaches the office directly, and they are the quickest ways to get a reply.",
   id: "contact-ways"
 })}
       <div class="contact-actions" data-reveal-group data-reveal-step="70">
@@ -3310,8 +3318,8 @@ ${sectionHead({
             <p>Email: <a data-config="email" data-config-role="email" data-pending-label="to be published"><span data-config-slot>to be published</span></a></p>
           </address>
           <p>
-            Please arrange a time before attending, so that a period can be set aside
-            to look at the papers properly.
+            Please arrange a time before visiting, so that enough time can be set
+            aside to go through your papers properly.
           </p>
         </div>
 
@@ -3320,9 +3328,9 @@ ${sectionHead({
             <span class="map-placeholder__icon" aria-hidden="true">${ICON.map(32)}</span>
             <p class="map-placeholder__title">Map</p>
             <p class="map-placeholder__text">
-              The map link is published once the office address has been confirmed.
-              No map is embedded here in the meantime, so that nothing on this page
-              points at a location that has not been verified.
+              The link below opens the office location in Google Maps. No map is
+              embedded in this page, so nothing is loaded from another company's
+              servers unless you choose to open it.
             </p>
             <p><a class="btn btn--secondary" data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Map link to be published">Open in Google Maps</a></p>
           </div>
@@ -3425,8 +3433,8 @@ ${options.map(([v, label]) => `                <option value="${v}">${label}</op
         <p>
           Sending an enquiry does not create an advocate&ndash;client relationship.
           A relationship arises only when the firm has agreed to act in a matter and
-          that has been confirmed between us. Please do not send confidential
-          information or documents through this website.
+          that has been confirmed between the firm and you. Please do not send
+          confidential information or documents through this website.
         </p>
         <p>${arrowLink("Read the full disclaimer", "../disclaimer/index.html")}</p>
       </div>

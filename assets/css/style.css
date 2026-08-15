@@ -4049,6 +4049,247 @@ a.contact-method__value:hover {
   margin-top: var(--space-2xs);
 }
 
+/* --- Homepage: Google Business Profile and enquiry form --- */
+
+/* Two columns: the office particulars on one side, a location card on
+   the other. Both stretch to the same height so the pair reads as one
+   object rather than two stacked blocks. */
+.gbp {
+  display: grid;
+  gap: var(--space-l);
+  align-items: stretch;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+}
+
+.gbp__panel {
+  padding: var(--space-l);
+  background-color: var(--color-white);
+  border: var(--hairline);
+  border-top: 3px solid var(--color-gold);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.gbp__name {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  color: var(--text-heading);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+
+/* The firm's own Google rating, stated as such and linked to the profile
+   below so a reader can check it. No review count, because none was
+   supplied, and no schema markup — see the note in site-config.js. */
+.gbp__rating {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3xs) var(--space-2xs);
+  margin: var(--space-2xs) 0 var(--space-m);
+}
+
+.gbp__stars {
+  display: inline-flex;
+  gap: 1px;
+  color: var(--color-gold);
+}
+
+.gbp__score {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-gold-ink);
+}
+
+.gbp__details {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: var(--space-2xs) var(--space-s);
+  margin: 0 0 var(--space-l);
+  padding-top: var(--space-m);
+  border-top: var(--hairline);
+}
+
+.gbp__details dt {
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+  padding-top: 2px;
+}
+
+.gbp__details dd {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  color: var(--text-body);
+  overflow-wrap: anywhere;
+}
+
+.gbp__details address {
+  font-style: normal;
+}
+
+/* Two by two rather than a flex row: four buttons of unequal label length
+   wrap 3+1 and leave the fourth stranded across the full width. */
+.gbp__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2xs);
+}
+
+.gbp__actions .btn {
+  justify-content: center;
+}
+
+/* The location card. There is no map embed: no third-party frame is
+   loaded anywhere on this site, and the address has to be read rather
+   than rendered. The map-line pattern is the same one the city page
+   heroes use. */
+.gbp__card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: var(--space-l);
+  background-color: var(--color-navy-deep);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  isolation: isolate;
+}
+
+.gbp__lines {
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.09) 0 1px, transparent 1px 3.25rem),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.09) 0 1px, transparent 1px 3.25rem),
+    repeating-linear-gradient(24deg, rgba(216, 195, 154, 0.22) 0 1px, transparent 1px 9rem),
+    repeating-linear-gradient(-63deg, rgba(216, 195, 154, 0.18) 0 1px, transparent 1px 13rem);
+  -webkit-mask-image: radial-gradient(95% 105% at 70% 40%, #000 0%, rgba(0, 0, 0, 0.45) 52%, transparent 92%);
+  mask-image: radial-gradient(95% 105% at 70% 40%, #000 0%, rgba(0, 0, 0, 0.45) 52%, transparent 92%);
+}
+
+.gbp__card-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.gbp__pin {
+  display: inline-flex;
+  color: var(--color-gold-soft);
+}
+
+.gbp__city {
+  font-family: var(--font-heading);
+  font-size: var(--fs-2xl);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-white);
+  margin: var(--space-2xs) 0 0;
+}
+
+.gbp__region {
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-soft);
+  margin: var(--space-3xs) 0 var(--space-m);
+}
+
+.gbp__where {
+  font-size: var(--fs-md);
+  color: var(--color-white);
+  margin: 0 0 var(--space-2xs);
+}
+
+.gbp__note {
+  font-size: var(--fs-sm);
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 var(--space-m);
+  max-width: 34ch;
+}
+
+.gbp__link a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-height: var(--tap);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-gold-soft);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.gbp__link a:hover {
+  border-bottom-color: currentColor;
+}
+
+/* The enquiry form, in a panel so it reads as a distinct thing to do
+   rather than more page. The controls themselves are the site's existing
+   form components, unchanged. */
+.enquiry {
+  padding: var(--space-l);
+  background-color: var(--color-white);
+  border: var(--hairline);
+  border-top: 3px solid var(--color-teal);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.enquiry__form {
+  max-width: none;
+}
+
+.enquiry__note {
+  margin: 0;
+  padding: var(--space-s) var(--space-m);
+  background-color: var(--color-ivory);
+  border-left: 2px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  color: var(--color-slate);
+}
+
+@media (max-width: 60em) {
+  .gbp {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gbp__card {
+    min-height: 16rem;
+  }
+}
+
+@media (max-width: 40em) {
+  .gbp__panel,
+  .gbp__card,
+  .enquiry {
+    padding: var(--space-m);
+  }
+
+  .gbp__details {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3xs);
+  }
+
+  .gbp__details dt {
+    padding-top: var(--space-2xs);
+  }
+
+  .gbp__actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* 30. Reduced motion and print
    ------------------------------------------------------------------ */
 

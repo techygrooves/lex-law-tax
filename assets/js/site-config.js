@@ -68,3 +68,14 @@ window.siteConfig.streetAddress = "Shop No. 4, Opposite Shia P.G. College, Sitap
 /* The same number reaches the office by telephone and on WhatsApp, so
    both are shown in the same readable form. */
 window.siteConfig.whatsappDisplay = window.siteConfig.phoneDisplay;
+
+/* The firm's Google Business Profile. Kept here with the other external
+   links so no page hardcodes it, same as googleMapsUrl. */
+window.siteConfig.googleProfileUrl = "https://share.google/wAlNNfsLw6whbZHPa";
+
+/* The rating shown beside the profile link is the firm's own Google
+   rating. It is displayed as plain text and is deliberately NOT marked up
+   as schema.org AggregateRating: that markup is for ratings a site hosts
+   itself, it requires a review count, and no count has been supplied.
+   Nothing here may be turned into a review, a testimonial or a count. */
+window.siteConfig.googleRating = "5.0";

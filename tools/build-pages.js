@@ -199,7 +199,13 @@ const ICON = {
   compass: (s) => ico('<circle cx="12" cy="12" r="8.5"/><path d="m15 9-1.8 4.2L9 15l1.8-4.2L15 9Z"/>', s || 20),
   key: (s) => ico('<circle cx="8" cy="12" r="3.5"/><path d="M11.5 12H21"/><path d="M17.5 12v3M20 12v2"/>', s || 20),
   receipt: (s) => ico('<path d="M6 3h12v18l-3-1.6-3 1.6-3-1.6L6 21V3Z"/><path d="M9.5 8h5M9.5 12h5"/>', s || 20),
-  alert: (s) => ico('<path d="M12 4.5 2.8 20h18.4L12 4.5Z"/><path d="M12 10v4"/><path d="M12 17h.01"/>', s || 16)
+  alert: (s) => ico('<path d="M12 4.5 2.8 20h18.4L12 4.5Z"/><path d="M12 10v4"/><path d="M12 17h.01"/>', s || 16),
+  /* Filled, unlike the rest of the set, because a hollow star reads as an
+     unearned one. Used only for the firm's Google rating. */
+  star: (s) =>
+    '<svg width="' + (s || 18) + '" height="' + (s || 18) +
+    '" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
+    '<path d="m12 3.2 2.6 5.6 6.1.8-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.6l6.1-.8L12 3.2Z"/></svg>'
 };
 
 /* --- Legal guides ---------------------------------------------------
@@ -1115,6 +1121,15 @@ HOME_SERVICES.forEach(([name, key, href]) => {
   }
 });
 
+/* The twelve practice areas plus Other, for the homepage enquiry form.
+   Taken from PRACTICE_AREAS so the form cannot list an area the site
+   does not have. */
+const PRACTICE_FORM_OPTIONS = PRACTICE_AREAS
+  .map(([, name]) => name)
+  .concat("Other")
+  .map((name) => '                <option value="' + name.replace(/&amp;/g, "and") + '">' + name + "</option>")
+  .join("\n");
+
 const HOME_CITIES = TIER_1;
 
 files["index.html"] = page({
@@ -1391,6 +1406,146 @@ ${HOME_GUIDES.map((g) => guideCard("", g)).join("\n")}
     </div>
   </section>
 
+
+  <section class="section section--soft" aria-labelledby="gbp-title">
+    <div class="container">
+${sectionHead({
+  eyebrow: "The office",
+  title: "Find H.R. Legal Associate in Lucknow",
+  lead: "One office, on Sitapur Road. Everything below reaches it directly.",
+  id: "gbp-title"
+})}
+
+      <div class="gbp">
+
+        <div class="gbp__panel" data-reveal>
+          <p class="gbp__name" data-firm-name>${FIRM}</p>
+
+          <p class="gbp__rating">
+            <span class="gbp__stars" aria-hidden="true">${ICON.star(17).repeat(5)}</span>
+            <span class="gbp__score"><span data-config="googleRating">5.0</span> on Google</span>
+          </p>
+
+          <dl class="gbp__details">
+            <dt>Address</dt>
+            <dd>
+              <address class="is-pending" data-config="address" data-config-role="lines" data-pending-label="Office address to be published"></address>
+            </dd>
+
+            <dt>Phone</dt>
+            <dd><a data-config="phone" data-config-role="tel" data-pending-label="Telephone to be published"><span data-config-slot>Telephone to be published</span></a></dd>
+
+            <dt>Email</dt>
+            <dd><a data-config="email" data-config-role="email" data-pending-label="Email to be published"><span data-config-slot>Email to be published</span></a></dd>
+          </dl>
+
+          <div class="gbp__actions">
+            <a class="btn btn--primary" data-config="googleProfileUrl" data-config-role="url" data-config-text="keep" data-pending-label="Google profile to be published">View Google Profile</a>
+            <a class="btn btn--secondary" data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Directions to be published">Get Directions</a>
+            <a class="btn btn--secondary" data-config="phone" data-config-role="tel" data-config-text="keep" data-pending-label="Telephone to be published">${ICON.phone()}<span>Call Office</span></a>
+            <a class="btn btn--secondary" data-config="whatsapp" data-config-role="whatsapp" data-config-text="keep" data-pending-label="WhatsApp to be published">${ICON.chat()}<span>WhatsApp</span></a>
+          </div>
+        </div>
+
+        <div class="gbp__card" data-reveal>
+          <span class="gbp__lines" aria-hidden="true"></span>
+          <div class="gbp__card-inner">
+            <span class="gbp__pin" aria-hidden="true">${ICON.pin(22)}</span>
+            <p class="gbp__city">Lucknow</p>
+            <p class="gbp__region">Uttar Pradesh</p>
+            <p class="gbp__where" data-config="addressShort" data-pending-label="Office address to be published">Office address to be published</p>
+            <p class="gbp__note">
+              The firm has one office and it is here. No branch office exists
+              anywhere else.
+            </p>
+            <p class="gbp__link">
+              <a data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Map link to be published">Open in Google Maps ${ICON.arrow()}</a>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="enquiry" aria-labelledby="enquiry-title">
+    <div class="container container--reading">
+${sectionHead({
+  eyebrow: "Enquiry",
+  title: "Send an Enquiry",
+  lead: "Describe the matter briefly and the office will revert. Please do not send confidential documents through this form.",
+  id: "enquiry-title"
+})}
+
+      <div class="enquiry" data-reveal>
+        <form class="form enquiry__form" action="https://formspree.io/f/xzepazjn" method="POST">
+
+          <input type="hidden" name="_subject" value="New enquiry from lexlawandtax.com">
+          <p class="visually-hidden" aria-hidden="true">
+            <label for="enquiry-home-company">Leave this field empty</label>
+            <input id="enquiry-home-company" type="text" name="_gotcha" tabindex="-1" autocomplete="off">
+          </p>
+
+          <div class="field">
+            <label for="home-name">Full Name <span class="required" aria-hidden="true">*</span></label>
+            <input id="home-name" name="Full Name" type="text" autocomplete="name" required>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="home-phone">Phone Number <span class="required" aria-hidden="true">*</span></label>
+              <input id="home-phone" name="Phone Number" type="tel" autocomplete="tel" required>
+            </div>
+            <div class="field">
+              <label for="home-email">Email</label>
+              <input id="home-email" name="Email" type="email" autocomplete="email">
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="home-city">City</label>
+              <input id="home-city" name="City" type="text" autocomplete="address-level2">
+            </div>
+            <div class="field">
+              <label for="home-area">Practice Area <span class="required" aria-hidden="true">*</span></label>
+              <select id="home-area" name="Practice Area" required>
+                <option value="">Please select</option>
+${PRACTICE_FORM_OPTIONS}
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="home-message">Brief Description of Matter <span class="required" aria-hidden="true">*</span></label>
+            <textarea id="home-message" name="Brief Description of Matter" rows="6" aria-describedby="home-message-hint" required></textarea>
+            <span class="hint" id="home-message-hint">A few sentences is enough. Please do not send confidential documents or attachments.</span>
+          </div>
+
+          <fieldset class="field field--group">
+            <legend>Preferred Contact Method</legend>
+            <div class="radio-row">
+              <label class="choice"><input type="radio" name="Preferred Contact Method" value="Call" checked><span>Call</span></label>
+              <label class="choice"><input type="radio" name="Preferred Contact Method" value="WhatsApp"><span>WhatsApp</span></label>
+              <label class="choice"><input type="radio" name="Preferred Contact Method" value="Email"><span>Email</span></label>
+            </div>
+          </fieldset>
+
+          <p class="enquiry__note">
+            Sending this enquiry does not create an advocate&ndash;client
+            relationship, and this website is not an advertisement or a
+            solicitation of work. Your details are used only to respond to it.
+            <a href="privacy-policy/index.html">Privacy policy</a>.
+          </p>
+
+          <div>
+            <button class="btn btn--primary" type="submit">Submit Enquiry</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <section class="cta-band" aria-labelledby="contact-title">
     <div class="container cta-band__body">
       <div class="section-head" data-reveal>
@@ -1404,7 +1559,7 @@ ${HOME_GUIDES.map((g) => guideCard("", g)).join("\n")}
       </div>
 ${contactPanel("")}
       <div class="cta-band__actions" data-reveal>
-        <a class="btn btn--inverse" href="contact/index.html">Go to the contact form</a>
+        <a class="btn btn--inverse" href="#enquiry">Send an enquiry</a>
         <a class="btn btn--outline-light" data-config="phone" data-config-role="tel" data-config-text="keep" data-pending-label="Telephone to be published">${ICON.phone()}<span>Call the office</span></a>
       </div>
     </div>
@@ -3468,18 +3623,30 @@ files["privacy-policy/index.html"] = page({
 
       <h2 id="forms">Information submitted through forms</h2>
       <p>
-        The contact page carries an enquiry form asking for a name, a telephone
-        number, an email address, a city, a service category, a brief description of
-        the matter and a preferred method of contact, together with an acknowledgement
-        that must be ticked before the form can be sent.
+        There are two enquiry forms on this website, and they behave differently.
       </p>
       <p>
-        <strong>The form is not connected to any destination at present.</strong> Its
-        submission endpoint is an unresolved placeholder, the form is disabled in the
-        browser, and nothing typed into it is transmitted, received or stored
-        anywhere. A notice on the form says so. When an endpoint is configured, this
-        policy will be updated to describe where submissions go before the form is
-        enabled.
+        <strong>The form on the home page is live.</strong> It asks for a name, a
+        telephone number, an email address, a city, a practice area, a brief
+        description of the matter and a preferred method of contact. When it is
+        submitted, those details are sent to <strong>Formspree</strong>, a
+        third-party form-processing service, which passes them on to the firm by
+        email. Formspree therefore receives everything typed into that form, and
+        what it does with the submission while handling it is governed by its own
+        terms and privacy policy rather than by this one. The firm uses the details
+        only to respond to the enquiry.
+      </p>
+      <p>
+        <strong>The form on the contact page is not connected to any destination.</strong>
+        Its submission endpoint is an unresolved placeholder, the form is disabled in
+        the browser, and nothing typed into it is transmitted, received or stored
+        anywhere. A notice on the form says so.
+      </p>
+      <p>
+        Please do not send confidential information or documents through either
+        form. Sending an enquiry does not create an advocate&ndash;client
+        relationship, and a communication made before such a relationship exists is
+        not protected as privileged.
       </p>
 
       <h2 id="contact-information">Contact information you send directly</h2>
@@ -3566,10 +3733,10 @@ files["privacy-policy/index.html"] = page({
 
       <h2 id="retention">Retention</h2>
       <p>
-        Information you send is kept for as long as is necessary for the purpose for
-        which you sent it &mdash; to respond to the enquiry, and where the firm acts
-        in a matter, for as long as the matter and the firm's professional obligations
-        require.
+        Information you send, whether through the home-page form or directly, is
+        kept for as long as is necessary for the purpose for which you sent it
+        &mdash; to respond to the enquiry, and where the firm acts in a matter, for
+        as long as the matter and the firm's professional obligations require.
       </p>
       <p>
         <strong>No fixed retention period is stated here</strong>, because one has not

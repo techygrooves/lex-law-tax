@@ -7,4 +7,8 @@ Allow: /
 # Internal design-system reference, not part of the public site
 Disallow: /components/
 
+# Authoring aids. They are not part of the published site and need not be
+# uploaded at all; excluded here in case the repository is deployed whole.
+Disallow: /tools/
+
 Sitemap: https://lexlawandtax.com/sitemap.xml

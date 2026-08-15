@@ -589,13 +589,18 @@ served by the silhouette placeholder until real photographs are supplied.
 ### Prohibited phrases
 
 A test scans all 102 pages and every source, data, config and documentation
-file for: *best lawyer*, *top lawyer*, *number one lawyer*, *guaranteed
-result*, *guaranteed bail*, *guaranteed registration*, *100% success*, *member
-of Bar Council of India*, *Advocate-on-Record*, *advocate on record* and *AOR*.
-None appears.
+file for: `best lawyer`, `top lawyer`, `number one lawyer`, `guaranteed
+result`, `guaranteed bail`, `guaranteed registration`, `100% success`,
+`member of Bar Council of India`, `Advocate-on-Record`, `advocate on record`
+and `AOR`. None appears in prose anywhere.
 
-One phrase was removed in this pass: a civil-litigation FAQ said appearance is
-"through the advocate on record", meaning simply the advocate conducting the
+The list above is written in backticks precisely so the scanner can tell a
+documented rule from a breach of it: code spans in Markdown are skipped, plain
+prose is not.
+
+One phrase was removed in an earlier pass: a civil-litigation FAQ said
+appearance is through `advocate on record`, meaning simply the advocate
+conducting the
 matter. It reads as the Supreme Court designation to anyone scanning, so it now
 says "through the advocate conducting the matter".
 
@@ -632,6 +637,23 @@ The disclaimer acknowledgement opens automatically on the homepage only, and
 records acceptance in `localStorage` under `hrla.disclaimer.accepted`. *Exit
 Website* closes the tab where the browser permits it and otherwise navigates to
 a blank page. The footer link reopens it on any page.
+
+## Final audit
+
+`FINAL-AUDIT.md` records the state of the site as built: what is complete,
+what is still missing, and the ordered list of what has to happen before
+launch. It is the file to read first if you are the one publishing this.
+
+Two defects were found in that audit and fixed:
+
+- at 320px the header truncated the firm's own name to "H.R. Le…", because
+  an ellipsis safety net added earlier to prevent overflow was doing its job
+  too literally. The name now wraps to two lines below 36em, which cannot
+  overflow and never abbreviates the firm;
+- the three four-service hubs stranded a single card as 3+1 at 1024px. Hub
+  grids now take their column count from the number of services — four
+  across when the count divides by four, three otherwise — so no breakpoint
+  strands a card.
 
 ## Still to do
 

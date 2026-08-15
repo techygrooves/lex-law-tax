@@ -3199,22 +3199,35 @@ a.contact-method__value:hover {
   color: var(--color-gold-ink);
 }
 
-/* Seven cards per group on the locations index. An auto-fit grid passes
-   through a three-across band on the way down, which leaves the seventh
-   card alone at the end of a row; explicit counts step 4 -> 2 -> 1 and
-   skip it. Two-across ends 2+2+2+1, which reads as a short last row
-   rather than a stray card. */
+/* Fixed-column grids, for a card count that an auto-fit grid would strand.
+   Auto-fit steps 4 -> 3 -> 2 -> 1 as the viewport narrows, and for some
+   counts one of those bands leaves a single card alone at the end of a
+   row: seven cards go 3+3+1, four go 3+1, nine go 4+4+1. These step
+   4 -> 2 -> 1 or 3 -> 2 -> 1 instead, skipping the band that strands one.
+
+   The generator picks between them from the number of cards. A last row
+   of one in a two-column grid is left alone: it reads as a short row,
+   not as a stray card. */
+.grid--fixed-3,
+.grid--fixed-4,
 .grid--cities {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 @media (min-width: 64em) {
+  .grid--fixed-4,
   .grid--cities {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .grid--fixed-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 40em) {
+  .grid--fixed-3,
+  .grid--fixed-4,
   .grid--cities {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -3941,6 +3954,23 @@ a.contact-method__value:hover {
 @media (max-width: 36em) {
   .logo__descriptor {
     display: none;
+  }
+
+  /* Below this width the header cannot give the firm's name a single
+     line, and the ellipsis safety net set at 48em would truncate it to
+     "H.R. Le…". A law firm's own name is the one thing on the page that
+     must never be abbreviated, so here it wraps instead. Wrapping cannot
+     overflow, which is what the safety net was guarding against. */
+  .logo__name {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .logo__text {
+    min-width: 0;
   }
 
   .hero__panel {

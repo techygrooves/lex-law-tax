@@ -79,3 +79,13 @@ window.siteConfig.googleProfileUrl = "https://share.google/wAlNNfsLw6whbZHPa";
    itself, it requires a review count, and no count has been supplied.
    Nothing here may be turned into a review, a testimonial or a count. */
 window.siteConfig.googleRating = "5.0";
+
+/* Google Analytics 4 measurement ID. The tag itself is written into the
+   head of every page by tools/build-pages.js; this is here so the ID is
+   recorded in one place with the rest of the account details, and so
+   site.js can tell whether measurement is meant to be on at all.
+
+   Setting this to "" turns the whole thing off: no tag in the head, no
+   events sent, and the privacy policy's analytics section stops applying.
+   Anything measured here is described in /privacy-policy/. */
+window.siteConfig.analyticsId = "G-WESK6RHJFG";

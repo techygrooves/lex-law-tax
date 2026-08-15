@@ -808,6 +808,103 @@
   }
 
   /* ---------------------------------------------------------------
+     Analytics events
+     ---------------------------------------------------------------
+     Page views are sent by the tag in the head without any help from
+     here. This adds the things a visitor does that a page view cannot
+     show: reaching for the telephone, WhatsApp or email, opening the
+     Google profile or directions, and starting or sending the enquiry
+     form.
+
+     One delegated listener on the document, rather than a listener per
+     link. The contact links are written by initConfig after this runs and
+     several of them are inside menus and panels, so binding to the
+     elements themselves would miss whatever did not exist yet.
+
+     Everything here is best-effort. If the tag was never emitted, or the
+     remote script could not be reached — which is always the case when
+     the site is opened from the filesystem — send() does nothing and the
+     click proceeds exactly as it would otherwise. Measurement must never
+     be the reason a telephone link fails to work.                       */
+
+  function initAnalytics() {
+    function send(name, params) {
+      if (typeof window.gtag !== "function") return;
+      try {
+        window.gtag("event", name, params || {});
+      } catch (err) {
+        /* Never let measurement break the interaction it is measuring. */
+      }
+    }
+
+    /* Which link was clicked, if any. Uses closest so a click on the icon
+       or the label inside a button still reports the link itself. */
+    function linkFrom(target) {
+      return target && target.closest ? target.closest("a[href]") : null;
+    }
+
+    function describe(link) {
+      var label = (link.textContent || "").replace(/\s+/g, " ").trim();
+      return {
+        link_url: link.getAttribute("href") || "",
+        link_text: label.slice(0, 100),
+        page_path: location.pathname
+      };
+    }
+
+    document.addEventListener("click", function (event) {
+      var link = linkFrom(event.target);
+      if (!link) return;
+
+      var href = link.getAttribute("href") || "";
+      var key = link.getAttribute("data-config") || "";
+      var info = describe(link);
+
+      if (href.indexOf("tel:") === 0) {
+        info.method = "phone";
+        send("contact_click", info);
+        send("phone_click", info);
+      } else if (/^https?:\/\/(?:www\.)?wa\.me\//i.test(href) || key === "whatsapp") {
+        info.method = "whatsapp";
+        send("contact_click", info);
+        send("whatsapp_click", info);
+      } else if (href.indexOf("mailto:") === 0) {
+        info.method = "email";
+        send("contact_click", info);
+        send("email_click", info);
+      } else if (key === "googleProfileUrl") {
+        send("google_profile_click", info);
+      } else if (key === "googleMapsUrl") {
+        send("directions_click", info);
+      }
+    }, true);
+
+    /* The enquiry form. form_start fires once, the first time the visitor
+       types into or chooses anything in it, which is the "did anyone begin
+       filling this in" number. generate_lead fires when it is actually
+       submitted — that is a submit listener rather than a click one, so a
+       press that the browser rejects for a missing required field is not
+       counted as a lead. */
+    $$("form").forEach(function (form) {
+      if (form.getAttribute("data-form") === "enquiry" && form.hasAttribute("data-form-state")) return;
+
+      var started = false;
+      var name = form.className.indexOf("enquiry__form") > -1 ? "enquiry" : "form";
+
+      form.addEventListener("input", function () {
+        if (started) return;
+        started = true;
+        send("form_start", { form_name: name, page_path: location.pathname });
+      });
+
+      form.addEventListener("submit", function () {
+        send("generate_lead", { form_name: name, page_path: location.pathname });
+        send("form_submit", { form_name: name, page_path: location.pathname });
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------
      Guide category filter
      ---------------------------------------------------------------
      Progressive enhancement over a list that is already complete in the
@@ -917,6 +1014,7 @@
     initDisclaimerGate();
     initStructuredData();
     initForms();
+    initAnalytics();
     initGuideFilters();
   }
 

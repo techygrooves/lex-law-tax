@@ -65,6 +65,14 @@ const LOCATIONS = loadData("src/data/locations.js", "siteLocations");
 const GUIDES = loadData("src/data/guides.js", "siteGuides");
 const FAQS = loadData("src/data/faqs.js", "siteFaqs");
 
+/* Read from the same file the browser reads, so the measurement ID is
+   written down once. Empty or missing means no tag is emitted at all. */
+const SITE_CONFIG = loadData("assets/js/site-config.js", "siteConfig");
+const ANALYTICS_ID = String(SITE_CONFIG.analyticsId || "").trim();
+if (ANALYTICS_ID && !/^G-[A-Z0-9]+$/.test(ANALYTICS_ID)) {
+  throw new Error("analyticsId does not look like a GA4 measurement ID: " + ANALYTICS_ID);
+}
+
 /* Both content files use the same page model, so the renderer treats
    them as one list. The coverage statement and the review date are
    site-wide and come from the legal-services file. */
@@ -954,6 +962,31 @@ const CONFIG_TOKENS = {
 /* PAGE SHELL                                                          */
 /* ================================================================== */
 
+/* Google Analytics 4, on every page or on none of them.
+
+   The inline half defines gtag() and the dataLayer array synchronously, so
+   a call to gtag() is safe from the moment this element is parsed. That
+   matters here: the remote half is async and cannot be reached at all when
+   the site is opened from the filesystem, which has been a requirement
+   since the first stage. When it fails, calls simply queue in dataLayer and
+   nothing throws — no page error, no broken behaviour, no measurement.
+
+   What is collected and by whom is set out in /privacy-policy/. If this is
+   ever removed, that section has to be corrected in the same change. */
+function analyticsTag() {
+  if (!ANALYTICS_ID) return "";
+  return `
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_ID}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${ANALYTICS_ID}');
+  </script>
+`;
+}
+
 function page(o) {
   const P = "../".repeat(o.depth);
   const robots = o.noindex ? '  <meta name="robots" content="noindex,follow">\n' : "";
@@ -1054,7 +1087,7 @@ ${imgPreconnect}  <link rel="preload" as="style" href="${attr(FONT_CSS)}">
   <script src="${P}assets/js/site-config.js" defer></script>
   <script src="${P}assets/js/image-data.js" defer></script>
   <script src="${P}assets/js/site.min.js" defer></script>
-${structuredData}</head>
+${analyticsTag()}${structuredData}</head>
 <body>
 
 ${skipLink()}
@@ -3690,21 +3723,47 @@ files["privacy-policy/index.html"] = page({
         operating and securing the site.
       </p>
       <p>
-        <strong>No analytics, tracking, advertising or profiling script is loaded by
-        this website.</strong> There is no analytics account, no tag manager, no pixel
-        and no third-party advertising code in its pages. If that changes, this policy
-        will be updated to say what is being collected and by whom.
+        <strong>This website uses Google Analytics.</strong> A measurement script
+        supplied by Google is loaded on every page, and it reports to Google, on the
+        firm's behalf, which pages are opened and how the site is used. Google
+        receives your IP address, the page you are on, the page that referred you,
+        and information about your browser and device. Google processes that
+        information under its own terms and privacy policy rather than under this
+        one, and the firm sees only the aggregated reports Google produces from it.
+      </p>
+      <p>
+        Alongside page views, the following actions are counted so the firm knows
+        which ways of getting in touch people actually use: clicking a telephone
+        number, a WhatsApp link or an email address; opening the firm's Google
+        Business Profile or the directions link; and starting or sending the
+        enquiry form on the home page. What is recorded is that the action happened
+        and on which page, not what you typed. The contents of the enquiry form are
+        never sent to Google.
+      </p>
+      <p>
+        There is no advertising code, no advertising pixel and no profiling for
+        advertising purposes on this website, and nothing collected here is sold or
+        used to build a profile of you.
       </p>
 
       <h2 id="cookies">Cookies and browser storage</h2>
       <p>
-        This website sets no cookies of its own, and it sets no cookie for tracking,
-        advertising or measurement.
+        Google Analytics sets cookies in your browser so that repeat visits from the
+        same browser can be recognised and counted as one visitor rather than many.
+        Those cookies are used for measurement. They are not used for advertising,
+        and the firm sets no cookie of its own for any purpose.
       </p>
       <p>
-        It does use your browser's local storage for a single purpose, described in
-        the next section. Local storage stays in your browser; it is not transmitted
-        to the firm or to anyone else, and it is not readable by other websites.
+        You can refuse or delete them in your browser's settings, or install
+        Google's opt-out add-on, and the site will continue to work normally.
+        Browsers that send a Do Not Track signal, or that block third-party
+        measurement scripts by default, will simply not be counted.
+      </p>
+      <p>
+        Separately from those cookies, this website uses your browser's local storage
+        for a single purpose, described in the next section. Local storage stays in
+        your browser; it is not transmitted to the firm or to anyone else, and it is
+        not readable by other websites.
       </p>
 
       <h2 id="acknowledgement">The disclaimer acknowledgement</h2>
@@ -3780,7 +3839,8 @@ files["privacy-policy/index.html"] = page({
         <li>You can use the site without submitting anything. Nothing on it requires you to identify yourself.</li>
         <li>You can contact the office by telephone instead of in writing, if you prefer not to send anything electronically.</li>
         <li>You can clear the acknowledgement entry at any time by clearing your browser's site data for this site.</li>
-        <li>You can block third-party requests in your browser; the site remains readable without the photographs and the web fonts.</li>
+        <li>You can block third-party requests in your browser; the site remains readable without the photographs and the web fonts, and blocking them also stops the analytics script from loading.</li>
+        <li>You can refuse or delete the analytics cookies in your browser's settings, or install Google's opt-out add-on, without affecting how the site works.</li>
         <li>You can ask that information you have sent be corrected or deleted, as described above.</li>
       </ul>
 

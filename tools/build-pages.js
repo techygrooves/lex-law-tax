@@ -243,7 +243,7 @@ const skipLink = () =>
 
 const topbar = () => `<div class="topbar">
   <div class="container topbar__inner">
-    <p class="topbar__location">${ICON.pin(14)}<span>Lucknow, Uttar Pradesh &middot; matters across Uttar Pradesh</span></p>
+    <p class="topbar__location">${ICON.pin(14)}<span data-config="addressShort" data-pending-label="Lucknow, Uttar Pradesh">Lucknow, Uttar Pradesh</span><span class="topbar__aside"> &middot; matters across Uttar Pradesh</span></p>
     <ul class="topbar__links">
       <li><a data-config="phone" data-config-role="tel" data-pending-label="Telephone to be published">${ICON.phone(14)}<span data-config-slot>Telephone to be published</span></a></li>
       <li><a data-config="email" data-config-role="email" data-pending-label="Email to be published">${ICON.mail(14)}<span data-config-slot>Email to be published</span></a></li>
@@ -388,6 +388,7 @@ ${items}
   </div>
 
   <div class="mobile-nav__foot">
+    <p class="mobile-nav__where">${ICON.pin(14)}<span data-config="addressShort" data-pending-label="Office address to be published">Office address to be published</span></p>
     <a class="btn btn--secondary btn--block" data-config="phone" data-config-role="tel" data-config-text="keep" data-pending-label="Telephone to be published">${ICON.phone()}<span>Call the office</span></a>
     <a class="btn btn--primary btn--block" href="${P}contact/index.html">Request a consultation</a>
   </div>
@@ -771,7 +772,7 @@ function contactPanel(P) {
           <span class="contact-method__icon">${ICON.pin(20)}</span>
           <span>
             <span class="contact-method__label">Lucknow office</span>
-            <span class="contact-method__value" data-config="address" data-pending-label="Office address to be published">Office address to be published</span>
+            <span class="contact-method__value" data-config="address" data-config-role="lines" data-pending-label="Office address to be published">Office address to be published</span>
           </span>
         </li>
       </ul>`;
@@ -842,10 +843,10 @@ ${cities}
       <div class="footer-contact">
         <h2 class="footer-heading">Office</h2>
         <address>
-          <p class="is-pending" data-config="address" data-pending-label="Office address to be published"></p>
-          <p><a data-config="phone" data-config-role="tel" data-pending-label="Telephone to be published"><span data-config-slot>Telephone to be published</span></a></p>
-          <p><a data-config="whatsapp" data-config-role="whatsapp" data-pending-label="WhatsApp to be published"><span data-config-slot>WhatsApp to be published</span></a></p>
-          <p><a data-config="email" data-config-role="email" data-pending-label="Email to be published"><span data-config-slot>Email to be published</span></a></p>
+          <p class="is-pending" data-config="address" data-config-role="lines" data-pending-label="Office address to be published"></p>
+          <p><span class="footer-contact__label">Telephone</span><a data-config="phone" data-config-role="tel" data-pending-label="to be published"><span data-config-slot>to be published</span></a></p>
+          <p><span class="footer-contact__label">WhatsApp</span><a data-config="whatsapp" data-config-role="whatsapp" data-pending-label="to be published"><span data-config-slot>to be published</span></a></p>
+          <p><span class="footer-contact__label">Email</span><a data-config="email" data-config-role="email" data-pending-label="to be published"><span data-config-slot>to be published</span></a></p>
           <p><a data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Map link to be published">View on Google Maps</a></p>
           <p><a href="${P}contact/index.html">Contact form</a></p>
         </address>
@@ -927,6 +928,19 @@ const PREP_NOTE = `      <div class="notice" data-reveal>
         <p>Detailed content for this page is being prepared and will be published shortly.</p>
       </div>`;
 
+/* The placeholders site.js can resolve, mirrored from PLACEHOLDER_KEYS
+   in assets/js/site.js. The check below reads this, and a test asserts
+   the two lists match. */
+const CONFIG_TOKENS = {
+  PHONE_NUMBER: "phone",
+  WHATSAPP_NUMBER: "whatsapp",
+  EMAIL_ADDRESS: "email",
+  OFFICE_ADDRESS: "address",
+  STREET_ADDRESS: "streetAddress",
+  POSTAL_CODE: "postalCode",
+  GOOGLE_MAPS_URL: "googleMapsUrl"
+};
+
 /* ================================================================== */
 /* PAGE SHELL                                                          */
 /* ================================================================== */
@@ -949,6 +963,27 @@ function page(o) {
      filled in, and drops any property still unresolved so the markup is
      never published claiming a placeholder is a telephone number. */
   const ldBlocks = o.jsonLd ? [].concat(o.jsonLd) : [];
+
+  /* Every {{TOKEN}} in the structured data has to be one site.js knows
+     how to resolve. An unregistered token is not an error at runtime —
+     site.js reads it as unresolved and DELETES the property — so the
+     page quietly loses a telephone number instead of failing. That is
+     exactly what {{PHONE}} and {{EMAIL}} did on the Lucknow page until
+     real details arrived and made it visible. Caught at build time
+     instead. */
+  ldBlocks.forEach((block) => {
+    for (const token of JSON.stringify(block).match(/\{\{[A-Z0-9_]+\}\}/g) || []) {
+      const key = token.slice(2, -2);
+      if (!CONFIG_TOKENS[key]) {
+        throw new Error(
+          "Unknown placeholder " + token + " in the structured data on " +
+          (o.canonical || o.url || "a page") +
+          ". site.js would delete the property. Known tokens: " +
+          Object.keys(CONFIG_TOKENS).join(", ")
+        );
+      }
+    }
+  });
   const structuredData = ldBlocks.length
     ? ldBlocks
         .map(
@@ -1108,9 +1143,10 @@ files["index.html"] = page({
     email: "{{EMAIL_ADDRESS}}",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "{{OFFICE_ADDRESS}}",
+      streetAddress: "{{STREET_ADDRESS}}",
       addressLocality: "Lucknow",
       addressRegion: "Uttar Pradesh",
+      postalCode: "{{POSTAL_CODE}}",
       addressCountry: "IN"
     },
     /* No sameAs: the firm has no verified profile anywhere else, and a
@@ -1141,9 +1177,10 @@ files["index.html"] = page({
     hasMap: "{{GOOGLE_MAPS_URL}}",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "{{OFFICE_ADDRESS}}",
+      streetAddress: "{{STREET_ADDRESS}}",
       addressLocality: "Lucknow",
       addressRegion: "Uttar Pradesh",
+      postalCode: "{{POSTAL_CODE}}",
       addressCountry: "IN"
     },
     areaServed: [
@@ -1439,7 +1476,7 @@ ${sectionHead({
             branch office anywhere else, and none is described on this website.
           </p>
           <address class="stack">
-            <p class="is-pending" data-config="address" data-pending-label="Office address to be published"></p>
+            <p class="is-pending" data-config="address" data-config-role="lines" data-pending-label="Office address to be published"></p>
             <p><a data-config="phone" data-config-role="tel" data-pending-label="Telephone to be published"><span data-config-slot>Telephone to be published</span></a></p>
           </address>
         </div>
@@ -2195,7 +2232,7 @@ function officeStatement(P, city) {
             represents one.
           </p>
           <address class="stack">
-            <p class="is-pending" data-config="address" data-pending-label="Office address to be published"></p>
+            <p class="is-pending" data-config="address" data-config-role="lines" data-pending-label="Office address to be published"></p>
             <p><a data-config="phone" data-config-role="tel" data-pending-label="Telephone to be published"><span data-config-slot>Telephone to be published</span></a></p>
             <p><a data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Map link to be published">View on Google Maps</a></p>
           </address>
@@ -2261,8 +2298,8 @@ ${relatedLinks(P, area.links)}
           "@id": DOMAIN + "/#practice",
           name: FIRM,
           url: DOMAIN + "/",
-          telephone: "{{PHONE}}",
-          email: "{{EMAIL}}",
+          telephone: "{{PHONE_NUMBER}}",
+          email: "{{EMAIL_ADDRESS}}",
           hasMap: "{{GOOGLE_MAPS_URL}}",
           address: {
             "@type": "PostalAddress",
@@ -2479,7 +2516,7 @@ ${splitSection("../", {
           none carries a local address or a local telephone number.
         </p>
         <address class="stack">
-          <p class="is-pending" data-config="address" data-pending-label="Office address to be published"></p>
+          <p class="is-pending" data-config="address" data-config-role="lines" data-pending-label="Office address to be published"></p>
           <p><a data-config="phone" data-config-role="tel" data-pending-label="Telephone to be published"><span data-config-slot>Telephone to be published</span></a></p>
           <p><a data-config="googleMapsUrl" data-config-role="url" data-config-text="keep" data-pending-label="Map link to be published">View on Google Maps</a></p>
         </address>
@@ -3104,7 +3141,7 @@ ${sectionHead({
             conducted from here before the court, tribunal or authority concerned.
           </p>
           <address class="stack">
-            <p class="is-pending" data-config="address" data-pending-label="Office address to be published"></p>
+            <p class="is-pending" data-config="address" data-config-role="lines" data-pending-label="Office address to be published"></p>
             <p>Telephone: <a data-config="phone" data-config-role="tel" data-pending-label="to be published"><span data-config-slot>to be published</span></a></p>
             <p>WhatsApp: <a data-config="whatsapp" data-config-role="whatsapp" data-pending-label="to be published"><span data-config-slot>to be published</span></a></p>
             <p>Email: <a data-config="email" data-config-role="email" data-pending-label="to be published"><span data-config-slot>to be published</span></a></p>
@@ -3597,6 +3634,12 @@ files["404.html"] = page({
         <ul class="error-page__links">
 ${NAV.map(([, label, href]) => `          <li><a href="${href}">${label}</a></li>`).join("\n")}
         </ul>
+        <p class="error-page__contact">
+          Or reach the office directly:
+          <a data-config="phone" data-config-role="tel" data-pending-label="telephone to be published"><span data-config-slot>telephone to be published</span></a>
+          &middot;
+          <a data-config="email" data-config-role="email" data-pending-label="email to be published"><span data-config-slot>email to be published</span></a>
+        </p>
       </div>
     </div>
   </section>`

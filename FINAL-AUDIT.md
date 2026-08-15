@@ -79,19 +79,22 @@ unlinked and disallowed in `robots.txt`).
 
 ### Firm contact details — `assets/js/site-config.js`
 
+**The firm's contact details are confirmed and in place.** One value is
+still outstanding:
+
 | Key | Value | Used by |
 | --- | --- | --- |
-| `phone` | `{{PHONE_NUMBER}}` | topbar, Call button, contact page, footer, every contact block, `Organization` and `LegalService` schema |
-| `whatsapp` | `{{WHATSAPP_NUMBER}}` | contact page, footer |
-| `email` | `{{EMAIL_ADDRESS}}` | contact page, footer, disclaimer and privacy contact lines, schema |
-| `address` | `{{OFFICE_ADDRESS}}` | Lucknow page, contact page, locations index, footer, `PostalAddress` |
-| `googleMapsUrl` | `{{GOOGLE_MAPS_URL}}` | the map panel on the contact, Lucknow and locations pages |
 | `formEndpoint` | `{{FORM_ENDPOINT}}` | the enquiry form (see §7) |
 
-Until each is replaced, `site.js` renders a neutral "to be published"
-label with an inert link, and **deletes** the corresponding property from
-the JSON-LD rather than publishing a placeholder as though it were a
-telephone number. No placeholder is rendered as text on any page.
+Everything else now resolves: telephone `+91 83187 72717`, the same
+number on WhatsApp, `legal@lexlawandtax.com`, the Sitapur Road address
+with postal code 226020, and the firm's Google Maps link.
+
+While a value is a placeholder, `site.js` renders a neutral "to be
+published" label with an inert link, and **deletes** the corresponding
+property from the JSON-LD rather than publishing a placeholder as though
+it were a telephone number. No placeholder is rendered as text on any
+page.
 
 ### Withheld advocate details — `src/data/advocates.js`
 
@@ -129,16 +132,28 @@ that no advocate page references Pexels at all.
 
 ---
 
-## 6. Missing contact information
+## 6. Contact information — supplied
 
-The firm has **one office, in Lucknow**, and no address, telephone
-number, WhatsApp number, email address or map link has been supplied for
-it. Every place those would appear currently shows a neutral pending
-label.
+The firm has **one office, in Lucknow**, and its details are now
+confirmed and live across the site:
 
-Nothing has been invented to fill the gap. There is no fabricated
-address, no fabricated number, no Google Maps embed and no map listing
-anywhere on the site.
+| | |
+| --- | --- |
+| Address | Shop No. 4, Opposite Shia P.G. College, Sitapur Road, Lucknow, Uttar Pradesh 226020, India |
+| Telephone | +91 83187 72717 — `tel:+918318772717` |
+| WhatsApp | +91 83187 72717 — `https://wa.me/918318772717` |
+| Email | legal@lexlawandtax.com |
+| Map | the firm's own Google Maps link, opened in a new tab |
+
+The address appears in three forms, all derived from the one official
+value in `site-config.js`: set over three lines where there is room (the
+contact page, the footer, the Lucknow page, the contact panels), compact
+in the header bar and the mobile menu (*Sitapur Road, Lucknow 226020*),
+and split across `streetAddress` / `addressLocality` / `addressRegion` /
+`postalCode` / `addressCountry` in the structured data.
+
+Still no second office, no other telephone number, no map embed and no
+map listing other than the firm's own.
 
 ---
 
@@ -366,9 +381,8 @@ absent: `Review`, `AggregateRating`, star ratings, `award`,
 
 **Must be done — the site should not go live without these.**
 
-1. **Supply the office details** — address, telephone, WhatsApp, email
-   and the Google Maps URL — in `assets/js/site-config.js`, then rebuild.
-   Until this is done the site cannot tell anyone how to reach the firm.
+1. ~~Supply the office details~~ — **done.** Telephone, WhatsApp, email,
+   address, postal code and map link are confirmed and live.
 2. **Have an advocate read all 12 guides.** Name them in `reviewedBy`,
    set `reviewStatus: "approved"`, rebuild, and the guides become
    indexable. Publishing legal information the firm has not read is the

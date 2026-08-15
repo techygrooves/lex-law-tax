@@ -140,6 +140,13 @@
     element.removeAttribute("aria-disabled");
     element.setAttribute("data-config-state", "ready");
 
+    /* The address, set over its own lines where the layout allows it. */
+    if (role === "lines") {
+      var lines = config[key + "Lines"];
+      writeConfigLines(element, lines && lines.length ? lines : [value]);
+      return;
+    }
+
     if (element.tagName === "A") {
       if (role === "tel") {
         element.setAttribute("href", "tel:" + digitsOnly(value));
@@ -157,10 +164,28 @@
     }
 
     if (element.getAttribute("data-config-text") !== "keep") {
-      writeConfigText(element, value);
+      /* The href wants the number in one form and a reader wants it in
+         another: tel: takes "+918318772717", a person reads
+         "+91 83187 72717". Where the config carries a display form for a
+         key, that is what gets written; the link still uses the raw
+         value. */
+      var display = config[key + "Display"];
+      writeConfigText(element, isPlaceholder(display) ? value : display);
     } else {
       element.removeAttribute("title");
     }
+  }
+
+  /* Writes a multi-line value as text nodes separated by <br>, for the
+     address where there is room to set it over three lines. Built from
+     nodes rather than innerHTML so nothing in the config is ever parsed
+     as markup. */
+  function writeConfigLines(element, lines) {
+    while (element.firstChild) element.removeChild(element.firstChild);
+    lines.forEach(function (line, index) {
+      if (index) element.appendChild(document.createElement("br"));
+      element.appendChild(document.createTextNode(line));
+    });
   }
 
   function initConfig() {
@@ -693,6 +718,10 @@
     WHATSAPP_NUMBER: "whatsapp",
     EMAIL_ADDRESS: "email",
     OFFICE_ADDRESS: "address",
+    /* PostalAddress keeps locality, region and postal code in their own
+       fields, so streetAddress carries only the premises and street. */
+    STREET_ADDRESS: "streetAddress",
+    POSTAL_CODE: "postalCode",
     GOOGLE_MAPS_URL: "googleMapsUrl"
   };
 

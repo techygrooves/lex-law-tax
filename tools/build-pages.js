@@ -25,7 +25,10 @@ const vm = require("vm");
 const ROOT = path.resolve(__dirname, "..");
 const DOMAIN = "https://lexlawandtax.com";
 const FIRM = "H.R. Legal Associate";
-const DESCRIPTOR = "Legal, Property, Corporate &amp; Tax Services";
+/* The line under the wordmark, in the header and the footer alike. It is
+   also the organisation's alternateName in the schema, so the brand line a
+   reader sees and the one a search engine reads stay the same string. */
+const DESCRIPTOR = "Property, Corporate and Tax Assistance";
 
 const FONT_CSS =
   "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700" +
@@ -1227,7 +1230,7 @@ files["index.html"] = page({
     <div class="container hero__inner">
       <div class="hero__content">
         <p class="eyebrow eyebrow--light">${FIRM} &bull; Lucknow, Uttar Pradesh</p>
-        <h1 id="hero-title">Legal, Property, Corporate and Tax Assistance in Lucknow</h1>
+        <h1 id="hero-title">Civil, Criminal, Property, Corporate and Tax Assistance</h1>
         <p class="hero__lead">
           A multidisciplinary practice assisting individuals, property owners,
           professionals and businesses with litigation, documentation,
@@ -1350,7 +1353,12 @@ ${pillars([
   [ICON.pin(22), "Lucknow practice with Uttar Pradesh coverage",
    "The office is in Lucknow, and matters are attended to before forums across the state."],
   [ICON.compass(22), "Matter-specific consultation",
-   "Advice is given on the facts and papers of the particular matter rather than from a general template."]
+   "Advice is given on the facts and papers of the particular matter rather than from a general template."],
+  /* Sixth card so the three-column grid fills two complete rows. It states
+     a professional obligation that already applies, not a distinction the
+     firm claims over anyone else. */
+  [ICON.seal(22), "Matters treated as confidential",
+   "What is disclosed about a matter is kept confidential, in keeping with the obligations that apply to an advocate."]
 ])}
     </div>
   </section>

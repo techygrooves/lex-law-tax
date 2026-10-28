@@ -76,6 +76,23 @@ window.siteGuides = {
 
   articles: [
 {
+      "slug": "da-hike-central-government-employees-2026",
+      "authored": true,
+      "categories": [
+            "employment"
+      ],
+      "title": "DA Hike 2026 for Central Government Employees: Salary & Arrears",
+      "h1": "DA Hike for Central Government Employees 2026: Salary, Arrears and Pensioner Guide",
+      "description": "Understand the 2026 DA hike process for Central Government employees: official rate checks, salary calculations, arrears, pensioner DR and tax.",
+      "summary": "A practical guide to understanding DA revisions, calculating salary changes and arrears, checking pensioner relief and verifying official orders.",
+      "datePublished": "2026-10-28",
+      "dateReviewed": "2026-10-28",
+      "reviewStatus": "approved",
+      "author": "{{TO_BE_ASSIGNED}}",
+      "reviewedBy": "{{TO_BE_ASSIGNED}}",
+      "relatedServices": []
+},
+{
       "slug": "epfo-withdrawal-rules-process-tax",
       "authored": true,
       "categories": [

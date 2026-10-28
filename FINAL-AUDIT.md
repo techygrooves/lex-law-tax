@@ -109,26 +109,17 @@ row appears on the next build.
 
 ---
 
-## 5. Missing advocate photographs
+## 5. Advocate photographs — corrected 28 October 2026
 
-All three. The registry points at these paths and no file exists at any
-of them:
+The supplied PNG files were present, but the image registry requested nonexistent
+JPG filenames. The registry now references `kamran-adv.png`, `hamid-adv.png` and
+`mateen-adv.png` in `assets/images/`, with their intrinsic dimensions of
+1086 × 1448. Generated pages now embed the real photos, and advocate profile
+structured data includes the matching image URLs. The existing CSS crop and
+layout remain unchanged. Missing images retain the silhouette fallback.
 
-| Advocate | Expected file |
-| --- | --- |
-| Advocate Mohammad Kamran | `assets/images/kamran-adv.jpg` |
-| Advocate Hamid Razzaq | `assets/images/hamid-adv.jpg` |
-| Advocate Irfan Ahmad Khan | `assets/images/irfan-adv.jpg` |
-
-Until the files exist, every advocate image renders the local silhouette
-placeholder, and the `Person` structured data omits `image` rather than
-pointing at a file that is not there. Drop the three JPEGs in at
-640×800 (4:5) and they appear immediately — no rebuild needed for the
-runtime swap, though a rebuild also embeds them into the markup and the
-schema.
-
-**No stock photograph is used for any advocate**, and a test asserts
-that no advocate page references Pexels at all.
+See `IMAGE-AUDIT.md` for the current section inventory and validation scope,
+and `IMAGE-CREDITS.md` for the exact replacement paths.
 
 ---
 
@@ -395,8 +386,8 @@ absent: `Review`, `AggregateRating`, star ratings, `award`,
 
 **Should be done before launch.**
 
-5. **Add the three advocate photographs** at 640×800, named exactly
-   `kamran-adv.jpg`, `hamid-adv.jpg`, `irfan-adv.jpg`.
+5. **Deploy the corrected advocate photograph references** together with the
+   three supplied PNG files and regenerated nested HTML pages; see §5.
 6. **Decide about the enquiry form.** Either supply `formEndpoint` —
    updating the privacy policy first, per §7 — or leave it inert and let
    telephone, WhatsApp and email carry enquiries. Both are honest; a

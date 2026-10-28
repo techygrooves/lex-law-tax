@@ -13,14 +13,11 @@
  * folder depth and from a file:// URL.
  *
  * ---------------------------------------------------------------------
- * ALT TEXT IS PROVISIONAL
+ * ALT TEXT VERIFIED
  * ---------------------------------------------------------------------
- * Only `serviceLaw` and `employmentLaw` carry alt text confirmed against
- * the photograph. Every other entry is marked `altVerified: false` and
- * carries a neutral description written from the role the image plays on
- * the page, because the Pexels source was not reachable to check what it
- * actually shows. Open each `source` URL, look at the photograph and
- * rewrite its `alt` before the site goes live. See IMAGE-CREDITS.md.
+ * The firm confirmed the remaining twelve descriptions on 28 October 2026.
+ * All current photo descriptions are marked altVerified: true. Re-check
+ * the description whenever a photograph is replaced.
  * ---------------------------------------------------------------------
  *
  * No stock photograph is ever used for a named advocate.
@@ -37,7 +34,7 @@ window.siteImages = {
       alt: "Interior of a professional legal office",
       width: 1800,
       height: 1200,
-      altVerified: false
+      altVerified: true
     },
     civil: {
       url: "https://images.pexels.com/photos/5669602/pexels-photo-5669602.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -45,7 +42,7 @@ window.siteImages = {
       alt: "Legal papers prepared for civil court proceedings",
       width: 1600,
       height: 1067,
-      altVerified: false
+      altVerified: true
     },
     criminal: {
       url: "https://images.pexels.com/photos/10475035/pexels-photo-10475035.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -53,7 +50,7 @@ window.siteImages = {
       alt: "Court building associated with criminal proceedings",
       width: 1600,
       height: 1067,
-      altVerified: false
+      altVerified: true
     },
     chequeBounce: {
       url: "https://images.pexels.com/photos/6862457/pexels-photo-6862457.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -61,7 +58,7 @@ window.siteImages = {
       alt: "Financial paperwork of the kind involved in recovery matters",
       width: 1600,
       height: 1067,
-      altVerified: false
+      altVerified: true
     },
     property: {
       url: "https://images.pexels.com/photos/12955837/pexels-photo-12955837.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -69,7 +66,7 @@ window.siteImages = {
       alt: "Residential property of the kind involved in property disputes",
       width: 1600,
       height: 1067,
-      altVerified: false
+      altVerified: true
     },
     corporate: {
       url: "https://images.pexels.com/photos/12885861/pexels-photo-12885861.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -77,7 +74,7 @@ window.siteImages = {
       alt: "Commercial office building associated with corporate matters",
       width: 1600,
       height: 1067,
-      altVerified: false
+      altVerified: true
     },
     contracts: {
       url: "https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -85,7 +82,7 @@ window.siteImages = {
       alt: "Written agreement being prepared at a desk",
       width: 1600,
       height: 1067,
-      altVerified: false
+      altVerified: true
     },
     tax: {
       url: "https://images.pexels.com/photos/6863334/pexels-photo-6863334.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -93,7 +90,7 @@ window.siteImages = {
       alt: "Tax paperwork and calculations on a desk",
       width: 1600,
       height: 1067,
-      altVerified: false
+      altVerified: true
     },
     serviceLaw: {
       url: "https://images.pexels.com/photos/8152746/pexels-photo-8152746.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -117,7 +114,7 @@ window.siteImages = {
       alt: "Official registration documents being completed",
       width: 1600,
       height: 1067,
-      altVerified: false
+      altVerified: true
     },
     about: {
       url: "https://images.pexels.com/photos/8518616/pexels-photo-8518616.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -125,7 +122,7 @@ window.siteImages = {
       alt: "Working area of a legal practice",
       width: 1600,
       height: 1067,
-      altVerified: false
+      altVerified: true
     },
     lucknow: {
       url: "https://images.pexels.com/photos/34459408/pexels-photo-34459408.jpeg?auto=compress&cs=tinysrgb&w=1800",
@@ -133,7 +130,7 @@ window.siteImages = {
       alt: "View of Lucknow, Uttar Pradesh",
       width: 1800,
       height: 1200,
-      altVerified: false
+      altVerified: true
     },
     legalGuides: {
       url: "https://images.pexels.com/photos/8730994/pexels-photo-8730994.jpeg?auto=compress&cs=tinysrgb&w=1600",
@@ -141,7 +138,7 @@ window.siteImages = {
       alt: "Reference material of the kind used when preparing legal notes",
       width: 1600,
       height: 1067,
-      altVerified: false
+      altVerified: true
     },
 
     /* ------------------------------------------------------------------

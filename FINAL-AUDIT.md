@@ -1,3 +1,7 @@
+# Current editorial status
+
+The firm has completed its image-description verification and opted against further advocate credentials. Article bylines use H.R. Legal Associate. Older launch observations below are historical; see `PLACEHOLDER-AUDIT.md` for the current audit.
+
 # Final audit — lexlawandtax.com
 
 **H.R. Legal Associate**, advocates, Lucknow, Uttar Pradesh.
@@ -88,16 +92,15 @@ The contact form now uses the same existing Formspree destination as the
 homepage. No contact or address field remains unresolved, including when
 JavaScript is unavailable. See `PLACEHOLDER-AUDIT.md` for the current audit.
 
-### Withheld advocate details — `src/data/advocates.js`
+### Advocate public information — complete by firm decision
 
-Fifteen fields, five for each advocate, all `{{TO_BE_PROVIDED}}`:
-`enrolmentNumber`, `copNumber`, `education`, `languages`,
-`courtsAndForums`. The builder **omits a withheld row from the HTML
-entirely** — no empty row, no "coming soon". Supply a real value and the
-row appears on the next build.
+The firm has confirmed that the existing names, experience and credential lines
+are sufficient. Optional further personal particulars were removed from the
+registry; none are awaited for publication. Unassigned articles use the firm’s
+Organization byline without inventing individual authors or reviewers. The
+remaining twelve image descriptions were also confirmed by the firm.
 
-> Do not fill these in from assumption. An enrolment number published in
-> error is a professional-conduct problem, not a content gap.
+See `PLACEHOLDER-AUDIT.md` for the latest editorial status.
 
 ---
 

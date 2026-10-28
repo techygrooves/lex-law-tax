@@ -65,6 +65,7 @@ window.siteGuides = {
     ["cheque-bounce", "Cheque Bounce"],
     ["contracts", "Contracts"],
     ["income-tax", "Income Tax"],
+    ["employment", "Employment & EPF"],
     ["gst", "GST"],
     ["business-registration", "Business Registration"]
   ],
@@ -74,6 +75,23 @@ window.siteGuides = {
     "Drafted for general information and pending final professional review.",
 
   articles: [
+{
+      "slug": "epfo-withdrawal-rules-process-tax",
+      "authored": true,
+      "categories": [
+            "employment"
+      ],
+      "title": "EPFO Withdrawal: Eligibility, Online Process, Forms & Tax",
+      "h1": "EPFO Withdrawals: Eligibility, Online Process, Forms and Tax",
+      "description": "Understand EPFO withdrawals, EPF advances, claim forms, UAN and KYC checks, pension benefits, tax considerations and rejected claims.",
+      "summary": "A practical guide to choosing an EPF withdrawal, advance or transfer, preparing your records and avoiding common claim mistakes.",
+      "datePublished": "2026-10-28",
+      "dateReviewed": "2026-10-28",
+      "reviewStatus": "approved",
+      "author": "{{TO_BE_ASSIGNED}}",
+      "reviewedBy": "{{TO_BE_ASSIGNED}}",
+      "relatedServices": []
+},
     /* ==================== PROPERTY ==================== */
     {
       slug: "property-documents-to-check-before-buying-in-lucknow",

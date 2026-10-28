@@ -3124,7 +3124,7 @@ const guideFilterBar = `      <div class="guide-filters" data-guide-filters>
 ${GUIDES.categories
   .map(
     ([slug, name]) =>
-      `          <button class="chip chip--button" type="button" data-guide-filter="${slug}" aria-pressed="false">${name}</button>`
+      `          <button class="chip chip--button" id="${slug}" type="button" data-guide-filter="${slug}" aria-pressed="false">${name}</button>`
   )
   .join("\n")}
         </div>
@@ -3449,7 +3449,7 @@ ${sectionHead({
   id: "contact-form-title"
 })}
 
-      <form class="form" data-form="enquiry" action="${attr(SITE_CONFIG.formEndpoint)}" method="post" novalidate>
+      <form class="form" data-form="enquiry" action="${attr(SITE_CONFIG.formEndpoint)}" method="post">
 
 
         <div class="field">

@@ -1835,6 +1835,142 @@ window.legalServices = {
               "Broadly, the court first determines the shares of the parties, and thereafter the property is divided in accordance with those shares, which may involve a commission to report on how a division can practically be made. It is a two-stage process, and the second stage takes its own time."
             ]
           ]
+        },
+
+        /* ---- AUTHORED ----
+           The ten below have their page HTML written by hand and
+           committed under property-law-and-registration/<slug>/.
+           `authored: true` keeps the builder from generating over
+           them, so these entries hold only what the hub's service
+           card needs, not the body of the page. */
+        {
+          slug: "will-drafting-registration-lawyer-lucknow",
+          authored: true,
+          name: "Will Drafting and Registration Lawyer in Lucknow",
+          navLabel: "Will Drafting and Registration",
+          h1: "Will Drafting and Registration Lawyer in Lucknow",
+          title: "Will Drafting and Registration Lawyer in Lucknow | H.R. Legal Associate",
+          description:
+            "Will drafting and registration lawyer in Lucknow: preparing a valid Will, witnesses, executors, registration and avoiding disputes.",
+          lead:
+            "Preparing a Will that says what it is meant to say, and is capable of being proved afterwards."
+        },
+
+        {
+          slug: "will-dispute-lawyer-lucknow",
+          authored: true,
+          name: "Will Dispute Lawyer in Lucknow",
+          navLabel: "Will Disputes",
+          h1: "Will Dispute Lawyer in Lucknow",
+          title: "Will Dispute Lawyer in Lucknow | Contesting a Will",
+          description:
+            "Will dispute lawyer in Lucknow: challenging a forged or suspicious Will, proving attestation and protecting inheritance rights.",
+          lead:
+            "Challenging a suspicious or forged Will, proving testamentary documents, examining inheritance rights and protecting a share."
+        },
+
+        {
+          slug: "probate-lawyer-lucknow",
+          authored: true,
+          name: "Probate Lawyer in Lucknow",
+          navLabel: "Probate",
+          h1: "Probate Lawyer in Lucknow",
+          title: "Probate Lawyer in Lucknow | Will Probate & Estate Guidance",
+          description:
+            "Probate lawyer in Lucknow: Will probate, probate petitions, court process, objections and letters of administration.",
+          lead:
+            "Understand when probate may help, how a Will is proved, who can apply, and the court procedure for estates."
+        },
+
+        {
+          slug: "succession-certificate-lawyer-lucknow",
+          authored: true,
+          name: "Succession Certificate Lawyer in Lucknow",
+          navLabel: "Succession Certificates",
+          h1: "Succession Certificate Lawyer in Lucknow",
+          title: "Succession Certificate Lawyer in Lucknow | Court Process & Fees",
+          description:
+            "Succession certificate lawyer in Lucknow: the court process, bank deposits, shares, legal heirs, documents and objections.",
+          lead:
+            "Court process, documents, bank deposits, shares, legal heirs and objections: a practical guide to succession certificates."
+        },
+
+        {
+          slug: "ancestral-property-dispute-lawyer-lucknow",
+          authored: true,
+          name: "Ancestral Property Dispute Lawyer in Lucknow",
+          navLabel: "Ancestral Property Disputes",
+          h1: "Ancestral Property Dispute Lawyer in Lucknow",
+          title: "Ancestral Property Dispute Lawyer in Lucknow | H.R. Legal Associate",
+          description:
+            "Ancestral property dispute lawyer in Lucknow: daughters' rights, inherited shares, a father's sale and the remedies available.",
+          lead:
+            "Ancestral and inherited family property, daughters' rights, disputed sales and the legal remedies available."
+        },
+
+        {
+          slug: "property-partition-lawyer-lucknow",
+          authored: true,
+          name: "Property Partition Lawyer in Lucknow",
+          navLabel: "Property Partition",
+          h1: "Property Partition Lawyer in Lucknow",
+          title: "Property Partition Lawyer in Lucknow | H.R. Legal Associate",
+          description:
+            "Property partition in Lucknow: civil partition suits, family inheritance, agricultural holdings and the legal process.",
+          lead:
+            "Partition of jointly owned houses, inherited family property and agricultural holdings in Uttar Pradesh."
+        },
+
+        {
+          slug: "family-settlement-deed-lawyer-lucknow",
+          authored: true,
+          name: "Family Settlement Deed Lawyer in Lucknow",
+          navLabel: "Family Settlement Deeds",
+          h1: "Family Settlement Deed Lawyer in Lucknow",
+          title: "Family Settlement Deed Lawyer in Lucknow | H.R. Legal Associate",
+          description:
+            "Family settlement deed lawyer in Lucknow: drafting, registration, stamp duty, inheritance rights and family arrangements.",
+          lead:
+            "Family property arrangements, drafting, registration, stamp duty, inherited shares and the records that follow."
+        },
+
+        {
+          slug: "relinquishment-deed-lawyer-lucknow",
+          authored: true,
+          name: "Relinquishment Deed Lawyer in Lucknow",
+          navLabel: "Relinquishment Deeds",
+          h1: "Relinquishment Deed Lawyer in Lucknow",
+          title: "Relinquishment Deed Lawyer in Lucknow | H.R. Legal Associate",
+          description:
+            "Relinquishment deed lawyer in Lucknow: release deed drafting, registration, stamp duty and inherited property shares.",
+          lead:
+            "Release deeds, inherited property shares, registration, stamp duty and the practical risks of giving up a share."
+        },
+
+        {
+          slug: "gift-deed-cancellation-lawyer-lucknow",
+          authored: true,
+          name: "Gift Deed Cancellation Lawyer in Lucknow",
+          navLabel: "Gift Deed Cancellation",
+          h1: "Gift Deed Cancellation Lawyer in Lucknow",
+          title: "Gift Deed Cancellation Lawyer in Lucknow | H.R. Legal Associate",
+          description:
+            "Gift deed cancellation lawyer in Lucknow: the grounds, civil court procedure, senior citizen rights and limitation.",
+          lead:
+            "When a registered gift can be challenged, the remedies available, senior-citizen protection and the court procedure."
+        },
+
+        {
+          slug: "muslim-property-inheritance-lawyer-lucknow",
+          authored: true,
+          name: "Muslim Property Inheritance Lawyer in Lucknow",
+          navLabel: "Muslim Property Inheritance",
+          h1: "Muslim Property Inheritance Lawyer in Lucknow",
+          title: "Muslim Property Inheritance Lawyer in Lucknow | Heirs & Shares",
+          description:
+            "Muslim property inheritance lawyer in Lucknow: Sunni and Shia heirs, daughters' shares, family disputes and settlements.",
+          lead:
+            "Daughters' and sons' rights, Sunni and Shia succession, family settlements and property disputes."
         }
       ]
     }

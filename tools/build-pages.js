@@ -2759,8 +2759,9 @@ ${lastReviewed()}
 });
 
 /* --- Legal guides ----------------------------------------------------------
-   Twelve notes, each written in src/data/guides.js. Three rules govern how
-   they are rendered:
+   The notes written in src/data/guides.js, plus any whose page HTML is
+   committed by hand and flagged `authored`. Three rules govern how they
+   are rendered:
 
      - an article is attributed to nobody until an advocate has actually
        been assigned to it. `author` and `reviewedBy` stay
@@ -2792,6 +2793,33 @@ GUIDES.articles.forEach((a) => {
 });
 
 const isApproved = (a) => a.reviewStatus === "approved";
+
+/* Counts that appear in prose are written out, and they are derived rather
+   than typed, so adding an article cannot leave the page claiming a number
+   that was true last month. Beyond twenty the figure reads better. */
+const NUMBER_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six",
+  "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen",
+  "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty"];
+const countWord = (n) => NUMBER_WORDS[n] || String(n);
+
+/* Four columns or three, whichever leaves the fullest bottom row. The old
+   rule took four only when the count divided by four exactly, which was
+   right for a hub of four but stranded a single card on its own row as
+   soon as a hub grew — nineteen services across three columns leaves one
+   card alone, across four it leaves three. A full row is ideal; a nearly
+   full one is the next best thing. */
+function gridFor(n) {
+  const lastRow = (cols) => (n % cols === 0 ? cols : n % cols);
+  return lastRow(4) >= lastRow(3) ? "grid--fixed-4" : "grid--fixed-3";
+}
+
+/* An article marked `authored` has its page written by hand and committed
+   as a file, rather than generated from the data here. The entry still
+   exists so the section index can list it, the hub can link to it and the
+   sitemap can carry it — but the page itself is never written, because the
+   data holds only its heading and summary, not its body. Deleting the entry
+   would orphan the page; generating it would overwrite it. */
+const isAuthored = (x) => x.authored === true;
 
 /* Label-and-note list with a check marker. Same shape as riskList, which
    carries the warning marker, so a checklist and a list of mistakes are
@@ -3031,6 +3059,7 @@ ${sectionHead({
 }
 
 GUIDES.articles.forEach((a) => {
+  if (isAuthored(a)) return;
   files["legal-guides/" + a.slug + "/index.html"] = guidePage(a);
 });
 
@@ -3113,7 +3142,7 @@ ${sectionHead({ eyebrow: "About these notes", title: "What This Section Is For",
 ${sectionHead({
   eyebrow: "Guides",
   title: "All Guides",
-  lead: "Twelve notes across property, litigation, cheque bounce, contracts, tax and business registration.",
+  lead: countWord(GUIDES.articles.length) + " notes across property, litigation, cheque bounce, contracts, tax and business registration.",
   id: "guides-list"
 })}
 ${guideFilterBar}
@@ -3563,11 +3592,19 @@ files["disclaimer/index.html"] = page({
         position now in force.
       </p>
       <p>
-        For that reason no page on this website states a fee, a rate, a threshold, a
-        limitation period or a filing deadline. Each page instead identifies what has
-        to be verified for the particular matter. Pages carry the date on which they
-        were last reviewed, and a review date is not a warranty that the content
-        remains current.
+        Most pages on this website deliberately state no fee, rate, threshold,
+        limitation period or filing deadline, and identify instead what has to be
+        verified for the particular matter. Some of the guides and property pages do
+        refer to a figure, a period or a decided case where the point cannot sensibly
+        be explained without it. Where they do, the figure is the one in force when
+        the page was written, taken from the notification or judgment named on the
+        page, and it is stated for general explanation rather than as advice. It
+        should be checked against the position in force before anything is done on
+        the strength of it.
+      </p>
+      <p>
+        Pages carry the date on which they were last reviewed, and a review date is
+        not a warranty that the content remains current.
       </p>
 
       <h2 id="advice">The need for advice on your own matter</h2>
@@ -4435,7 +4472,7 @@ ${sectionHead({
   lead: "Each page below deals with one service and the questions it raises.",
   id: "hub-services"
 })}
-      <div class="grid ${hub.services.length % 4 === 0 ? "grid--fixed-4" : "grid--fixed-3"}" data-reveal-group data-reveal-step="70">
+      <div class="grid ${gridFor(hub.services.length)}" data-reveal-group data-reveal-step="70">
 ${serviceCards}
       </div>
     </div>
@@ -4602,9 +4639,11 @@ ${lastReviewed()}
   });
 }
 
+/* Authored pages are skipped here: their HTML is committed, not built. */
 SECTION_HUBS.forEach((hub) => {
   files[hub.slug + "/index.html"] = hubPage(hub);
   hub.services.forEach((svc) => {
+    if (isAuthored(svc)) return;
     files[hub.slug + "/" + svc.slug + "/index.html"] = servicePage(hub, svc);
   });
 });
@@ -4638,11 +4677,60 @@ console.log("\n" + written + " pages written.");
 
 const SITEMAP_EXCLUDE = new Set(["404.html", "components/index.html"]);
 
-const sitemapEntries = Object.keys(files)
+/* Authored pages are not in `files`, because the builder never writes
+   them, but they are real indexable pages and belong in the sitemap. They
+   are read from disk and put through the same rules as the rest: a page
+   carrying noindex is left out, and one without a canonical is an error
+   rather than a silent omission. A missing file means the entry has an
+   `authored` flag but nobody committed the page, so say so plainly. */
+const authoredPaths = []
+  .concat(GUIDES.articles.filter(isAuthored).map((a) => "legal-guides/" + a.slug + "/index.html"))
+  .concat(
+    SECTION_HUBS.reduce(
+      (acc, hub) =>
+        acc.concat(
+          hub.services
+            .filter(isAuthored)
+            .map((svc) => hub.slug + "/" + svc.slug + "/index.html")
+        ),
+      []
+    )
+  );
+
+const authoredPages = {};
+authoredPaths.forEach((rel) => {
+  const target = path.join(ROOT, rel);
+  if (!fs.existsSync(target)) {
+    throw new Error(
+      "Marked authored but no page is committed at " + rel +
+      " — either add the file or drop the entry from the data."
+    );
+  }
+  authoredPages[rel] = fs.readFileSync(target, "utf8");
+});
+
+const sitemapSource = Object.assign({}, files, authoredPages);
+
+/* Attribute order is not guaranteed. The generated pages put rel before
+   href, but a hand-authored page that has been through an HTML formatter
+   comes back with the attributes sorted the other way, so match the tag
+   first and read the href out of it. */
+function canonicalOf(html) {
+  const tags = html.match(/<link\b[^>]*>/gi) || [];
+  for (const tag of tags) {
+    if (!/\brel\s*=\s*"canonical"/i.test(tag)) continue;
+    const href = tag.match(/\bhref\s*=\s*"([^"]+)"/i);
+    if (href) return href[1];
+  }
+  return null;
+}
+
+const sitemapEntries = Object.keys(sitemapSource)
   .filter((rel) => !SITEMAP_EXCLUDE.has(rel))
-  .filter((rel) => !/<meta name="robots" content="noindex/.test(files[rel]))
+  .filter((rel) => !/<meta[^>]*\bcontent="noindex/i.test(sitemapSource[rel]) &&
+    !/<meta name="robots" content="noindex/.test(sitemapSource[rel]))
   .map((rel) => {
-    const canonical = (files[rel].match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
+    const canonical = canonicalOf(sitemapSource[rel]);
     if (!canonical) throw new Error("Indexable page without a canonical: " + rel);
     const depth = canonical.replace(DOMAIN, "").split("/").filter(Boolean).length;
     return {

@@ -79,22 +79,14 @@ unlinked and disallowed in `robots.txt`).
 
 ### Firm contact details — `assets/js/site-config.js`
 
-**The firm's contact details are confirmed and in place.** One value is
-still outstanding:
+**The firm's contact details are confirmed and embedded in the HTML.**
+Telephone and WhatsApp use `+91 83187 72717`; email is
+`legal@lexlawandtax.com`. The address is Shop No. 4, Opposite Shia P.G.
+College, Sitapur Road, Lucknow, Uttar Pradesh 226020, India.
 
-| Key | Value | Used by |
-| --- | --- | --- |
-| `formEndpoint` | `{{FORM_ENDPOINT}}` | the enquiry form (see §7) |
-
-Everything else now resolves: telephone `+91 83187 72717`, the same
-number on WhatsApp, `legal@lexlawandtax.com`, the Sitapur Road address
-with postal code 226020, and the firm's Google Maps link.
-
-While a value is a placeholder, `site.js` renders a neutral "to be
-published" label with an inert link, and **deletes** the corresponding
-property from the JSON-LD rather than publishing a placeholder as though
-it were a telephone number. No placeholder is rendered as text on any
-page.
+The contact form now uses the same existing Formspree destination as the
+homepage. No contact or address field remains unresolved, including when
+JavaScript is unavailable. See `PLACEHOLDER-AUDIT.md` for the current audit.
 
 ### Withheld advocate details — `src/data/advocates.js`
 
@@ -148,28 +140,13 @@ map listing other than the firm's own.
 
 ---
 
-## 7. Missing form endpoint
+## 7. Enquiry forms — connected to the existing destination
 
-`formEndpoint` is `{{FORM_ENDPOINT}}`, so the enquiry form on
-`/contact/` is **deliberately inert**:
-
-- the markup ships with no `action` attribute at all;
-- `site.js` disables every control and prevents submission;
-- a notice above the form says online submission is being configured;
-- nothing typed into it is transmitted or stored, and nothing on the
-  page suggests a message was sent;
-- telephone, WhatsApp and email stay available throughout — they are the
-  routes that will work as soon as §6 is filled in.
-
-The form collects name, telephone, email, city, service category, a
-brief description of the matter, a preferred contact method and a consent
-acknowledgement.
-
-> **Before enabling it:** the privacy policy currently states in terms
-> that the form goes nowhere and that nothing is stored. That stops being
-> true the moment an endpoint is configured. Update
-> `/privacy-policy/` to say where submissions go, who receives them and
-> how long they are kept, **and then** set `formEndpoint`.
+The home and contact pages both post to the existing Formspree endpoint.
+The contact form includes a static action and is not disabled. The privacy
+policy describes Formspree processing for both forms. Delivery, quota and
+account configuration must be checked in the Formspree dashboard; no test
+message was submitted during the placeholder audit.
 
 ---
 
@@ -388,9 +365,8 @@ absent: `Review`, `AggregateRating`, star ratings, `award`,
 
 5. **Deploy the corrected advocate photograph references** together with the
    three supplied PNG files and regenerated nested HTML pages; see §5.
-6. **Decide about the enquiry form.** Either supply `formEndpoint` —
-   updating the privacy policy first, per §7 — or leave it inert and let
-   telephone, WhatsApp and email carry enquiries. Both are honest; a
+6. **Verify Formspree delivery and account settings** for the configured
+   enquiry forms; see §7. Telephone, WhatsApp and email remain available. A
    half-configured form is not.
 7. **Look at the site once with the web fonts loading.** It has only ever
    been seen in fallback type here.

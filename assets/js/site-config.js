@@ -3,12 +3,9 @@
  * ------------------
  * Central place for firm contact details used across the site.
  *
- * The contact details below are the firm's confirmed particulars. The
- * only value still outstanding is `formEndpoint`: while it holds a
- * {{PLACEHOLDER}}, site.js disables the enquiry form and shows the
- * "being configured" notice, and the telephone, WhatsApp and email
- * routes carry enquiries instead. Supplying a real endpoint enables the
- * form — update /privacy-policy/ to say where submissions go first.
+ * The contact details below are the firm's confirmed particulars. Both
+ * enquiry forms use the same existing Formspree destination, with the
+ * firm's authorisation. See /privacy-policy/ for submission handling.
  *
  * Anything still wrapped in double curly braces is UNRESOLVED. site.js
  * hides or disables the related links, shows a neutral "to be published"
@@ -26,7 +23,7 @@ window.siteConfig = {
   address: "Shop No. 4, Opposite Shia P.G. College, Sitapur Road, Lucknow, Uttar Pradesh 226020, India",
   postalCode: "226020",
   googleMapsUrl: "https://maps.app.goo.gl/CAFRw6227png94257?g_st=ac",
-  formEndpoint: "{{FORM_ENDPOINT}}"
+  formEndpoint: "https://formspree.io/f/xzepazjn"
 };
 
 /* ---------------------------------------------------------------------

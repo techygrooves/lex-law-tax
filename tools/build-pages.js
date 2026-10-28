@@ -57,6 +57,8 @@ function loadData(relative, globalName) {
   return sandbox.window[globalName];
 }
 
+const { renderConfig } = require("./render-config");
+
 const IMAGES = loadData("src/data/images.js", "siteImages");
 const ADVOCATE_DATA = loadData("src/data/advocates.js", "advocateData");
 const LEGAL = loadData("src/data/legal-services.js", "legalServices");
@@ -940,10 +942,6 @@ ${breadcrumb(P, o.trail)}
     </div>
   </section>`;
 }
-
-const PREP_NOTE = `      <div class="notice" data-reveal>
-        <p>Detailed content for this page is being prepared and will be published shortly.</p>
-      </div>`;
 
 /* The placeholders site.js can resolve, mirrored from PLACEHOLDER_KEYS
    in assets/js/site.js. The check below reads this, and a test asserts
@@ -2110,6 +2108,47 @@ function scopeList(items) {
   return items.map((item) => `            <li>${item}</li>`).join("\n");
 }
 
+function practiceDetails(slug, name) {
+  const hub = SECTION_HUBS.find((h) => h.slug === PRACTICE_AREA_HUBS[slug]);
+  const specialist = slug === "service-law" ? {
+    intro: [
+      "Service law deals with the relationship between government employees and their public employer. Recruitment conditions, service rules, departmental decisions and the employee’s records determine the questions that need examination.",
+      "A promotion, transfer, suspension or disciplinary dispute calls for a document-based assessment. The available representation, departmental remedy, tribunal or court route depends on the employee’s service and the decision challenged."
+    ],
+    documents: ["Appointment and service records", "Applicable service rules and departmental policies", "Orders, notices and inquiry papers", "Representations, replies and proof of receipt", "Pay, seniority and pension records where relevant"],
+    questions: [
+      ["Does every service dispute go directly to court?", "No. Departmental procedures and the appropriate forum must be examined first. The correct route depends on the service, the order and the relief sought."],
+      ["What should I do after receiving a departmental notice?", "Keep the notice and its enclosures, identify the response requirements and organise the relevant service records before preparing a factual reply."]
+    ]
+  } : {
+    intro: [
+      "Employment law concerns rights and obligations arising from private employment. Appointment terms, workplace policies, the employee’s actual duties and applicable legislation all matter; a job title alone does not decide which protections or forum apply.",
+      "The firm assists with employment documents and disputes involving salary, termination, confidentiality and workplace obligations. Both employers and employees benefit from clear records and a careful assessment before a notice, settlement or new agreement is signed."
+    ],
+    documents: ["Appointment letter and employment agreement", "Relevant workplace policies and communications", "Payslips, attendance and payment records", "Notices, termination letters and replies", "Settlement proposals and supporting correspondence"],
+    questions: [
+      ["Does every employee have the same legal remedies?", "No. Duties, employment status, establishment coverage and the applicable legislation affect the rights and forum. Those questions require examination of the actual working arrangement."],
+      ["Can an employment agreement settle every issue?", "The agreement is important, but applicable statutory rights and obligations must also be considered. A contractual label does not automatically displace the law."]
+    ]
+  };
+  const intro = hub ? hub.intro : specialist.intro;
+  const matters = hub ? hub.services.map((svc) => `<a href="../../${hub.slug}/${svc.slug}/index.html">${svc.navLabel}</a>`) : (slug === "service-law" ? SERVICE_LAW_SCOPE : EMPLOYMENT_LAW_SCOPE);
+  const documents = hub ? ["Agreements, deeds, notices or orders relevant to the matter", "A dated account of the events and the parties involved", "Correspondence, acknowledgements and payment records", "Earlier proceedings, filings and advice where available", "Original documents for verification when requested"] : specialist.documents;
+  const questions = hub ? hub.faqs.slice(0, 3) : specialist.questions;
+  return `      <h2>Understanding ${name}</h2>
+${intro.map((text) => `      <p>${text}</p>`).join("\n")}
+      <h2>Matters covered and detailed guidance</h2>
+      <ul>${matters.map((text) => `<li>${text}</li>`).join("\n")}</ul>
+      <h2>Documents to prepare</h2>
+      <p>Bring the records that explain your situation. The precise documents depend on the facts; the following is a starting point.</p>
+      <ul>${documents.map((text) => `<li>${text}</li>`).join("\n")}</ul>
+      <h2>How a matter is assessed</h2>
+      <p>The first step is to identify the issue, the relevant documents and the result you need. The applicable law, available procedure, responsible authority and any time-sensitive requirements are then considered on those facts.</p>
+      <p>Advice, document preparation, correspondence and representation are different tasks. The scope of any engagement is discussed before work begins. No outcome can be promised, and an initial enquiry does not create an advocate–client relationship.</p>
+      <h2>Common questions</h2>
+${questions.map(([question, answer]) => `      <h3>${question}</h3>\n      <p>${answer}</p>`).join("\n")}`;
+}
+
 PRACTICE_AREAS.forEach(([slug, name, blurb]) => {
   let scope = "";
   let related = "";
@@ -2199,7 +2238,7 @@ ${related}`
 
   <section class="section section--soft">
     <div class="container prose">
-${PREP_NOTE}
+${practiceDetails(slug, name)}
       <p class="cluster">
         ${btnSecondary("All practice areas", "../index.html")}
         ${btnPrimary("Contact the office", "../../contact/index.html")}
@@ -3410,15 +3449,8 @@ ${sectionHead({
   id: "contact-form-title"
 })}
 
-      <form class="form" data-form="enquiry" method="post" novalidate>
-        <div class="notice notice--warn" data-form-notice hidden>
-          <p>
-            <strong>Online form submission is being configured.</strong>
-            This form cannot send a message yet, and nothing typed into it is
-            transmitted or stored. Please use the telephone, WhatsApp or email
-            details above, all of which reach the office now.
-          </p>
-        </div>
+      <form class="form" data-form="enquiry" action="${attr(SITE_CONFIG.formEndpoint)}" method="post" novalidate>
+
 
         <div class="field">
           <label for="enquiry-name">Name <span class="required" aria-hidden="true">*</span></label>
@@ -3658,9 +3690,8 @@ files["disclaimer/index.html"] = page({
       </p>
       <p>
         Contact details are published on the contact page and in the footer, and those
-        are the only channels the firm operates. Some details may appear as
-        &ldquo;to be published&rdquo; while they are being confirmed; where that is
-        so, no address or number is being asserted. The firm is not responsible for
+        are the only channels the firm operates. The firm’s confirmed telephone number, email and Lucknow address are
+        provided on those pages. The firm is not responsible for
         any listing, profile, directory entry or contact detail published elsewhere
         that it has not authorised.
       </p>
@@ -3709,10 +3740,10 @@ files["privacy-policy/index.html"] = page({
 
       <h2 id="forms">Information submitted through forms</h2>
       <p>
-        There are two enquiry forms on this website, and they behave differently.
+        The home page and contact page enquiry forms use the same form-processing service.
       </p>
       <p>
-        <strong>The form on the home page is live.</strong> It asks for a name, a
+        <strong>The home page form uses Formspree.</strong> It asks for a name, a
         telephone number, an email address, a city, a practice area, a brief
         description of the matter and a preferred method of contact. When it is
         submitted, those details are sent to <strong>Formspree</strong>, a
@@ -3723,10 +3754,10 @@ files["privacy-policy/index.html"] = page({
         only to respond to the enquiry.
       </p>
       <p>
-        <strong>The form on the contact page is not connected to any destination.</strong>
-        Its submission endpoint is an unresolved placeholder, the form is disabled in
-        the browser, and nothing typed into it is transmitted, received or stored
-        anywhere. A notice on the form says so.
+        <strong>The contact page form also sends enquiries through Formspree.</strong>
+        It collects the name, contact details and matter information entered in the
+        form so the firm can respond. Formspree receives the submitted information
+        and forwards it to the firm by email, subject to its own terms and privacy policy.
       </p>
       <p>
         Please do not send confidential information or documents through either
@@ -4147,7 +4178,7 @@ ${previewBlock(
   "notices",
   "Notices and disclaimer",
   ".notice, .disclaimer-note, .disclaimer-gate",
-  `          <div class="notice"><p>Detailed content for this page is being prepared and will be published shortly.</p></div>
+  `          <div class="notice"><p>Please read the relevant guidance and contact the office with your documents for advice on your circumstances.</p></div>
           <div class="disclaimer-note" style="margin-top:1rem">
             <p>Sending an enquiry does not create an advocate&ndash;client relationship.
             Please do not send confidential documents through this website.</p>
@@ -4639,7 +4670,7 @@ ${lastReviewed()}
   });
 }
 
-/* Authored pages are skipped here: their HTML is committed, not built. */
+/* Authored bodies are skipped here; contact metadata is resolved below. */
 SECTION_HUBS.forEach((hub) => {
   files[hub.slug + "/index.html"] = hubPage(hub);
   hub.services.forEach((svc) => {
@@ -4658,6 +4689,7 @@ Object.keys(files)
   .forEach((relative) => {
     const target = path.join(ROOT, relative);
     fs.mkdirSync(path.dirname(target), { recursive: true });
+    files[relative] = renderConfig(files[relative], SITE_CONFIG, CONFIG_TOKENS);
     fs.writeFileSync(target, files[relative], "utf8");
     written += 1;
     console.log("  " + relative);
@@ -4675,10 +4707,17 @@ console.log("\n" + written + " pages written.");
    contradictory signal. The component preview and 404 are excluded for
    the same reason.                                                    */
 
+const previousSitemapPath = path.join(ROOT, "sitemap.xml");
+const previousSitemapDates = new Map(
+  fs.existsSync(previousSitemapPath)
+    ? Array.from(fs.readFileSync(previousSitemapPath, "utf8").matchAll(/<loc>(.*?)<\/loc>\s*<lastmod>(.*?)<\/lastmod>/g), (m) => [m[1], m[2]])
+    : []
+);
+
 const SITEMAP_EXCLUDE = new Set(["404.html", "components/index.html"]);
 
-/* Authored pages are not in `files`, because the builder never writes
-   them, but they are real indexable pages and belong in the sitemap. They
+/* Authored pages are not in `files`, because their article bodies are not
+   generated. Only confirmed contact metadata is refreshed below. They
    are read from disk and put through the same rules as the rest: a page
    carrying noindex is left out, and one without a canonical is an error
    rather than a silent omission. A missing file means the entry has an
@@ -4706,7 +4745,9 @@ authoredPaths.forEach((rel) => {
       " — either add the file or drop the entry from the data."
     );
   }
-  authoredPages[rel] = fs.readFileSync(target, "utf8");
+  const original = fs.readFileSync(target, "utf8");
+  authoredPages[rel] = renderConfig(original, SITE_CONFIG, CONFIG_TOKENS);
+  if (authoredPages[rel] !== original) fs.writeFileSync(target, authoredPages[rel], "utf8");
 });
 
 const sitemapSource = Object.assign({}, files, authoredPages);
@@ -4754,7 +4795,7 @@ fs.writeFileSync(
         (u) =>
           "  <url>\n" +
           "    <loc>" + u.loc + "</loc>\n" +
-          "    <lastmod>" + LEGAL.lastReviewed + "</lastmod>\n" +
+          "    <lastmod>" + (previousSitemapDates.get(u.loc) || LEGAL.lastReviewed) + "</lastmod>\n" +
           "    <changefreq>" + u.changefreq + "</changefreq>\n" +
           "    <priority>" + u.priority + "</priority>\n" +
           "  </url>\n"

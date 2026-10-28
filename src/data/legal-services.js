@@ -1838,11 +1838,21 @@ window.legalServices = {
         },
 
         /* ---- AUTHORED ----
-           The ten below have their page HTML written by hand and
+           The entries below have their page HTML written by hand and
            committed under property-law-and-registration/<slug>/.
            `authored: true` keeps the builder from generating over
            them, so these entries hold only what the hub's service
            card needs, not the body of the page. */
+{
+          "slug": "buying-property-through-power-of-attorney",
+          "authored": true,
+          "name": "Buying Property Through a Power of Attorney: Legal Risks and Essential Checks",
+          "navLabel": "Buying Property Through a Power of Attorney",
+          "h1": "Buying Property Through a Power of Attorney: Legal Risks and Essential Checks",
+          "title": "Buying Property Through Power of Attorney: Risks & Checks",
+          "description": "Buying property through a power of attorney? Understand GPA sale risks, title checks, valid authority, NRI documents and registration safeguards in India.",
+          "lead": "A practical guide to genuine attorney-led property sales, the limits of GPA arrangements and the checks to complete before paying for property."
+},
         {
           slug: "will-drafting-registration-lawyer-lucknow",
           authored: true,

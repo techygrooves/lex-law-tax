@@ -72,20 +72,28 @@ cheque-bounce guide card its own picture.
 
 ## Advocate photographs
 
-Original photographs supplied by the firm, with the written consent of each
-advocate. **Referenced but not yet present** in the repository.
+The three local photographs are present in the repository. The central image
+registry and generated pages use these exact filenames (including extension):
 
-| File | Subject | Status |
-| --- | --- | --- |
-| `assets/images/kamran-adv.jpg` | Advocate Mohammad Kamran | Outstanding |
-| `assets/images/hamid-adv.jpg` | Advocate Hamid Razzaq | Outstanding |
-| `assets/images/irfan-adv.jpg` | Advocate Irfan Ahmad Khan | Outstanding |
+| File | Subject | Intrinsic size | Status |
+| --- | --- | --- | --- |
+| `assets/images/kamran-adv.png` | Advocate Mohammad Kamran | 1086 × 1448 | Present |
+| `assets/images/hamid-adv.png` | Advocate Hamid Razzaq | 1086 × 1448 | Present |
+| `assets/images/mateen-adv.png` | Advocate Mohd. Mateen | 1086 × 1448 | Present |
 
-Until each file is added, the pages ship pointing at the SVG silhouette, so
-nothing appears broken and no stock photograph ever stands in for a real
-person. On every visit, `site.js` attempts the JPG first and shows it the
-moment the file exists — adding the three files to `assets/images/` is the
-whole job, with no markup or rebuild step needed.
+The existing CSS controls the displayed card size and crop. These pixel dimensions
+do not change the layout. Keep the supplied originals; no conversion is needed.
+
+To replace a photograph, update its file in `assets/images/`. If its name,
+extension or intrinsic dimensions change, update the matching record in
+`src/data/images.js`. Run `node tools/build-pages.js` and review the generated
+changes. The builder embeds real paths and includes available profile photographs
+in structured data, so photographs also work without JavaScript. Missing files
+use the existing SVG silhouette.
+
+Upload the updated HTML pages, `src/data/images.js`, and the matching image files
+together. Preserve the directory structure and filename case on Hostinger and
+GitHub Pages; uploading only `index.html` does not update nested pages.
 
 **Recommended specification**
 

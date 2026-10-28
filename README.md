@@ -583,8 +583,9 @@ hero per page is lazy-loaded.
 
 Nothing from Pexels is copied into this repository; the photographs are
 referenced by URL and every media figure carries a neutral fallback that
-appears if the request fails. The three advocate images remain local paths
-served by the silhouette placeholder until real photographs are supplied.
+appears if the request fails. The three advocate photographs are local PNG files in `assets/images/`.
+The registry uses their exact filenames; the silhouette is only a fallback.
+See `IMAGE-AUDIT.md` for the section inventory and deployment checklist.
 
 ### Prohibited phrases
 
@@ -660,7 +661,7 @@ Two defects were found in that audit and fixed:
 - ~~Replace the placeholders in `assets/js/site-config.js`~~ — done, bar
   `formEndpoint`. The firm's telephone, WhatsApp, email, address, postal
   code and map link are confirmed and resolve across the site
-- Add the three advocate photographs
+- Keep the three supplied advocate photographs and registry filenames in sync
 - Verify and rewrite the provisional image alt text
 - **Have an advocate read each of the twelve guides**, then name them as
   `reviewedBy` and set `reviewStatus: "approved"` in `src/data/guides.js`.

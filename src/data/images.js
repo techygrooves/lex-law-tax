@@ -213,22 +213,22 @@ window.siteImages = {
 
   advocates: {
     "mohammad-kamran": {
-      src: "assets/images/kamran-adv.jpg",
+      src: "assets/images/kamran-adv.png",
       alt: "Photograph of Advocate Mohammad Kamran",
-      width: 640,
-      height: 800
+      width: 1086,
+      height: 1448
     },
     "hamid-razzaq": {
-      src: "assets/images/hamid-adv.jpg",
+      src: "assets/images/hamid-adv.png",
       alt: "Photograph of Advocate Hamid Razzaq",
-      width: 640,
-      height: 800
+      width: 1086,
+      height: 1448
     },
     "mohd-mateen": {
-      src: "assets/images/mateen-adv.jpg",
+      src: "assets/images/mateen-adv.png",
       alt: "Photograph of Advocate Mohd. Mateen",
-      width: 640,
-      height: 800
+      width: 1086,
+      height: 1448
     }
   },
 

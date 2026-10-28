@@ -1257,6 +1257,94 @@ window.siteGuides = {
       ],
       verify:
         "Which registrations a business requires, the thresholds at which they arise and what each involves depend on the structure, the activity, the place of business and the current state of the law and the notifications in force. The position for a particular business should be established before it begins trading."
+    },
+
+    /* ==================== AUTHORED ====================
+       The four below have their page HTML written by hand and committed
+       under legal-guides/<slug>/index.html. `authored: true` keeps the
+       builder from generating over them, so these entries hold only what
+       the index card and the sitemap need — heading, summary, category
+       and dates — not the body of the article. Remove the flag and the
+       next build would overwrite the page with a stub. */
+    {
+      slug: "supreme-court-mutation-does-not-confer-title",
+      authored: true,
+      categories: ["property"],
+      title: "Supreme Court on Mutation & Property Title | H.R. Legal Associate",
+      h1: "Supreme Court on Mutation: Ownership and Dakhil Kharij Explained",
+      description:
+        "Understand Jamnabai v. Vasudev (2026 INSC 900), why mutation does not confer ownership, and practical dakhil kharij guidance for Uttar Pradesh property owners.",
+      summary:
+        "A recent Supreme Court judgment, the difference between revenue entries and ownership, and a practical guide for property owners in Lucknow and Uttar Pradesh.",
+      datePublished: "2026-10-17",
+      dateReviewed: "2026-10-17",
+      reviewStatus: "approved",
+      author: "{{TO_BE_ASSIGNED}}",
+      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      relatedServices: [
+        ["Mutation and dakhil kharij", "property-law-and-registration/mutation-dakhil-kharij-lucknow/index.html"]
+      ]
+    },
+
+    {
+      slug: "father-sell-ancestral-property-without-children-consent",
+      authored: true,
+      categories: ["property"],
+      title: "Can a Father Sell Ancestral Property Without Consent?",
+      h1: "Can a Father Sell Ancestral Property Without His Children’s Consent? Supreme Court Decision Explained",
+      description:
+        "Can a father sell ancestral property without children’s consent? Understand the 2026 Supreme Court decision, legal necessity, daughters’ rights and buyer checks.",
+      summary:
+        "The difference between self-acquired and coparcenary property, when legal necessity matters, and what the Supreme Court decided in H.G. Pattabi v. K.R. Suraj.",
+      datePublished: "2026-10-17",
+      dateReviewed: "2026-10-17",
+      reviewStatus: "approved",
+      author: "{{TO_BE_ASSIGNED}}",
+      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      relatedServices: [
+        ["Property disputes", "property-law-and-registration/property-dispute-lawyer-lucknow/index.html"]
+      ]
+    },
+
+    {
+      slug: "gift-deed-stamp-duty-uttar-pradesh-5000-concession",
+      authored: true,
+      categories: ["property"],
+      title: "Gift Deed Stamp Duty UP: ₹5,000 Concession & Eligibility",
+      h1: "Gift Deed Stamp Duty in Uttar Pradesh: Who Qualifies for the ₹5,000 Concession?",
+      description:
+        "Who qualifies for Uttar Pradesh’s ₹5,000 gift deed stamp duty concession? Check eligible relatives, the five-year rule, covered property and registration costs.",
+      summary:
+        "A practical guide to eligible relatives, property categories, the five-year condition and costs beyond stamp duty, based on the official January 2026 notification.",
+      datePublished: "2026-10-17",
+      dateReviewed: "2026-10-17",
+      reviewStatus: "approved",
+      author: "{{TO_BE_ASSIGNED}}",
+      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      relatedServices: [
+        ["Gift deed registration", "property-law-and-registration/gift-deed-registration-lucknow/index.html"]
+      ]
+    },
+
+    {
+      slug: "how-to-make-will-india",
+      authored: true,
+      categories: ["property"],
+      title: "How to Make a Will in India: Requirements & Registration",
+      h1: "How to Make a Will in India: Legal Requirements, Registration and Common Mistakes",
+      description:
+        "Learn how to make a will in India: witnesses, registration, executors, personal-law differences, the probate update and common mistakes to avoid.",
+      summary:
+        "A practical guide to planning your estate, choosing witnesses and an executor, understanding registration and avoiding preventable disputes.",
+      datePublished: "2026-10-17",
+      dateReviewed: "2026-10-17",
+      reviewStatus: "approved",
+      author: "{{TO_BE_ASSIGNED}}",
+      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      relatedServices: [
+        ["Will drafting and registration", "property-law-and-registration/will-drafting-registration-lawyer-lucknow/index.html"]
+      ]
     }
+
   ]
 };

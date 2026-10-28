@@ -92,7 +92,7 @@ edit one of those two SVGs; the PNGs it produces are committed.
 ├── components/                    Design-system preview (noindex, not linked)
 ├── assets/
 │   ├── css/style.css              Design system and components
-│   ├── js/site-config.js          Firm details (placeholders)
+│   ├── js/site-config.js          Confirmed firm details and form destination
 │   ├── js/image-data.js           Adapter over the image registry
 │   ├── js/site.js                 Behaviour
 │   └── images/
@@ -251,8 +251,8 @@ is all that is needed — no markup changes.
 | `data-config-slot` | Child element that receives the text |
 | `data-pending-label` | Text shown while the value is a placeholder |
 
-While `formEndpoint` is unresolved the contact form renders but its fields are
-disabled behind a notice pointing to the telephone and email details.
+Both enquiry forms use the existing Formspree endpoint; the contact form has
+a static action as well as runtime configuration.
 
 ## Content notes
 
@@ -411,25 +411,16 @@ what a position depends on. **None of them advises anyone.** No answer tells a
 reader what to do in their own matter, addresses their facts or predicts an
 outcome, and a test scans for exactly those constructions.
 
-## Contact page and the enquiry form
+## Contact forms and directions
 
-The form asks for name, telephone, email, city, service category, a brief
-description, a preferred contact method and a consent acknowledgement.
+The homepage and contact page use the same existing Formspree endpoint configured
+in `assets/js/site-config.js`. The contact form has a real static `action`, so it
+can submit without JavaScript. The privacy policy describes both forms and the
+third-party processor. No test enquiries were submitted during validation.
 
-**It is deliberately inert.** `formEndpoint` in `assets/js/site-config.js` is
-`{{FORM_ENDPOINT}}`, so `site.js` disables every control, shows the notice
-saying online submission is being configured, and prevents submission. The
-markup ships with no `action` attribute at all. Nothing typed into it is
-transmitted or stored, and nothing on the page suggests a message was sent.
-Telephone, WhatsApp and email stay available throughout, because those are the
-routes that actually work today.
-
-Supply a real `formEndpoint` and `site.js` sets the `action`, re-enables the
-controls and hides the notice. **Update the privacy policy to say where
-submissions go before doing that.**
-
-The map is a placeholder rather than an embed. No address has been confirmed,
-and an embedded map would have to point somewhere.
+The office address, phone, WhatsApp, email and directions links are confirmed.
+They are embedded in the HTML as well as refreshed by browser JavaScript. The
+map panel links to Google Maps; it does not embed a third-party map.
 
 ## Location pages
 
@@ -658,17 +649,16 @@ Two defects were found in that audit and fixed:
 
 ## Still to do
 
-- ~~Replace the placeholders in `assets/js/site-config.js`~~ — done, bar
-  `formEndpoint`. The firm's telephone, WhatsApp, email, address, postal
-  code and map link are confirmed and resolve across the site
+- Contact details are confirmed and embedded in static HTML as well as hydrated
+  in the browser. Both enquiry forms use the existing Formspree destination.
 - Keep the three supplied advocate photographs and registry filenames in sync
 - Verify and rewrite the provisional image alt text
 - **Have an advocate read each of the twelve guides**, then name them as
   `reviewedBy` and set `reviewStatus: "approved"` in `src/data/guides.js`.
   Until that happens every guide is `noindex`
-- Supply `formEndpoint` in `assets/js/site-config.js` so the enquiry form can
-  send, and update the privacy policy to say where submissions go **before**
-  enabling it
+- Verify Formspree delivery and account settings in the service dashboard; both
+  forms are configured to use the homepage’s existing endpoint. No test enquiry
+  was sent during the placeholder audit.
 - Review the seven `noindex` city pages, add independently verified local
   content, then set `index: true` in `src/data/locations.js` and regenerate
   the sitemap
@@ -676,3 +666,14 @@ Two defects were found in that audit and fixed:
   that now exist; they still go to the guides index
 - Supply the withheld advocate details in `src/data/advocates.js`, if the firm
   wishes to publish them
+
+
+## Practice content and static contact rendering
+
+All twelve practice-area pages contain scope, document preparation, process and
+common-question guidance, with links to detailed service pages where available.
+`tools/render-config.js` embeds confirmed contact details and known structured-data
+tokens when building generated pages. For hand-authored pages the build updates
+only their `data-config` contact elements and registered JSON-LD tokens, preserving
+article content. Run `node tools/render-config.test.js` for the renderer checks.
+See `PLACEHOLDER-AUDIT.md` for the remaining intentionally withheld information.

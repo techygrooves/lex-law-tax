@@ -4,11 +4,12 @@ Prepared 28 October 2026 for lexlawandtax.com.
 
 ## Use the tested files
 
-The prepared `lexlawandtax-hostinger.zip` contains the tested working branch,
-including practice-page, photo, contact-detail and byline fixes. At validation time
-GitHub `main` did not yet contain those changes. If downloading from GitHub instead,
-merge `codex/complete-practice-pages` into `main` first, then download the updated
-branch. Do not upload an older archive.
+The prepared `lexlawandtax-hostinger.zip` contains the final tested release,
+including practice-page, photo, contact-detail, byline and form-validation fixes.
+GitHub `main` now includes the same tested website files and preserves the merged
+website-branch history. If downloading from GitHub, select `main`. GitHub's source
+archive has an enclosing repository folder; upload its contents, not that folder.
+The dedicated Hostinger ZIP is already flattened for direct extraction.
 
 The upload ZIP has `index.html` at its top level, not inside a repository folder.
 It includes `assets/`, `src/data/`, all public page folders, sitemap, robots,

@@ -21,6 +21,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const crypto = require("crypto");
 
 const ROOT = path.resolve(__dirname, "..");
 const DOMAIN = "https://lexlawandtax.com";
@@ -58,6 +59,30 @@ function loadData(relative, globalName) {
 }
 
 const { renderConfig } = require("./render-config");
+
+/* The stylesheet and the script are linked with a short hash of their own
+   source, so the URL changes whenever their contents do.
+
+   Without it the two files are the only things on the site whose address
+   never changes while their contents do, which makes them the only things
+   a browser or a host can serve from cache after they have been replaced.
+   That failure is quiet and misleading: new pages arrive looking broken,
+   because the markup is current and the CSS that styles it is months old.
+   A hash in the query string costs nothing and removes the possibility.
+
+   It is taken from the editable source rather than the minified output
+   because the minified file is written later in this run; it is a pure
+   function of the source, so the two move together. */
+const assetVersion = (relative) =>
+  crypto
+    .createHash("sha256")
+    .update(fs.readFileSync(path.join(ROOT, relative), "utf8"))
+    .digest("hex")
+    .slice(0, 8);
+
+const CSS_VERSION = assetVersion("assets/css/style.css");
+const JS_VERSION = assetVersion("assets/js/site.js");
+
 const { reviewsSection } = require("./reviews-section");
 const { articleAttribution } = require("./article-attribution");
 
@@ -1099,12 +1124,12 @@ ${imgPreconnect}  <link rel="preload" as="style" href="${attr(FONT_CSS)}">
   <link rel="apple-touch-icon" href="${P}assets/images/favicon-180.png">
   <link rel="manifest" href="${P}site.webmanifest">
   <link rel="author" href="${P}humans.txt">
-  <link rel="stylesheet" href="${P}assets/css/style.min.css">
+  <link rel="stylesheet" href="${P}assets/css/style.min.css?v=${CSS_VERSION}">
 
   <script src="${P}src/data/images.js" defer></script>
   <script src="${P}assets/js/site-config.js" defer></script>
   <script src="${P}assets/js/image-data.js" defer></script>
-  <script src="${P}assets/js/site.min.js" defer></script>
+  <script src="${P}assets/js/site.min.js?v=${JS_VERSION}" defer></script>
 ${analyticsTag()}${structuredData}</head>
 <body>
 

@@ -29,11 +29,24 @@ files are excluded. File permissions in the archive are normalised to 644.
    folder. The final path must be `public_html/index.html`.
 4. Confirm `public_html/assets/images/` contains the three advocate PNGs and
    `public_html/src/data/images.js` exists. Extracting only the HTML is insufficient.
+   The same applies to the shared assets every page depends on, above all
+   `public_html/assets/css/style.min.css` and `public_html/assets/js/site.min.js`.
+   New pages uploaded against an old stylesheet look broken in a way that is easy
+   to misread as a fault in the pages: the markup is current, the CSS that styles
+   it is not. **Upload the whole site, not only the folders that are new to you.**
 5. Enable SSL and Force HTTPS in hPanel if not already active. If the domain
    already opens the Hostinger site, no DNS change is needed. Otherwise follow
    Hostinger’s domain connection instructions; preserve existing email records.
 6. Purge Hostinger/CDN cache if enabled, then open the site in a private window.
    Delete the uploaded ZIP from public_html after successful extraction.
+
+   Then confirm the stylesheet that is actually being served is the new one.
+   Open `https://lexlawandtax.com/assets/css/style.min.css` and search it for
+   `prose__table`. If the string is absent, the old stylesheet is still being
+   served: re-upload it and purge the cache again. Every page links the
+   stylesheet and the script with a `?v=` hash of their contents, so a browser
+   cannot serve a stale copy once the new files are actually in place — but
+   nothing can help if the new file was never uploaded.
 7. Check the home page, all three advocate profiles, the practice-area menu,
    Property Law and Registration, Legal Guides and Contact on desktop and phone.
    Open the article URLs below directly. If the default hosting page appears,

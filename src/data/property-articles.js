@@ -1590,7 +1590,7 @@ window.sectionArticles = [
             ],
             table: {
               caption: "Leasehold against freehold",
-              head: ["", "Leasehold", "Freehold"],
+              head: ["What it affects", "Leasehold", "Freehold"],
               rows: [
                 [
                   "What is held",
@@ -2423,7 +2423,7 @@ window.sectionArticles = [
             ],
             table: {
               caption: "What a property power of attorney does and does not do",
-              head: ["", "Position"],
+              head: ["Question", "Position"],
               rows: [
                 [
                   "Creates an agency",

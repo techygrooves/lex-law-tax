@@ -444,6 +444,89 @@ small {
   color: var(--text-heading);
 }
 
+/* Below the reading column's width a comparison table stops working as a
+   grid. Four columns inside a phone screen leave each cell a few words
+   wide, every line wraps four or five deep, and the last column sits off
+   the edge behind a scrollbar nobody notices. So the table stops being a
+   grid: each row becomes its own block, the row heading becomes its
+   title, and every other cell is printed under the name of its column,
+   which each cell carries as data-label.
+
+   The column headings are hidden rather than removed, because they are
+   still the accessible names for the cells. The explicit roles in the
+   markup are what keep the table a table once display is changed. */
+@media (max-width: 48em) {
+  .prose__table {
+    overflow-x: visible;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .prose__table table {
+    display: block;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .prose__table caption {
+    padding: 0 0 var(--space-2xs);
+  }
+
+  .prose__table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .prose__table tbody {
+    display: block;
+  }
+
+  .prose__table tbody tr {
+    display: block;
+    padding: var(--space-s);
+    border: var(--hairline);
+    border-radius: var(--radius-sm);
+  }
+
+  .prose__table tbody tr + tr {
+    margin-top: var(--space-2xs);
+  }
+
+  .prose__table tbody th,
+  .prose__table tbody td {
+    display: block;
+    padding: 0;
+    border: 0;
+  }
+
+  /* The row heading titles the block. */
+  .prose__table tbody th {
+    font-size: var(--fs-md);
+    font-weight: 700;
+    line-height: var(--lh-snug);
+  }
+
+  .prose__table tbody td {
+    margin-top: var(--space-2xs);
+  }
+
+  .prose__table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    font-size: var(--fs-2xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-gold-ink);
+  }
+}
+
 
 /* 4. Layout
    ------------------------------------------------------------------ */

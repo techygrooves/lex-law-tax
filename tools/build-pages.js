@@ -4707,23 +4707,41 @@ ${lastReviewed()}
    do. Nothing here styles itself.                                      */
 
 function proseTable(t) {
-  const head = `          <thead>
-            <tr>${t.head.map((h) => `<th scope="col">${h}</th>`).join("")}</tr>
+  /* Every cell carries the heading of its column. On a narrow screen the
+     table stops being a grid and each row becomes a labelled block, and
+     the label is what the CSS prints above the value — a four-column
+     comparison squeezed into a phone is unreadable as a grid, whatever
+     the scrolling does for it.
+
+     The roles are written out even though a table has them implicitly,
+     because changing display to block drops the implicit ones in several
+     browsers, and a stacked row would then reach a screen reader as
+     anonymous text rather than as a table row. */
+  const head = `          <thead role="rowgroup">
+            <tr role="row">${t.head
+              .map((h) => `<th role="columnheader" scope="col">${h}</th>`)
+              .join("")}</tr>
           </thead>`;
+
   const rows = t.rows
     .map(
       (r) =>
-        `            <tr>` +
+        `            <tr role="row">` +
         r
-          .map((cell, i) => (i === 0 ? `<th scope="row">${cell}</th>` : `<td>${cell}</td>`))
+          .map((cell, i) =>
+            i === 0
+              ? `<th role="rowheader" scope="row" data-label="${attr(t.head[i] || "")}">${cell}</th>`
+              : `<td role="cell" data-label="${attr(t.head[i] || "")}">${cell}</td>`
+          )
           .join("") +
         `</tr>`
     )
     .join("\n");
+
   return `      <div class="prose__table">
-        <table>
+        <table role="table">
 ${t.caption ? `          <caption>${t.caption}</caption>\n` : ""}${head}
-          <tbody>
+          <tbody role="rowgroup">
 ${rows}
           </tbody>
         </table>

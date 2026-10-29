@@ -259,8 +259,8 @@ a static action as well as runtime configuration.
 
 Firm-authored content provides general legal information. At the firm’s request,
 the homepage separately displays the complete Google review texts it supplied,
-with names and wording preserved. No star ratings, review totals or individual
-results are invented. See `REVIEWS.md` for provenance and update instructions.
+with names and wording preserved. Star ratings reflect the firm’s explicit confirmation; review totals and individual
+results are not invented. See `REVIEWS.md` for provenance and update instructions.
 The footer carries a standing notice, a disclaimer acknowledgement appears on
 first visit, and `/disclaimer/` sets out the terms.
 

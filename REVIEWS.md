@@ -4,8 +4,9 @@ The homepage includes 20 complete reviews copied from the text supplied by the
 firm on 29 October 2026. Names and wording are preserved, including spelling.
 Rafi Ahmad’s English text is labelled as translated by Google. Empty entries,
 owner replies, interface labels and the truncated Asfar Ahmed review are omitted.
-No star ratings, review totals, absolute dates or reviewer photographs were
-provided, so these are not invented. No Review/AggregateRating schema is added.
+The firm subsequently confirmed an overall 5-star rating and that all 20 selected
+reviews are 5 stars. The section displays those confirmed ratings. Review totals,
+absolute dates and reviewer photographs are not inferred. No Review/AggregateRating schema is added.
 
 The source link is https://share.google/uQauRVQV4QKgKefoZ. Reviews are selected
 static content, not a live Google feed or an automatic synchronisation service.

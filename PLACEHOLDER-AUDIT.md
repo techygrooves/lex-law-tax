@@ -21,9 +21,9 @@ No contact or address value is missing. No new contact information was invented.
 
 ## Remaining source fields and deliberate fallbacks
 
-- **Advocate details:** 15 withheld fields (enrolment number, Certificate of Practice number, education, languages and courts/forums for each of three advocates). They are omitted from public HTML. Obtain verified details from the firm before publishing them.
-- **Article bylines:** unassigned author/reviewer fields remain withheld; no person is credited without assignment. This does not mean the article body is missing.
-- **Image descriptions:** 12 remote image records retain `altVerified: false`; their descriptions need visual verification. This is source metadata, not visible placeholder copy.
+- **Advocate profiles:** the existing public information is sufficient by the firm’s decision. Optional unpublished fields were removed from the registry; no further qualifications or enrolment numbers are awaited.
+- **Article bylines:** unassigned articles now use H.R. Legal Associate as a visible editorial author and an Organization in structured data. No individual reviewer is invented or claimed.
+- **Image descriptions:** the firm confirmed the remaining 12 descriptions; all current photo records have `altVerified: true`.
 - **Image fallbacks:** the silhouette and neutral media fallback remain for genuine loading errors. Real advocate PNGs continue to be referenced.
 - **Map panel:** intentionally links to Google Maps instead of embedding it; it is not missing an address.
 - **Form input hints:** ordinary placeholders such as “Full name” are input guidance, not missing page content.
@@ -37,3 +37,18 @@ Static audit: 119 HTML pages and 1,503 contact configuration elements checked, w
 Browser verification: 268 page checks passed with JavaScript enabled and disabled, covering all 119 pages at the root plus practice/contact/home pages under a simulated GitHub Pages project path. No page JavaScript errors or pending contact values were found. Form actions and enabled controls were checked without submitting messages.
 
 These results concern the checked-out site. Merge and deploy the changes to update Hostinger and GitHub Pages.
+
+## Editorial completion
+
+The firm’s subsequent instructions have been applied: no additional advocate
+credentials are required, the twelve outstanding image descriptions are confirmed,
+and all 29 Article/BlogPosting records have firm Organization authors. Authored
+articles carry the firm byline, while generated guides show the firm in the
+existing authorship block. Existing individually assigned authors would be preserved.
+
+Editorial verification: all 29 Article/BlogPosting records use an Organization
+author. All 18 photo descriptions are verified, including the 12 confirmed in
+this update. Fifty-eight article-byline browser checks passed with JavaScript
+on/off under a GitHub Pages project path. Three attribution regression tests
+passed alongside the seven contact-rendering tests. Advocate profile HTML and
+shared CSS remain unchanged.

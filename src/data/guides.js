@@ -45,12 +45,10 @@
  * is not the same as crediting an individual, and the two are deliberately
  * separate here.
  *
- * `author` and `reviewedBy` stay {{TO_BE_ASSIGNED}} until an advocate has
- * actually written or read the article. The builder omits a withheld name
- * entirely; it never prints a placeholder and never attributes an article
- * to anyone who has not been assigned to it. A "Reviewed by" row, and the
- * reviewedBy property in the structured data, appear only when a real name
- * is set here — approving an article never invents one.
+ * The firm is the editorial author of unassigned guides and is represented
+ * as an Organization in structured data. No individual reviewer is claimed
+ * unless a real reviewer has been explicitly named. Publication approval
+ * does not invent a professional reviewer or additional credentials.
  *
  * After editing, run:  node tools/build-pages.js
  * ---------------------------------------------------------------------
@@ -88,8 +86,7 @@ window.siteGuides = {
       "datePublished": "2026-10-28",
       "dateReviewed": "2026-10-28",
       "reviewStatus": "approved",
-      "author": "{{TO_BE_ASSIGNED}}",
-      "reviewedBy": "{{TO_BE_ASSIGNED}}",
+      "author": "H.R. Legal Associate",
       "relatedServices": []
 },
 {
@@ -105,8 +102,7 @@ window.siteGuides = {
       "datePublished": "2026-10-28",
       "dateReviewed": "2026-10-28",
       "reviewStatus": "approved",
-      "author": "{{TO_BE_ASSIGNED}}",
-      "reviewedBy": "{{TO_BE_ASSIGNED}}",
+      "author": "H.R. Legal Associate",
       "relatedServices": []
 },
     /* ==================== PROPERTY ==================== */
@@ -122,8 +118,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "why",
@@ -226,8 +221,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "what-each-is",
@@ -321,8 +315,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "what-it-is",
@@ -409,8 +402,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "the-difference",
@@ -498,8 +490,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "memo",
@@ -596,8 +587,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "different-things",
@@ -685,8 +675,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "purpose",
@@ -802,8 +791,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "label",
@@ -891,8 +879,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "parties",
@@ -1005,8 +992,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "read-it",
@@ -1097,8 +1083,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "identify",
@@ -1197,8 +1182,7 @@ window.siteGuides = {
       datePublished: "2026-08-07",
       dateReviewed: "2026-08-07",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       sections: [
         {
           id: "structure",
@@ -1314,8 +1298,7 @@ window.siteGuides = {
       datePublished: "2026-10-17",
       dateReviewed: "2026-10-17",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       relatedServices: [
         ["Mutation and dakhil kharij", "property-law-and-registration/mutation-dakhil-kharij-lucknow/index.html"]
       ]
@@ -1334,8 +1317,7 @@ window.siteGuides = {
       datePublished: "2026-10-17",
       dateReviewed: "2026-10-17",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       relatedServices: [
         ["Property disputes", "property-law-and-registration/property-dispute-lawyer-lucknow/index.html"]
       ]
@@ -1354,8 +1336,7 @@ window.siteGuides = {
       datePublished: "2026-10-17",
       dateReviewed: "2026-10-17",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       relatedServices: [
         ["Gift deed registration", "property-law-and-registration/gift-deed-registration-lucknow/index.html"]
       ]
@@ -1374,8 +1355,7 @@ window.siteGuides = {
       datePublished: "2026-10-17",
       dateReviewed: "2026-10-17",
       reviewStatus: "approved",
-      author: "{{TO_BE_ASSIGNED}}",
-      reviewedBy: "{{TO_BE_ASSIGNED}}",
+      author: "H.R. Legal Associate",
       relatedServices: [
         ["Will drafting and registration", "property-law-and-registration/will-drafting-registration-lawyer-lucknow/index.html"]
       ]

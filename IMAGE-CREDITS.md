@@ -8,21 +8,13 @@ loaded from their remote Pexels URLs at request time.
 
 No stock photograph is used for any of the three named advocates.
 
-## ⚠️ Alt text needs verification before launch
+## Image descriptions confirmed
 
-The network policy of the environment this site was built in blocks
-`pexels.com`, so the photographs below could not be opened and checked. Every
-entry marked **Unverified** carries provisional alt text written from the role
-the image plays on the page, not from what the photograph actually shows.
-
-**Before the site goes live:** open each source URL, look at the photograph,
-and rewrite its `alt` in `src/data/images.js`. Then set `altVerified: true`.
-Six entries carry confirmed alt text and are already correct: two were
-supplied at the outset, and four were chosen by the firm after a visual
-review, which described what each photograph shows.
-
-Provisional alt text is not a cosmetic issue — a screen-reader user is told
-something that may not be true.
+The firm confirmed the remaining twelve image descriptions on 28 October 2026.
+All current remote photo records now have `altVerified: true`. Existing alt text
+is retained as confirmed; re-check the description when replacing a photograph.
+This confirmation was supplied by the firm, not a claim of independent network
+verification by the development environment.
 
 ## Remote photographs (Pexels)
 

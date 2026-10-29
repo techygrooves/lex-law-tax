@@ -104,7 +104,7 @@ edit one of those two SVGs; the PNGs it produces are committed.
 ├── tax-and-gst/                   Hub + 9 income-tax and GST pages
 ├── business-registration/         Hub + 6 registration pages
 ├── src/data/images.js             Image registry — every URL lives here
-├── src/data/advocates.js          Advocate registry, incl. withheld details
+├── src/data/advocates.js          Advocate registry with approved public details
 ├── src/data/legal-services.js     Legal hub and service page content
 ├── src/data/tax-business.js       Tax, GST and registration page content
 ├── src/data/locations.js          Per-city wording for the location pages
@@ -231,8 +231,9 @@ longer matches, so editing the registry alone is enough.
 - A failed remote image leaves a neutral block, not a broken-image icon
 - No image is used more than twice on one page
 
-**Alt text for twelve of the fourteen photographs is provisional and must be
-verified** — see [IMAGE-CREDITS.md](IMAGE-CREDITS.md).
+All current image descriptions are confirmed. The firm verified the remaining
+twelve on 28 October 2026; all image records now use `altVerified: true`.
+Re-check the alt text whenever an image changes.
 
 ## Configuration
 
@@ -256,11 +257,12 @@ a static action as well as runtime configuration.
 
 ## Content notes
 
-The site follows the Bar Council of India position that advocates may not
-advertise or solicit work. Content is informational and avoids promotional
-claims, comparative or superlative wording, testimonials and case results. The
-footer carries a standing notice on every page, a disclaimer acknowledgement is
-shown once per visitor, and `/disclaimer/` sets out the position in full.
+Firm-authored content provides general legal information. At the firm’s request,
+the homepage separately displays the complete Google review texts it supplied,
+with names and wording preserved. No star ratings, review totals or individual
+results are invented. See `REVIEWS.md` for provenance and update instructions.
+The footer carries a standing notice, a disclaimer acknowledgement appears on
+first visit, and `/disclaimer/` sets out the terms.
 
 ## Deployment
 
@@ -370,7 +372,7 @@ every guide renders its own.
 article has `author`, `reviewedBy` and `reviewStatus`. While `reviewStatus` is
 `"pending"` the page:
 
-- names no author and no reviewer — the builder omits a withheld name
+- uses H.R. Legal Associate as the editorial author; no individual reviewer is invented — the builder omits an absent reviewer
   entirely, and never prints a placeholder;
 - displays *"Drafted for general information and pending final professional
   review."*;
@@ -602,24 +604,10 @@ says "through the advocate conducting the matter".
 verified facts are published: name, years in practice, Bar Council of Uttar
 Pradesh enrolment and the Certificate of Practice.
 
-Everything under `details` is still `{{TO_BE_PROVIDED}}`:
-
-| Field | Published? |
-| --- | --- |
-| `enrolmentNumber` | withheld |
-| `copNumber` | withheld |
-| `education` | withheld |
-| `languages` | withheld |
-| `courtsAndForums` | withheld |
-
-The builder **omits a withheld row from the HTML entirely** — no empty row, no
-"coming soon" label, no placeholder text reaching a visitor. Supply a real
-value and the row appears on the next build; leave it and nothing is claimed.
-The same rule governs `Person` structured data, which also only claims an
-`image` once the photograph file actually exists on disk.
-
-Do not fill these in from assumption. An enrolment number or qualification
-published in error is a professional-conduct problem, not a content gap.
+The firm has chosen not to publish additional qualifications, enrolment or
+Certificate of Practice numbers, languages or court lists. The optional
+`details` collections are intentionally empty. These are not missing content
+requirements, and no further personal particulars should be requested or invented.
 
 After editing, run `node tools/build-pages.js`.
 
@@ -664,8 +652,7 @@ Two defects were found in that audit and fixed:
   the sitemap
 - Repoint the `relatedGuides` links on the practice hub pages at the guides
   that now exist; they still go to the guides index
-- Supply the withheld advocate details in `src/data/advocates.js`, if the firm
-  wishes to publish them
+- Keep advocate profiles limited to the approved public particulars.
 
 
 ## Practice content and static contact rendering
@@ -676,4 +663,13 @@ common-question guidance, with links to detailed service pages where available.
 tokens when building generated pages. For hand-authored pages the build updates
 only their `data-config` contact elements and registered JSON-LD tokens, preserving
 article content. Run `node tools/render-config.test.js` for the renderer checks.
-See `PLACEHOLDER-AUDIT.md` for the remaining intentionally withheld information.
+See `PLACEHOLDER-AUDIT.md` for the publication decisions and deliberate fallbacks.
+
+
+## Article attribution
+
+Unassigned articles are attributed to H.R. Legal Associate as an Organization,
+with a visible firm byline. No individual reviewer or professional qualification
+is inferred. `tools/article-attribution.js` normalizes authored-page attribution
+while preserving existing genuine individual authors. Generated guide attribution
+comes from `src/data/guides.js`. Run `node tools/article-attribution.test.js`.

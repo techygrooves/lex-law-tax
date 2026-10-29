@@ -58,7 +58,10 @@ function loadData(relative, globalName) {
 }
 
 const { renderConfig } = require("./render-config");
+const { reviewsSection } = require("./reviews-section");
+const { articleAttribution } = require("./article-attribution");
 
+const REVIEWS = loadData("src/data/reviews.js", "siteReviews");
 const IMAGES = loadData("src/data/images.js", "siteImages");
 const ADVOCATE_DATA = loadData("src/data/advocates.js", "advocateData");
 const LEGAL = loadData("src/data/legal-services.js", "legalServices");
@@ -1429,6 +1432,8 @@ ${cityLinks("", HOME_CITIES)}
 })}
     </div>
   </section>
+
+${reviewsSection(REVIEWS)}
 
   <section class="section section--soft" aria-labelledby="guides-title">
     <div class="container">
@@ -2802,9 +2807,8 @@ ${lastReviewed()}
    committed by hand and flagged `authored`. Three rules govern how they
    are rendered:
 
-     - an article is attributed to nobody until an advocate has actually
-       been assigned to it. `author` and `reviewedBy` stay
-       {{TO_BE_ASSIGNED}} and the builder omits a withheld name entirely,
+     - the firm is the editorial author of otherwise unassigned articles.
+       An individual reviewer is included only when explicitly named,
        so a "Written by" or "Reviewed by" row, and the matching property in
        the structured data, appear only for a named person. Approving an
        article is the firm vouching for the content; it never fills in a
@@ -2976,7 +2980,7 @@ ${s.paras.map((t) => `      <p>${t}</p>`).join("\n")}${
     about: a.categories.map((c) => ({ "@type": "Thing", name: GUIDE_CATEGORY_NAME[c] }))
   };
   if (!isWithheld(a.author)) {
-    article.author = { "@type": "Person", name: a.author };
+    article.author = { "@type": a.author === FIRM ? "Organization" : "Person", name: a.author, ...(a.author === FIRM ? { url: DOMAIN + "/about/" } : {}) };
   }
   /* Never claimed while the article is pending: a reviewer property on an
      unreviewed article is exactly the false signal reviewStatus exists to
@@ -3124,7 +3128,7 @@ const guideFilterBar = `      <div class="guide-filters" data-guide-filters>
 ${GUIDES.categories
   .map(
     ([slug, name]) =>
-      `          <button class="chip chip--button" type="button" data-guide-filter="${slug}" aria-pressed="false">${name}</button>`
+      `          <button class="chip chip--button" id="${slug}" type="button" data-guide-filter="${slug}" aria-pressed="false">${name}</button>`
   )
   .join("\n")}
         </div>
@@ -3449,7 +3453,7 @@ ${sectionHead({
   id: "contact-form-title"
 })}
 
-      <form class="form" data-form="enquiry" action="${attr(SITE_CONFIG.formEndpoint)}" method="post" novalidate>
+      <form class="form" data-form="enquiry" action="${attr(SITE_CONFIG.formEndpoint)}" method="post">
 
 
         <div class="field">
@@ -4717,7 +4721,7 @@ const previousSitemapDates = new Map(
 const SITEMAP_EXCLUDE = new Set(["404.html", "components/index.html"]);
 
 /* Authored pages are not in `files`, because their article bodies are not
-   generated. Only confirmed contact metadata is refreshed below. They
+   generated. Only confirmed contact metadata and firm article attribution are refreshed below. They
    are read from disk and put through the same rules as the rest: a page
    carrying noindex is left out, and one without a canonical is an error
    rather than a silent omission. A missing file means the entry has an
@@ -4746,7 +4750,7 @@ authoredPaths.forEach((rel) => {
     );
   }
   const original = fs.readFileSync(target, "utf8");
-  authoredPages[rel] = renderConfig(original, SITE_CONFIG, CONFIG_TOKENS);
+  authoredPages[rel] = articleAttribution(renderConfig(original, SITE_CONFIG, CONFIG_TOKENS), FIRM);
   if (authoredPages[rel] !== original) fs.writeFileSync(target, authoredPages[rel], "utf8");
 });
 

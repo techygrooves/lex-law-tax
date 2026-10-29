@@ -58,8 +58,10 @@ function loadData(relative, globalName) {
 }
 
 const { renderConfig } = require("./render-config");
+const { reviewsSection } = require("./reviews-section");
 const { articleAttribution } = require("./article-attribution");
 
+const REVIEWS = loadData("src/data/reviews.js", "siteReviews");
 const IMAGES = loadData("src/data/images.js", "siteImages");
 const ADVOCATE_DATA = loadData("src/data/advocates.js", "advocateData");
 const LEGAL = loadData("src/data/legal-services.js", "legalServices");
@@ -1430,6 +1432,8 @@ ${cityLinks("", HOME_CITIES)}
 })}
     </div>
   </section>
+
+${reviewsSection(REVIEWS)}
 
   <section class="section section--soft" aria-labelledby="guides-title">
     <div class="container">

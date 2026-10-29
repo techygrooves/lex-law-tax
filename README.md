@@ -257,11 +257,12 @@ a static action as well as runtime configuration.
 
 ## Content notes
 
-The site follows the Bar Council of India position that advocates may not
-advertise or solicit work. Content is informational and avoids promotional
-claims, comparative or superlative wording, testimonials and case results. The
-footer carries a standing notice on every page, a disclaimer acknowledgement is
-shown once per visitor, and `/disclaimer/` sets out the position in full.
+Firm-authored content provides general legal information. At the firm’s request,
+the homepage separately displays the complete Google review texts it supplied,
+with names and wording preserved. No star ratings, review totals or individual
+results are invented. See `REVIEWS.md` for provenance and update instructions.
+The footer carries a standing notice, a disclaimer acknowledgement appears on
+first visit, and `/disclaimer/` sets out the terms.
 
 ## Deployment
 

@@ -74,6 +74,216 @@ window.siteGuides = {
 
   articles: [
 {
+    "slug": "stamp-duty-property-registration-charges-uttar-pradesh-2026",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Stamp Duty in UP 2026: Property Registration Charges Guide",
+    "h1": "Stamp Duty and Property Registration Charges in Uttar Pradesh 2026: Complete Guide",
+    "description": "Stamp duty in UP 2026 explained: valuation, registration charges, buyer concessions, payment checks and detailed property purchase cost worksheets.",
+    "summary": "Build a reliable registration budget with valuation checks, detailed cost tables, concession documents and a clear payment-to-registration workflow.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "lucknow-circle-rate-2026",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Lucknow Circle Rate 2026: Area-Wise Lookup & Valuation",
+    "h1": "Lucknow Circle Rate 2026: Area-Wise Property Rates and How to Check Them",
+    "description": "Lucknow circle rate 2026 guide: find the correct area-wise schedule, compare localities, calculate valuation and document the applicable official rate.",
+    "summary": "Find the right locality entry and valuation category, understand area and road factors, and use a detailed worksheet before a Lucknow property registry.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "property-registry-uttar-pradesh-online-process-documents",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Property Registry Process UP 2026: Documents & Appointment",
+    "h1": "Property Registry in Uttar Pradesh 2026: Online Process, Documents and Appointment",
+    "description": "Property registry process UP: prepare sale deed documents, valuation, payments, appointment, identity checks and post-registration records in 2026.",
+    "summary": "A detailed guide from title papers and online preparation to the registry appointment, registered deed, possession and post-purchase record updates.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "up-property-registration-aadhaar-biometric-rules-2026",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "UP Registry Aadhaar & Biometric Rules 2026 Explained",
+    "h1": "UP Property Registration Aadhaar and Biometric Rules 2026 Explained",
+    "description": "UP registry Aadhaar biometric 2026 guide: identity checks, photographs, fingerprints, authentication, mismatch solutions and representative documents.",
+    "summary": "Understand the difference between Aadhaar authentication, fingerprint capture and execution admission, with detailed preparation and troubleshooting tables.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "section-80-land-conversion-uttar-pradesh",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Section 80 UP Land Conversion 2026: Process & LDA Approval",
+    "h1": "Section 80 Land Conversion in Uttar Pradesh 2026: Rules, Process and LDA Approval",
+    "description": "Section 80 UP land conversion explained: revenue declaration, application documents, land use, LDA layout approval and detailed buyer due-diligence checks.",
+    "summary": "Understand what a Section 80 declaration changes, how to prepare the land file, and why planning permission and LDA approval need separate examination.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "up-bhulekh-khasra-khatauni-online",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "UP Bhulekh 2026: Check Khasra & Khatauni Online",
+    "h1": "How to Check Khasra and Khatauni Online in UP: Bhulekh 2026 Guide",
+    "description": "UP Bhulekh khasra khatauni guide for 2026: search land records, understand gata and khata numbers, read entries and compare maps and title documents.",
+    "summary": "Learn how to locate a UP land record, read its main fields, resolve search mismatches and build a useful parcel file for inheritance or purchase.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "lucknow-bhulekh-certified-land-records",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Lucknow Bhulekh Certified Copy: Land Records Guide 2026",
+    "h1": "Lucknow Bhulekh Portal 2026: How to Get Certified Land Records Online",
+    "description": "Lucknow Bhulekh certified copy guide: identify the official service, request authenticated khatauni and land records, verify copies and resolve record gaps.",
+    "summary": "Choose the correct land record, understand certification and digital authentication, and prepare a complete Lucknow copy request with verification tables.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "igrsup-property-registry-barah-sala-encumbrance-certificate",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "IGRSUP Barah Sala: 12-Year Encumbrance & Registry Search",
+    "h1": "How to Check Property Registry and Obtain a 12-Year Encumbrance Certificate in UP",
+    "description": "IGRSUP barah sala certificate guide: search UP property registry records, prepare a 12-year search, obtain deed copies and interpret encumbrance results.",
+    "summary": "Plan a clear registration search with correct property identifiers, a defined 12-year period and detailed follow-up checks for mortgages and title history.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "property-title-verification-lucknow",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Property Title Verification Lucknow: Legal Search Report",
+    "h1": "Property Title Verification in Lucknow: Legal Search Report and Due Diligence",
+    "description": "Property title verification Lucknow guide: title chain, legal search report, mortgages, succession, LDA approvals and detailed due-diligence checklists.",
+    "summary": "Understand what a property lawyer examines, what a useful legal search report should contain and how findings become clear purchase conditions.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "lda-approved-plots-layouts-lucknow",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "LDA Approved Plots Lucknow: Layout Verification Guide",
+    "h1": "How to Check LDA-Approved Plots and Layouts in Lucknow Before Buying",
+    "description": "LDA approved plots Lucknow guide: verify sanctioned layouts, khasra numbers, land use, promoter title, RERA details and plot-level approval conditions.",
+    "summary": "Check the exact plot against the sanctioned layout and underlying land, with detailed tables covering authority records, title, roads and completion conditions.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
       "slug": "da-hike-central-government-employees-2026",
       "authored": true,
       "categories": [

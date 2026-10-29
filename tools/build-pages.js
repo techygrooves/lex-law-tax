@@ -3210,16 +3210,17 @@ ${sectionHead({ eyebrow: "About these notes", title: "What This Section Is For",
         taking advice on it, not as a substitute for that advice.
       </p>
       <p>
-        No note here states a court fee, a stamp duty rate, a tax rate, a limitation
-        period or a filing deadline. Those are set by statute and notification, they
-        are revised, and a figure published on a website is wrong as soon as it
-        changes. Each note says instead what has to be verified for the particular
-        matter and against what.
+        Find document checklists, process explanations, detailed comparison tables
+        and links to official services. Where a guide uses a worked cost example,
+        it identifies the assumptions separately from current notified charges.
+        Rates, concessions and portal requirements should be read with the
+        effective official rules for the transaction.
       </p>
       <p>
-        Every note also records when it was published and when it was last reviewed,
-        and says whether an advocate has read it. Notes still awaiting that review say
-        so at the top and are not submitted for indexing until it has happened.
+        Each guide identifies its publisher and publication date. An individual
+        author or reviewer is credited only when specifically assigned. The
+        property guides connect registration, land records, title verification
+        and planning approvals so you can prepare a complete transaction file.
       </p>
     </div>
   </section>

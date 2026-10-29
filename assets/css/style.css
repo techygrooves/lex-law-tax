@@ -383,6 +383,67 @@ small {
   color: var(--color-gold);
 }
 
+/* Tables inside prose.
+   Nothing in the generated pages used a table until the revenue-law
+   articles, so this adds styling where there was none rather than
+   changing anything that was already on the page. The wrapper is what
+   scrolls: a comparison table with four columns cannot reflow to 320px
+   without becoming unreadable, so it keeps its width and the reader
+   swipes it, while the page itself never overflows. The wrapper is
+   allowed to use the full reading column, which is why the width is set
+   on it rather than inherited from .prose. */
+.prose__table {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: var(--space-m);
+  border: var(--hairline);
+  border-radius: var(--radius-sm);
+}
+
+.prose__table table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.prose__table caption {
+  caption-side: top;
+  padding: var(--space-s) var(--space-s) 0;
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-gold-ink);
+  text-align: left;
+}
+
+.prose__table th,
+.prose__table td {
+  padding: var(--space-2xs) var(--space-s);
+  border-bottom: var(--hairline);
+  text-align: left;
+  vertical-align: top;
+  line-height: var(--lh-snug);
+}
+
+.prose__table thead th {
+  background-color: var(--color-ivory);
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+.prose__table tbody tr:last-child th,
+.prose__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.prose__table tbody th {
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
 
 /* 4. Layout
    ------------------------------------------------------------------ */

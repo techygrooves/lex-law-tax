@@ -83,6 +83,23 @@ if (ANALYTICS_ID && !/^G-[A-Z0-9]+$/.test(ANALYTICS_ID)) {
    site-wide and come from the legal-services file. */
 const SECTION_HUBS = LEGAL.hubs.concat(TAXBIZ.hubs);
 
+/* Long-form articles that live under a section hub. They are kept in
+   their own file because each one runs to a couple of thousand words, and
+   folding them into legal-services.js would bury the service definitions
+   they sit beside. Each is attached to its hub here, so the hub lists it
+   and links to it exactly as it does a service. */
+const ARTICLES = loadData("src/data/property-articles.js", "sectionArticles");
+ARTICLES.forEach((group) => {
+  const hub = SECTION_HUBS.filter((h) => h.slug === group.hub)[0];
+  if (!hub) throw new Error("Article group names an unknown hub: " + group.hub);
+  group.articles.forEach((a) => {
+    if (hub.services.some((s) => s.slug === a.slug)) {
+      throw new Error("Article slug collides with an existing service: " + a.slug);
+    }
+    hub.services.push(Object.assign({ article: true }, a));
+  });
+});
+
 /* A withheld detail is still {{TO_BE_PROVIDED}}. Those rows are dropped
    from the page rather than rendered empty, so nothing unverified is
    ever published beside an advocate's name. */
@@ -2849,11 +2866,13 @@ const countWord = (n) => NUMBER_WORDS[n] || String(n);
    rule took four only when the count divided by four exactly, which was
    right for a hub of four but stranded a single card on its own row as
    soon as a hub grew — nineteen services across three columns leaves one
-   card alone, across four it leaves three. A full row is ideal; a nearly
-   full one is the next best thing. */
+   card alone, across four it leaves three. A row that comes out exactly
+   full beats a merely wide one, which is why an exact division scores
+   above its own column count: twenty-seven belongs in threes, not in
+   fours with three left over. */
 function gridFor(n) {
-  const lastRow = (cols) => (n % cols === 0 ? cols : n % cols);
-  return lastRow(4) >= lastRow(3) ? "grid--fixed-4" : "grid--fixed-3";
+  const score = (cols) => (n % cols === 0 ? cols + 0.5 : n % cols);
+  return score(4) >= score(3) ? "grid--fixed-4" : "grid--fixed-3";
 }
 
 /* An article marked `authored` has its page written by hand and committed
@@ -4674,12 +4693,151 @@ ${lastReviewed()}
   });
 }
 
+/* --- Long-form article page ------------------------------------------
+   A second kind of page under a section hub. servicePage renders a fixed
+   set of blocks — scope, who it is for, matters, process, documents,
+   risks — which suits a page describing what the firm does. An article
+   has to be able to run to its own shape: as many sections as the subject
+   needs, a table where a comparison is clearer than a paragraph, a list
+   where it is not.
+
+   It is still built through page(), so the header, footer, navigation,
+   fonts, analytics and relative paths are identical to every other page
+   on the site, and the typography comes from .prose exactly as the guides
+   do. Nothing here styles itself.                                      */
+
+function proseTable(t) {
+  const head = `          <thead>
+            <tr>${t.head.map((h) => `<th scope="col">${h}</th>`).join("")}</tr>
+          </thead>`;
+  const rows = t.rows
+    .map(
+      (r) =>
+        `            <tr>` +
+        r
+          .map((cell, i) => (i === 0 ? `<th scope="row">${cell}</th>` : `<td>${cell}</td>`))
+          .join("") +
+        `</tr>`
+    )
+    .join("\n");
+  return `      <div class="prose__table">
+        <table>
+${t.caption ? `          <caption>${t.caption}</caption>\n` : ""}${head}
+          <tbody>
+${rows}
+          </tbody>
+        </table>
+      </div>`;
+}
+
+function articleSection(s) {
+  const parts = [`      <h2 id="${s.id}">${s.heading}</h2>`];
+  (s.paras || []).forEach((t) => parts.push(`      <p>${t}</p>`));
+  if (s.list) {
+    parts.push(`      <ul>\n${s.list.map((t) => `        <li>${t}</li>`).join("\n")}\n      </ul>`);
+  }
+  if (s.table) parts.push(proseTable(s.table));
+  (s.after || []).forEach((t) => parts.push(`      <p>${t}</p>`));
+  return parts.join("\n");
+}
+
+function articlePage(hub, a) {
+  const P = "../../";
+  const canonical = "/" + hub.slug + "/" + a.slug + "/";
+  const trail = [
+    { label: "Home", href: "index.html", canonical: "" },
+    { label: hub.name, href: hub.slug + "/index.html", canonical: hub.slug + "/" },
+    { label: a.h1, canonical: hub.slug + "/" + a.slug + "/" }
+  ];
+
+  const toc = `      <nav class="toc" aria-labelledby="toc-title" data-reveal>
+        <h2 class="toc__title" id="toc-title">On this page</h2>
+        <ol class="toc__list">
+${a.sections.map((s) => `          <li><a href="#${s.id}">${s.heading}</a></li>`).join("\n")}
+          <li><a href="#faq">Questions people ask</a></li>
+        </ol>
+      </nav>`;
+
+  const article = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: a.h1,
+    description: a.description,
+    url: DOMAIN + canonical,
+    datePublished: a.datePublished,
+    dateModified: a.dateModified,
+    inLanguage: "en-IN",
+    isAccessibleForFree: true,
+    publisher: { "@id": DOMAIN + "/#practice" },
+    about: { "@type": "Thing", name: hub.name }
+  };
+  article.mainEntityOfPage = { "@type": "WebPage", "@id": DOMAIN + canonical };
+
+  return page({
+    depth: 2,
+    canonical,
+    cta: false,
+    title: a.title,
+    description: a.description,
+    ogType: "article",
+    jsonLd: [breadcrumbJsonLd(trail), article, faqJsonLd(a.faqs)],
+    body:
+      `  <section class="page-header page-header--article">
+    <div class="container container--reading">
+      <div class="page-header__inner">
+${breadcrumb(P, trail)}
+        <p class="eyebrow">${hub.name}</p>
+        <h1>${a.h1}</h1>
+        <p class="page-header__lead">${a.lead}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container container--reading">
+${toc}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="article-body">
+    <div class="container container--reading prose">
+      <h2 class="visually-hidden" id="article-body">${a.h1}</h2>
+${a.sections.map(articleSection).join("\n\n")}
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="faq">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Questions", title: "Questions People Ask", id: "faq" })}
+${accordion("article-faq-" + a.slug, a.faqs, true)}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="article-related">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "See also", title: "Related Services", id: "article-related" })}
+${relatedLinks(P, a.related)}
+      <p class="cluster">${arrowLink("All property services", P + hub.slug + "/index.html")}</p>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="article-note">
+    <div class="container container--reading">
+${sectionHead({ eyebrow: "Please note", title: "About This Page", id: "article-note" })}
+${disclaimerBlock(P)}
+${lastReviewed()}
+    </div>
+  </section>`
+  });
+}
+
 /* Authored bodies are skipped here; contact metadata is resolved below. */
 SECTION_HUBS.forEach((hub) => {
   files[hub.slug + "/index.html"] = hubPage(hub);
   hub.services.forEach((svc) => {
     if (isAuthored(svc)) return;
-    files[hub.slug + "/" + svc.slug + "/index.html"] = servicePage(hub, svc);
+    files[hub.slug + "/" + svc.slug + "/index.html"] =
+      svc.article ? articlePage(hub, svc) : servicePage(hub, svc);
   });
 });
 

@@ -1837,6 +1837,97 @@ window.legalServices = {
           ]
         },
 
+{
+          "slug": "property-injunction-lawyer-lucknow",
+          "authored": true,
+          "name": "Property Injunction Lawyer in Lucknow",
+          "navLabel": "Property Injunction Lawyer",
+          "h1": "Property Injunction Lawyer in Lucknow",
+          "title": "Property Injunction Lawyer in Lucknow | Stay & Protection",
+          "description": "Property injunction lawyer in Lucknow: temporary and permanent injunctions, construction disputes, possession protection, evidence and court procedure.",
+          "lead": "Understand urgent property protection, the injunction tests, evidence, precise court orders and enforcement."
+},
+{
+          "slug": "property-possession-lawyer-lucknow",
+          "authored": true,
+          "name": "Property Possession Lawyer in Lucknow",
+          "navLabel": "Property Possession Lawyer",
+          "h1": "Property Possession Lawyer in Lucknow",
+          "title": "Property Possession Lawyer in Lucknow | Recovery Guide",
+          "description": "Property possession lawyer in Lucknow: title-based recovery, Section 6 dispossession suits, evidence, mesne profits and execution explained.",
+          "lead": "Understand possession recovery, the Section 6 remedy, title-based claims, occupation charges and physical handover."
+},
+{
+          "slug": "property-title-declaration-suit-lawyer-lucknow",
+          "authored": true,
+          "name": "Property Title Declaration Suit Lawyer in Lucknow",
+          "navLabel": "Property Title Declaration Suit Lawyer",
+          "h1": "Property Title Declaration Suit Lawyer in Lucknow",
+          "title": "Property Title Declaration Suit Lawyer in Lucknow",
+          "description": "Property title declaration suit lawyer in Lucknow: Section 34, disputed ownership, civil and revenue jurisdiction, limitation and connected relief.",
+          "lead": "Resolve the legal issues behind competing ownership claims, disputed documents, title declarations and consequential relief."
+},
+{
+          "slug": "sale-deed-cancellation-lawyer-lucknow",
+          "authored": true,
+          "name": "Sale Deed Cancellation Lawyer in Lucknow",
+          "navLabel": "Sale Deed Cancellation Lawyer",
+          "h1": "Sale Deed Cancellation Lawyer in Lucknow",
+          "title": "Sale Deed Cancellation Lawyer in Lucknow | Legal Guide",
+          "description": "Sale deed cancellation lawyer in Lucknow: fraud, forgery, authority, Section 31, limitation, court fees and the distinction from a title declaration.",
+          "lead": "Understand how a disputed sale deed is challenged, which relief fits the claimant and how evidence supports the case."
+},
+{
+          "slug": "specific-performance-suit-lawyer-lucknow",
+          "authored": true,
+          "name": "Specific Performance Suit Lawyer in Lucknow",
+          "navLabel": "Specific Performance Suit Lawyer",
+          "h1": "Specific Performance Suit Lawyer in Lucknow",
+          "title": "Specific Performance Suit Lawyer in Lucknow | Sale Agreements",
+          "description": "Specific performance suit lawyer in Lucknow: enforcing property sale agreements, readiness and willingness, Article 54, later buyers and execution.",
+          "lead": "Understand enforcement of property agreements, evidence of readiness, limitation, alternative relief and completion through court."
+},
+{
+          "slug": "land-encroachment-lawyer-lucknow",
+          "authored": true,
+          "name": "Land Encroachment Lawyer in Lucknow",
+          "navLabel": "Land Encroachment Lawyer",
+          "h1": "Land Encroachment Lawyer in Lucknow",
+          "title": "Land Encroachment Lawyer in Lucknow | Removal & Recovery",
+          "description": "Land encroachment lawyer in Lucknow: private and public land, evidence, demarcation, injunctions, possession recovery and lawful removal procedures.",
+          "lead": "Identify the occupied land, select the correct legal route and prepare evidence for protection, removal or recovery."
+},
+{
+          "slug": "boundary-dispute-lawyer-lucknow",
+          "authored": true,
+          "name": "Boundary Dispute Lawyer in Lucknow",
+          "navLabel": "Boundary Dispute Lawyer",
+          "h1": "Boundary Dispute Lawyer in Lucknow",
+          "title": "Boundary Dispute Lawyer in Lucknow | Demarcation Guide",
+          "description": "Boundary dispute lawyer in Lucknow: property measurement, Uttar Pradesh demarcation, maps, court commissioners, shared walls and settlement records.",
+          "lead": "Connect title descriptions with the ground position through reliable measurement, demarcation and enforceable remedies."
+},
+{
+          "slug": "co-owner-property-dispute-lawyer-lucknow",
+          "authored": true,
+          "name": "Co-owner Property Dispute Lawyer in Lucknow",
+          "navLabel": "Co-owner Property Dispute Lawyer",
+          "h1": "Co-owner Property Dispute Lawyer in Lucknow",
+          "title": "Co-owner Property Dispute Lawyer in Lucknow | Shares & Partition",
+          "description": "Co-owner property dispute lawyer in Lucknow: shares, exclusion, property sales, rent accounts, partition, family settlement and buyout options.",
+          "lead": "Understand undivided shares, use rights, transfers, rent accounts and practical solutions for jointly owned property."
+},
+{
+          "slug": "tenant-eviction-lawyer-lucknow",
+          "authored": true,
+          "name": "Tenant Eviction Lawyer in Lucknow",
+          "navLabel": "Tenant Eviction Lawyer",
+          "h1": "Tenant Eviction Lawyer in Lucknow",
+          "title": "Tenant Eviction Lawyer in Lucknow | Notices & Recovery",
+          "description": "Tenant eviction lawyer in Lucknow: Uttar Pradesh tenancy law, rent default, notices, evidence, competent forums, deposits and possession enforcement.",
+          "lead": "Understand the governing tenancy framework, eviction grounds, notices, rent accounts, settlement and lawful recovery."
+},
+
         /* ---- AUTHORED ----
            The entries below have their page HTML written by hand and
            committed under property-law-and-registration/<slug>/.

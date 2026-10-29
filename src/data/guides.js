@@ -74,6 +74,216 @@ window.siteGuides = {
 
   articles: [
 {
+    "slug": "rera-project-verification-lucknow-2026",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "RERA Project Verification Lucknow: Buyer Checklist 2026",
+    "h1": "How to Verify RERA-Registered Projects in Lucknow: Buyer Checklist 2026",
+    "description": "RERA project verification Lucknow: check UP RERA registration, project phases, approvals, promoter records, agreements and buyer documents in 2026.",
+    "summary": "Check the exact project, phase, promoter and plot or apartment against official RERA disclosures, approvals and the proposed purchase agreement.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "agricultural-land-residential-use-uttar-pradesh",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Agricultural Land Residential Use UP: Registry & House Rules",
+    "h1": "Can Agricultural Land Be Registered and Used for a House in Uttar Pradesh?",
+    "description": "Agricultural land residential use UP explained: ownership, tenure, Section 80, planning land use, layout approval, access and building permission.",
+    "summary": "Understand why buying agricultural land and obtaining permission to build a house are separate legal steps, with a detailed land-to-home checklist.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "bkt-sitapur-road-lucknow-property-registry",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "BKT Lucknow Property Registry: Sitapur Road Legal Checks",
+    "h1": "BKT and Sitapur Road Lucknow Property Registry: Circle Rates and Legal Checks",
+    "description": "BKT Lucknow property registry guide: Sitapur Road land identity, circle-rate lookup, title, agricultural plots, approvals, access and sale deed checks.",
+    "summary": "A local property checklist for Bakshi Ka Talab and the Sitapur Road corridor, covering exact parcel identity, valuation, approvals and registry preparation.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "female-stamp-duty-concession-uttar-pradesh-2026",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Female Stamp Duty Concession UP 2026: Ownership & Costs",
+    "h1": "Property Registration for Women in Uttar Pradesh: Stamp Duty Concessions in 2026",
+    "description": "Female stamp duty concession UP guide for 2026: eligibility, joint ownership, notification checks, valuation, documents and detailed cost comparisons.",
+    "summary": "Understand how to check a women’s property-registration concession and compare the actual benefit with ownership shares, valuation and completion costs.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "sale-deed-certified-copy-uttar-pradesh",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Sale Deed Certified Copy UP: Application & Verification Guide",
+    "h1": "How to Get a Certified Copy of a Sale Deed in Uttar Pradesh",
+    "description": "Sale deed certified copy UP guide: find registration details, request the correct deed, verify schedules and endorsements, and manage lost originals.",
+    "summary": "Locate the registered instrument, prepare a precise copy request and check the delivered deed for completeness, authenticity and the correct property.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "sale-deed-cancellation-uttar-pradesh-remedies",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Sale Deed Cancellation UP: Registered Deed Legal Remedies",
+    "h1": "Can You Cancel a Registered Sale Deed in Uttar Pradesh? Legal Remedies Explained",
+    "description": "Sale deed cancellation UP explained: fraud, forgery, executant and non-executant remedies, Section 31, limitation, possession and court decree effects.",
+    "summary": "Understand when a registered deed can be challenged, how cancellation differs from declaration or rectification, and which evidence supports each remedy.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "registry-done-mutation-not-done-uttar-pradesh",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Registry Done, Mutation Not Done in UP: Effects & Next Steps",
+    "h1": "Property Registered but Mutation Not Done: What Happens in Uttar Pradesh?",
+    "description": "Registry done mutation not done? Understand UP ownership, revenue and municipal updates, mutation documents, pending cases and practical next steps.",
+    "summary": "Understand the effect of delayed mutation, identify the correct record authority and build a clear application and follow-up file after property registration.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "inherited-property-transfer-uttar-pradesh",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Inherited Property Transfer UP: Legal Heirs & Documents",
+    "h1": "How to Register an Inherited Property in UP: Legal Heirs and Ownership Documents",
+    "description": "Inherited property transfer UP explained: succession, legal heirs, wills, mutation, co-owner shares, partition, release and sale deed documents.",
+    "summary": "Distinguish inheritance from a new conveyance, establish every heir’s interest and prepare the documents needed for record updates or a later property transfer.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "power-of-attorney-property-sale-uttar-pradesh",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Power of Attorney Property Sale UP: Risks & Registration",
+    "h1": "Buying Property Through Power of Attorney in Uttar Pradesh: Risks and Registration",
+    "description": "Power of attorney property sale UP explained: genuine agency, GPA sales, authority, registration, overseas owners, payment and completion documents.",
+    "summary": "Follow a UP-focused transaction workflow to verify the owner, attorney, powers, property and final sale deed before completing a represented sale.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
+    "slug": "plot-buying-legal-checklist-lucknow",
+    "authored": true,
+    "categories": [
+        "property"
+    ],
+    "title": "Plot Buying Legal Checklist Lucknow: Title, LDA & RERA",
+    "h1": "Buying a Plot in Lucknow: Freehold vs Leasehold, LDA, RERA and Title Checks",
+    "description": "Plot buying legal checklist Lucknow: freehold versus leasehold, LDA layouts, RERA projects, title, land use, roads, registry costs and possession.",
+    "summary": "Compare the legal interest, approvals, title, access and total completion cost of a Lucknow plot before booking, registry and possession.",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "reviewStatus": "approved",
+    "author": "H.R. Legal Associate",
+    "relatedServices": [
+        [
+            "Property Law and Registration",
+            "property-law-and-registration/index.html"
+        ]
+    ]
+},
+{
     "slug": "stamp-duty-property-registration-charges-uttar-pradesh-2026",
     "authored": true,
     "categories": [

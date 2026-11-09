@@ -226,6 +226,18 @@ window.siteImages = {
       alt: "Photograph of Advocate Mohd. Mateen",
       width: 1086,
       height: 1448
+    },
+    "pradyumn-jaiswal": {
+      src: "assets/images/pradyumn-adv.png",
+      alt: "Photograph of Advocate Pradyumn Jaiswal",
+      width: 1086,
+      height: 1448
+    },
+    "harshit-tiwari": {
+      src: "assets/images/harshit-adv.png",
+      alt: "Photograph of Advocate Harshit Tiwari",
+      width: 1086,
+      height: 1448
     }
   },
 

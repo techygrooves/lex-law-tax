@@ -180,6 +180,14 @@ const ADVOCATES = ADVOCATE_DATA.order.map((slug) =>
   Object.assign({ slug }, ADVOCATE_DATA.advocates[slug])
 );
 
+/* Counts that appear in prose are written out, and they are derived rather
+   than typed, so adding an article cannot leave a page claiming a number
+   that was true last month. Beyond twenty the figure reads better. */
+const NUMBER_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six",
+  "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen",
+  "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty"];
+const countWord = (n) => NUMBER_WORDS[n] || String(n);
+
 const CREDENTIALS = [
   "Enrolled with the Bar Council of Uttar Pradesh",
   "Certificate of Practice holder"
@@ -1405,7 +1413,7 @@ ${sectionHead({
   lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
   id: "advocates-title"
 })}
-      <div class="grid grid--3" data-reveal-group>
+      <div class="grid grid--3 grid--advocates" data-reveal-group>
 ${ADVOCATES.map((a) => advocateCard("", a)).join("\n")}
       </div>
     </div>
@@ -1821,7 +1829,7 @@ ${sectionHead({
   lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
   id: "advocates-title"
 })}
-      <div class="grid grid--3" data-reveal-group>
+      <div class="grid grid--3 grid--advocates" data-reveal-group>
 ${ADVOCATES.map((a) => advocateCard("../", a)).join("\n")}
       </div>
     </div>
@@ -1915,7 +1923,7 @@ files["advocates/index.html"] = page({
 ${sectionHead({
   eyebrow: "The practice",
   title: "The Advocates of the Firm",
-  lead: "All three work from the Lucknow office. Only what the firm has verified is published for each of them.",
+  lead: "All " + countWord(ADVOCATES.length).toLowerCase() + " work from the Lucknow office. Only what the firm has verified is published for each of them.",
   id: "advocates-title"
 })}
     </div>
@@ -1929,9 +1937,10 @@ ${ADVOCATES.map((a) => advocateProfileCard("../", a, a.slug + "/index.html")).jo
       <div class="disclaimer-note" data-reveal>
         <p>
           The details on these pages are limited to what the firm has verified:
-          years in practice, enrolment with the Bar Council of Uttar Pradesh and
-          the holding of a Certificate of Practice. No specialisation,
-          court list, qualification or result is claimed for any advocate.
+          years in practice, enrolment with the Bar Council of Uttar Pradesh,
+          the holding of a Certificate of Practice and, where the firm has
+          stated it, the court an advocate practises before. No specialisation,
+          qualification or result is claimed for any advocate.
         </p>
         <p>
           This website is not an advertisement or a solicitation of work, and
@@ -2102,8 +2111,7 @@ ${PRACTICE_AREAS.map(
         </p>
         <p>
           The particulars given above are limited to the years in practice,
-          enrolment with the Bar Council of Uttar Pradesh and the holding of a
-          Certificate of Practice. No qualification, court list, membership,
+          enrolment with the Bar Council of Uttar Pradesh${a.details && a.details.courts ? ", the holding of a\n          Certificate of Practice and the court stated" : " and the holding of a\n          Certificate of Practice"}. No qualification, ${a.details && a.details.courts ? "" : "court list, "}membership,
           designation, reported matter or result is claimed.
         </p>
         <p>${arrowLink("Read the full disclaimer", "../../disclaimer/index.html")}</p>
@@ -2699,7 +2707,7 @@ ${sectionHead({
   lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice. All three work from the Lucknow office.",
   id: "loc-advocates"
 })}
-      <div class="grid grid--3" data-reveal-group>
+      <div class="grid grid--3 grid--advocates" data-reveal-group>
 ${ADVOCATES.map((a) => advocateCard(P, a)).join("\n")}
       </div>
     </div>
@@ -2878,14 +2886,6 @@ GUIDES.articles.forEach((a) => {
 });
 
 const isApproved = (a) => a.reviewStatus === "approved";
-
-/* Counts that appear in prose are written out, and they are derived rather
-   than typed, so adding an article cannot leave the page claiming a number
-   that was true last month. Beyond twenty the figure reads better. */
-const NUMBER_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six",
-  "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen",
-  "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty"];
-const countWord = (n) => NUMBER_WORDS[n] || String(n);
 
 /* Four columns or three, whichever leaves the fullest bottom row. The old
    rule took four only when the count divided by four exactly, which was
@@ -4573,7 +4573,7 @@ ${sectionHead({
   lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
   id: "hub-advocates"
 })}
-      <div class="grid grid--3" data-reveal-group>
+      <div class="grid grid--3 grid--advocates" data-reveal-group>
 ${ADVOCATES.map((a) => advocateCard(P, a)).join("\n")}
       </div>
     </div>
@@ -4695,7 +4695,7 @@ ${sectionHead({
   lead: "Each advocate of the firm is enrolled with the Bar Council of Uttar Pradesh and holds a Certificate of Practice.",
   id: "svc-advocates"
 })}
-      <div class="grid grid--3" data-reveal-group>
+      <div class="grid grid--3 grid--advocates" data-reveal-group>
 ${ADVOCATES.map((a) => advocateCard(P, a)).join("\n")}
       </div>
     </div>

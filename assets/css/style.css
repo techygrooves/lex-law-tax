@@ -590,6 +590,16 @@ small {
 .grid--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
 .grid--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr)); }
 
+/* Advocate cards: never more than three across, however many advocates
+   there are. With auto-fit alone, a fourth track opens on wide screens as
+   soon as there are four or more cards, and every portrait shrinks. The
+   minimum track is a third of the row (less the two gaps), so a row holds
+   at most three and further advocates simply start a new row at the same
+   card size. Below that width the 17rem minimum takes over as before. */
+.grid--advocates {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(17rem, (100% - 2 * var(--space-m)) / 3)), 1fr));
+}
+
 .stack > * + * {
   margin-top: var(--space-s);
 }

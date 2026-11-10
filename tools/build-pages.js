@@ -4922,8 +4922,21 @@ const previousSitemapDates = new Map(
 
 const SITEMAP_EXCLUDE = new Set(["404.html", "components/index.html"]);
 
+/* Authored pages link the same stylesheet and script as generated ones,
+   but nothing regenerates them, so their ?v= versions used to fall behind
+   whenever either file changed. A browser then kept serving its cached
+   copy of the old file on those pages only: the unstyled tables seen on
+   the live site came from exactly that. Refreshing the version here keeps
+   every page on the current asset. Only the query string is touched. */
+function refreshAssetVersions(html) {
+  return html
+    .replace(/(assets\/css\/style\.min\.css)(\?v=[0-9a-f]+)?"/g, "$1?v=" + CSS_VERSION + '"')
+    .replace(/(assets\/js\/site\.min\.js)(\?v=[0-9a-f]+)?"/g, "$1?v=" + JS_VERSION + '"');
+}
+
 /* Authored pages are not in `files`, because their article bodies are not
-   generated. Only confirmed contact metadata and firm article attribution are refreshed below. They
+   generated. Only confirmed contact metadata, firm article attribution and
+   asset versions are refreshed below. They
    are read from disk and put through the same rules as the rest: a page
    carrying noindex is left out, and one without a canonical is an error
    rather than a silent omission. A missing file means the entry has an
@@ -4952,7 +4965,9 @@ authoredPaths.forEach((rel) => {
     );
   }
   const original = fs.readFileSync(target, "utf8");
-  authoredPages[rel] = articleAttribution(renderConfig(original, SITE_CONFIG, CONFIG_TOKENS), FIRM);
+  authoredPages[rel] = refreshAssetVersions(
+    articleAttribution(renderConfig(original, SITE_CONFIG, CONFIG_TOKENS), FIRM)
+  );
   if (authoredPages[rel] !== original) fs.writeFileSync(target, authoredPages[rel], "utf8");
 });
 

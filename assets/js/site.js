@@ -601,6 +601,72 @@
      Back to top
      --------------------------------------------------------------- */
 
+  /* --------------------------------------------------------------------
+     Mobile contact bar
+     --------------------------------------------------------------------
+     A bar fixed to the bottom of the screen on phones: Call Now on the
+     left, with a pulsing green light for "Available 24/7", and Free
+     Consultation on the right, which opens WhatsApp.
+
+     It is added here rather than written into each page because many
+     pages are hand-committed and never regenerated; every page loads this
+     script, so every page gets the same bar. The stylesheet shows it only
+     at phone widths, and pads the bottom of the page by the bar's height
+     so the footer can still be scrolled clear of it.
+
+     The numbers come from site-config.js, the same source as every other
+     call and WhatsApp link, and the hrefs are tel: and wa.me, so the
+     analytics click tracking already counts both. If either number is not
+     yet published the bar is not added at all, rather than showing a
+     button that goes nowhere. */
+
+  var WHATSAPP_GREETING = "Hello, I would like a free consultation.";
+
+  var MOBILE_CTA_ICONS = {
+    phone: '<path d="M6.6 3h3l1.5 4-2 1.4a12 12 0 0 0 5.5 5.5l1.4-2 4 1.5v3a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 4.6 5.2 2 2 0 0 1 6.6 3Z"/>',
+    chat: '<path d="M20.5 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 20.5 12Z"/>'
+  };
+
+  function mobileCtaIcon(name) {
+    return '<svg class="mobile-cta__icon" width="20" height="20" viewBox="0 0 24 24" fill="none"' +
+      ' stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"' +
+      ' aria-hidden="true" focusable="false">' + MOBILE_CTA_ICONS[name] + "</svg>";
+  }
+
+  function initMobileCta() {
+    if ($("[data-mobile-cta]")) return;
+    if (isPlaceholder(config.phone) || isPlaceholder(config.whatsapp)) return;
+
+    var bar = document.createElement("div");
+    bar.className = "mobile-cta";
+    bar.setAttribute("data-mobile-cta", "");
+    bar.setAttribute("role", "region");
+    bar.setAttribute("aria-label", "Call or message the firm");
+
+    var whatsapp = "https://wa.me/" + digitsOnly(config.whatsapp).replace(/^\+/, "") +
+      "?text=" + encodeURIComponent(WHATSAPP_GREETING);
+
+    bar.innerHTML =
+      '<a class="mobile-cta__btn mobile-cta__btn--call" href="tel:' + digitsOnly(config.phone) + '">' +
+        mobileCtaIcon("phone") +
+        '<span class="mobile-cta__text">' +
+          '<span class="mobile-cta__label">Call Now</span> ' +
+          '<span class="mobile-cta__sub"><span class="mobile-cta__live" aria-hidden="true"></span>Available 24/7</span>' +
+        "</span>" +
+      "</a>" +
+      '<a class="mobile-cta__btn mobile-cta__btn--whatsapp" href="' + whatsapp + '"' +
+        ' target="_blank" rel="noopener noreferrer">' +
+        mobileCtaIcon("chat") +
+        '<span class="mobile-cta__text">' +
+          '<span class="mobile-cta__label">Free Consultation</span> ' +
+          '<span class="mobile-cta__sub">on WhatsApp</span>' +
+        "</span>" +
+      "</a>";
+
+    document.body.appendChild(bar);
+    document.documentElement.classList.add("has-mobile-cta");
+  }
+
   function initBackToTop() {
     var button = $("[data-to-top]");
     if (!button) return;
@@ -1057,6 +1123,7 @@
     initMobileNav();
     initAccordions();
     initReveal();
+    initMobileCta();
     initBackToTop();
     initDisclaimerGate();
     initStructuredData();

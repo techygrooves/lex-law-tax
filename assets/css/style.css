@@ -162,6 +162,7 @@
   --z-drawer: 200;
   --z-modal: 300;
   --z-totop: 90;
+  --z-mobile-cta: 95;
 }
 
 
@@ -2506,6 +2507,146 @@ textarea:disabled {
   border-color: var(--color-teal);
 }
 
+/* 24a. Mobile contact bar
+   ------------------------------------------------------------------
+   Added by site.js (initMobileCta) on every page, shown only at phone
+   widths. It stays fixed to the bottom of the screen, and the page is
+   padded by the bar's height so the footer can still be scrolled clear of
+   it: the bar never hides content, it only sits beside it. Stacked under
+   the menu drawer and the disclaimer dialog, above everything else. */
+
+.mobile-cta {
+  display: none;
+}
+
+@media (max-width: 48em) {
+  :root {
+    --mobile-cta-h: 4rem;
+  }
+
+  .mobile-cta {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: var(--z-mobile-cta);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: var(--mobile-cta-h);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-color: var(--color-navy-deep);
+    box-shadow: 0 -6px 22px rgba(8, 28, 44, 0.18);
+  }
+
+  .has-mobile-cta body {
+    padding-bottom: calc(var(--mobile-cta-h) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .has-mobile-cta .to-top {
+    bottom: calc(var(--mobile-cta-h) + env(safe-area-inset-bottom, 0px) + 0.75rem);
+  }
+}
+
+.mobile-cta__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  min-height: var(--mobile-cta-h);
+  padding: var(--space-2xs) var(--space-xs);
+  color: var(--color-white);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.mobile-cta__btn--call {
+  background-color: var(--color-navy);
+}
+
+.mobile-cta__btn--whatsapp {
+  background-color: var(--color-teal);
+}
+
+.mobile-cta__btn:hover,
+.mobile-cta__btn:active {
+  color: var(--color-white);
+}
+
+.mobile-cta__btn--call:active {
+  background-color: var(--color-navy-deep);
+}
+
+.mobile-cta__btn--whatsapp:active {
+  background-color: var(--color-teal-dark);
+}
+
+.mobile-cta__btn:focus-visible {
+  outline: 2px solid var(--color-gold-soft);
+  outline-offset: -4px;
+}
+
+.mobile-cta__icon {
+  flex: none;
+}
+
+.mobile-cta__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.mobile-cta__label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.mobile-cta__sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+}
+
+/* The "Available 24/7" light: a green dot with a ring that pulses out
+   from it. Under reduced motion it stays lit without pulsing. */
+.mobile-cta__live {
+  position: relative;
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.mobile-cta__live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: #22c55e;
+  animation: mobile-cta-pulse 1.6s var(--ease-out) infinite;
+}
+
+@keyframes mobile-cta-pulse {
+  0% { transform: scale(1); opacity: 0.85; }
+  70% { transform: scale(2.6); opacity: 0; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-cta__live::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 
 /* 25. Hero and page header
    ------------------------------------------------------------------ */
@@ -4481,6 +4622,7 @@ a.contact-method__value:hover {
   .site-footer,
   .skip-link,
   .to-top,
+  .mobile-cta,
   .cta-band,
   .disclaimer-gate,
   .hero__actions {

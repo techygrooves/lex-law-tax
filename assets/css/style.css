@@ -26,7 +26,7 @@
    20. Contact CTA
    21. Forms
    22. Footer
-   23. Disclaimer acknowledgement
+   23. Disclaimer notes
    24. Back to top
    25. Hero and page header
    26. Homepage sections
@@ -2378,80 +2378,10 @@ textarea:disabled {
 }
 
 
-/* 23. Disclaimer acknowledgement
+/* 23. Disclaimer notes
    ------------------------------------------------------------------ */
 
-.disclaimer-gate {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal);
-  display: grid;
-  place-items: center;
-  padding: var(--space-s);
-  background-color: rgba(8, 28, 44, 0.75);
-}
-
-.disclaimer-gate__dialog {
-  width: min(38rem, 100%);
-  max-height: 90vh;
-  overflow-y: auto;
-  background-color: var(--color-white);
-  border-top: 3px solid var(--color-gold);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-}
-
-.disclaimer-gate__title {
-  font-size: var(--fs-xl);
-  margin-bottom: var(--space-xs);
-}
-
-.disclaimer-gate p {
-  font-size: var(--fs-sm);
-  color: var(--color-slate);
-  max-width: none;
-}
-
-.disclaimer-gate__points {
-  list-style: none;
-  margin: var(--space-s) 0 0;
-  padding: 0;
-  display: grid;
-  gap: var(--space-2xs);
-}
-
-.disclaimer-gate__points li {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-xs);
-  font-size: var(--fs-sm);
-  color: var(--color-slate);
-  line-height: var(--lh-snug);
-}
-
-.disclaimer-gate__points svg {
-  flex: none;
-  margin-top: 3px;
-  color: var(--color-teal);
-}
-
-.disclaimer-gate__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2xs);
-  margin-top: var(--space-m);
-  padding-top: var(--space-m);
-  border-top: var(--hairline);
-}
-
-.disclaimer-gate__foot {
-  margin: var(--space-s) 0 0;
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-}
-
-/* Inline acknowledgement block, for use inside a page */
+/* Inline disclaimer block, for use inside a page */
 .disclaimer-note {
   border: var(--hairline);
   border-left: 2px solid var(--color-gold);
@@ -2513,7 +2443,7 @@ textarea:disabled {
    widths. It stays fixed to the bottom of the screen, and the page is
    padded by the bar's height so the footer can still be scrolled clear of
    it: the bar never hides content, it only sits beside it. Stacked under
-   the menu drawer and the disclaimer dialog, above everything else. */
+   the menu drawer, above everything else. */
 
 .mobile-cta {
   display: none;
@@ -4624,7 +4554,6 @@ a.contact-method__value:hover {
   .to-top,
   .mobile-cta,
   .cta-band,
-  .disclaimer-gate,
   .hero__actions {
     display: none !important;
   }

@@ -930,8 +930,7 @@ ${cities}
         This website is intended to provide information about ${FIRM} and is not an
         advertisement or a solicitation of work. Nothing on this website constitutes legal
         advice, and no advocate&ndash;client relationship is created by using it.
-        Please read the <a href="${P}disclaimer/index.html">disclaimer</a> in full, or
-        <a href="#" data-disclaimer-open>review the acknowledgement</a>.
+        Please read the <a href="${P}disclaimer/index.html">disclaimer</a> in full.
       </p>
     </div>
 
@@ -946,35 +945,6 @@ ${cities}
 
   </div>
 </footer>`;
-}
-
-/* --- 22. Disclaimer acknowledgement ----------------------------------------- */
-
-function disclaimerGate(P, auto) {
-  const points = [
-    "This website provides general information about " + FIRM + " and its areas of practice.",
-    "It is not intended as advertising or as a solicitation of work.",
-    "Viewing this website does not create an advocate&ndash;client relationship.",
-    "Legal outcomes depend on the facts of each matter and the law applicable to it.",
-    "Please obtain advice on your own specific matter before acting on anything read here."
-  ];
-
-  return `<div class="disclaimer-gate" data-disclaimer-gate="${auto ? "auto" : "manual"}" role="dialog" aria-modal="true" aria-labelledby="disclaimer-gate-title" aria-describedby="disclaimer-gate-points" hidden>
-  <div class="disclaimer-gate__dialog">
-    <p class="eyebrow">Please read before continuing</p>
-    <h2 class="disclaimer-gate__title" id="disclaimer-gate-title">Disclaimer</h2>
-    <ul class="disclaimer-gate__points" id="disclaimer-gate-points">
-${points.map((t) => `      <li>${ICON.check(15)}<span>${t}</span></li>`).join("\n")}
-    </ul>
-    <div class="disclaimer-gate__actions">
-      <button class="btn btn--primary" type="button" data-disclaimer-accept>I Understand and Continue</button>
-      <button class="btn btn--secondary" type="button" data-disclaimer-exit>Exit Website</button>
-    </div>
-    <p class="disclaimer-gate__foot">
-      The full terms are set out in the <a href="${P}disclaimer/index.html">disclaimer</a>.
-    </p>
-  </div>
-</div>`;
 }
 
 /* --- 23. Back to top --------------------------------------------------------- */
@@ -1156,7 +1126,6 @@ ${o.body}
 ${o.cta === false ? "" : ctaBand(P, o.cta)}
 ${footer(P)}
 
-${disclaimerGate(P, o.depth === 0 && !o.noindex)}
 
 ${backToTop()}
 
@@ -3877,25 +3846,8 @@ files["privacy-policy/index.html"] = page({
         measurement scripts by default, will simply not be counted.
       </p>
       <p>
-        Separately from those cookies, this website uses your browser's local storage
-        for a single purpose, described in the next section. Local storage stays in
-        your browser; it is not transmitted to the firm or to anyone else, and it is
-        not readable by other websites.
-      </p>
-
-      <h2 id="acknowledgement">The disclaimer acknowledgement</h2>
-      <p>
-        On a first visit the site shows the acknowledgement required by the Bar
-        Council of India's rules, which has to be accepted before the site is used.
-        When it is accepted, one entry is written to your browser's local storage
-        under the key <code>hrla.disclaimer.accepted</code> so that the
-        acknowledgement is not shown again on every page.
-      </p>
-      <p>
-        That entry records only that the acknowledgement was accepted. It contains
-        nothing that identifies you, it is not sent anywhere, and clearing your
-        browser's site data removes it, after which the acknowledgement is shown
-        again.
+        Beyond those analytics cookies, the website stores nothing in your browser:
+        it uses no local storage, session storage or cookie of its own.
       </p>
 
       <h2 id="images">Third-party image requests</h2>
@@ -3955,7 +3907,6 @@ files["privacy-policy/index.html"] = page({
       <ul>
         <li>You can use the site without submitting anything. Nothing on it requires you to identify yourself.</li>
         <li>You can contact the office by telephone instead of in writing, if you prefer not to send anything electronically.</li>
-        <li>You can clear the acknowledgement entry at any time by clearing your browser's site data for this site.</li>
         <li>You can block third-party requests in your browser; the site remains readable without the photographs and the web fonts, and blocking them also stops the analytics script from loading.</li>
         <li>You can refuse or delete the analytics cookies in your browser's settings, or install Google's opt-out add-on, without affecting how the site works.</li>
         <li>You can ask that information you have sent be corrected or deleted, as described above.</li>
@@ -4226,15 +4177,12 @@ ${previewBlock(
 ${previewBlock(
   "notices",
   "Notices and disclaimer",
-  ".notice, .disclaimer-note, .disclaimer-gate",
+  ".notice, .disclaimer-note",
   `          <div class="notice"><p>Please read the relevant guidance and contact the office with your documents for advice on your circumstances.</p></div>
           <div class="disclaimer-note" style="margin-top:1rem">
             <p>Sending an enquiry does not create an advocate&ndash;client relationship.
             Please do not send confidential documents through this website.</p>
-          </div>
-          <p class="cluster" style="margin-top:1.5rem">
-            <button class="btn btn--secondary" type="button" data-disclaimer-open>Open the disclaimer acknowledgement</button>
-          </p>`
+          </div>`
 )}
 
 ${previewBlock(

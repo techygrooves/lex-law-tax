@@ -704,83 +704,18 @@
   }
 
   /* ---------------------------------------------------------------
-     Disclaimer acknowledgement
+     Retired disclaimer acknowledgement
      ---------------------------------------------------------------
-     Shown once per visitor. Storage is wrapped because file:// origins
-     can refuse it; if storage is unavailable the acknowledgement still
-     works, it just is not remembered.                                 */
+     The site used to open with a disclaimer dialog and remember its
+     acceptance under this key in local storage. The dialog has been
+     removed, and the privacy policy now says the site stores nothing in
+     the browser, so returning visitors' old entry is cleared once.    */
 
-  var STORE_KEY = "hrla.disclaimer.accepted";
-
-  function readStore(key) {
+  function clearRetiredStorage() {
     try {
-      return window.localStorage.getItem(key);
+      window.localStorage.removeItem("hrla.disclaimer.accepted");
     } catch (error) {
-      return null;
-    }
-  }
-
-  function writeStore(key, value) {
-    try {
-      window.localStorage.setItem(key, value);
-    } catch (error) {
-      /* Not fatal — the acknowledgement simply is not remembered. */
-    }
-  }
-
-  function initDisclaimerGate() {
-    var gate = $("[data-disclaimer-gate]");
-    if (!gate) return;
-
-    var accept = $("[data-disclaimer-accept]", gate);
-    var lastFocused = null;
-
-    function open() {
-      lastFocused = document.activeElement;
-      gate.hidden = false;
-      lockScroll(true);
-      if (accept) accept.focus();
-    }
-
-    function close(remember) {
-      gate.hidden = true;
-      lockScroll(false);
-      if (remember) writeStore(STORE_KEY, "1");
-      if (lastFocused && lastFocused.focus) lastFocused.focus();
-    }
-
-    if (accept) {
-      accept.addEventListener("click", function () {
-        close(true);
-      });
-    }
-
-    /* "Exit Website" closes the tab where the browser allows it — which is
-       only when a script opened it — and otherwise navigates away to a
-       blank page. Either way the visitor leaves without acknowledging. */
-    $$("[data-disclaimer-exit]", gate).forEach(function (button) {
-      button.addEventListener("click", function () {
-        window.close();
-        window.setTimeout(function () {
-          window.location.replace("about:blank");
-        }, 120);
-      });
-    });
-
-    gate.addEventListener("keydown", function (event) {
-      if (event.key === "Tab") trapFocus(gate, event);
-    });
-
-    /* Anything that opens the acknowledgement on demand. */
-    $$("[data-disclaimer-open]").forEach(function (trigger) {
-      trigger.addEventListener("click", function (event) {
-        event.preventDefault();
-        open();
-      });
-    });
-
-    if (gate.getAttribute("data-disclaimer-gate") === "auto" && !readStore(STORE_KEY)) {
-      open();
+      /* Storage refused (file://, private mode): nothing to clear. */
     }
   }
 
@@ -1125,7 +1060,7 @@
     initReveal();
     initMobileCta();
     initBackToTop();
-    initDisclaimerGate();
+    clearRetiredStorage();
     initStructuredData();
     initForms();
     initAnalytics();

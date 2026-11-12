@@ -183,7 +183,7 @@ navigation · mega menu · dropdown · mobile drawer · breadcrumbs · section
 heading · primary button · secondary button · ghost / inverse / outline buttons
 · arrow link · practice-area card · advocate card · location card · article
 card · image-and-text split · trust strip · FAQ accordion · contact CTA band ·
-footer · disclaimer acknowledgement · back-to-top · 404 layout · media figure
+footer · back-to-top · 404 layout · media figure
 with fallback · form controls · notices.
 
 ## Accessibility
@@ -261,8 +261,8 @@ Firm-authored content provides general legal information. At the firm’s reques
 the homepage separately displays the complete Google review texts it supplied,
 with names and wording preserved. Star ratings reflect the firm’s explicit confirmation; review totals and individual
 results are not invented. See `REVIEWS.md` for provenance and update instructions.
-The footer carries a standing notice, a disclaimer acknowledgement appears on
-first visit, and `/disclaimer/` sets out the terms.
+The footer carries a standing notice on every page, and `/disclaimer/` sets
+out the terms in full.
 
 ## Deployment
 
@@ -611,12 +611,21 @@ requirements, and no further personal particulars should be requested or invente
 
 After editing, run `node tools/build-pages.js`.
 
-## First-visit acknowledgement
+## Disclaimer
 
-The disclaimer acknowledgement opens automatically on the homepage only, and
-records acceptance in `localStorage` under `hrla.disclaimer.accepted`. *Exit
-Website* closes the tab where the browser permits it and otherwise navigates to
-a blank page. The footer link reopens it on any page.
+The site opens directly, with no disclaimer dialog: at the firm's request the
+first-visit acknowledgement was removed. The standing notice in every page's
+footer and the full `/disclaimer/` page remain. The site stores nothing in the
+browser; `site.js` clears the `hrla.disclaimer.accepted` entry the old dialog
+left in returning visitors' local storage, so the privacy policy's statement
+holds for them too.
+
+## Mobile contact bar
+
+On phones (up to 768px) `site.js` adds a bar fixed to the bottom of every page:
+*Call Now* with a pulsing *Available 24/7* light, and *Free Consultation* on
+WhatsApp. Numbers come from `assets/js/site-config.js`. The page is padded by
+the bar's height so it always scrolls clear of the footer.
 
 ## Final audit
 

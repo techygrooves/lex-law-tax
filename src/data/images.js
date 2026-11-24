@@ -228,13 +228,13 @@ window.siteImages = {
       height: 1448
     },
     "pradyumn-jaiswal": {
-      src: "assets/images/pradyumn-adv.png",
+      src: "assets/images/pradyumn-adv.jpg",
       alt: "Photograph of Advocate Pradyumn Jaiswal",
-      width: 1086,
-      height: 1448
+      width: 1024,
+      height: 1008
     },
     "harshit-tiwari": {
-      src: "assets/images/harshit-adv.png",
+      src: "assets/images/harshit-adv.jpg",
       alt: "Photograph of Advocate Harshit Tiwari",
       width: 1086,
       height: 1448

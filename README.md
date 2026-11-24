@@ -620,6 +620,16 @@ browser; `site.js` clears the `hrla.disclaimer.accepted` entry the old dialog
 left in returning visitors' local storage, so the privacy policy's statement
 holds for them too.
 
+## Family & Matrimonial Law
+
+`/family-law/` is a detailed section with thirteen topic pages, written in
+`src/data/family-law.js` (hub and articles in one file, with the sources
+checked and the writing rules at the top). The build places it after Property
+Law and Registration in the menus, adds it to the practice-area list, and
+renders the pages through the same article template as the property articles.
+The hub sets its pages out in four groups using the optional `groups`,
+`summary` and `linkLabel` fields; hubs without them render as before.
+
 ## Mobile contact bar
 
 On phones (up to 768px) `site.js` adds a bar fixed to the bottom of every page:

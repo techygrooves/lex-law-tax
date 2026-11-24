@@ -1368,6 +1368,23 @@ a.is-pending {
   max-width: var(--measure-heading);
 }
 
+/* Group headings inside a hub's list of pages, where a hub sets its
+   pages out under headings (Family & Matrimonial Law). Ordinary h3
+   type; only the spacing between groups is set here. */
+.hub-group__title {
+  margin: var(--space-2xl) 0 var(--space-2xs);
+}
+
+.hub-group__title:first-of-type {
+  margin-top: 0;
+}
+
+.hub-group__lead {
+  max-width: var(--measure);
+  margin-bottom: var(--space-m);
+  color: var(--color-slate);
+}
+
 .section-head__lead {
   font-size: var(--fs-md);
   color: var(--color-slate);

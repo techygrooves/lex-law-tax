@@ -262,7 +262,10 @@ window.siteImages = {
     "employment-law": "employmentLaw",
     "income-tax": "tax",
     "gst": "tax",
-    "firm-business-registration": "firmRegistration"
+    "firm-business-registration": "firmRegistration",
+    /* No photograph of its own yet: the neutral office photograph is used.
+       To give the section its own, add a record above and change this key. */
+    "family-law": "about"
   }
 
   /* ---------------------------------------------------------------------

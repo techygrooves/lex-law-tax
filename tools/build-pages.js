@@ -106,14 +106,22 @@ if (ANALYTICS_ID && !/^G-[A-Z0-9]+$/.test(ANALYTICS_ID)) {
 /* Both content files use the same page model, so the renderer treats
    them as one list. The coverage statement and the review date are
    site-wide and come from the legal-services file. */
-const SECTION_HUBS = LEGAL.hubs.concat(TAXBIZ.hubs);
+const FAMILY = loadData("src/data/family-law.js", "familyLaw");
+const LEGAL_HUBS = LEGAL.hubs.slice();
+LEGAL_HUBS.splice(
+  LEGAL_HUBS.findIndex((h) => h.slug === "property-law-and-registration") + 1,
+  0,
+  Object.assign({ services: [] }, FAMILY.hub)
+);
+const SECTION_HUBS = LEGAL_HUBS.concat(TAXBIZ.hubs);
 
 /* Long-form articles that live under a section hub. They are kept in
    their own file because each one runs to a couple of thousand words, and
    folding them into legal-services.js would bury the service definitions
    they sit beside. Each is attached to its hub here, so the hub lists it
    and links to it exactly as it does a service. */
-const ARTICLES = loadData("src/data/property-articles.js", "sectionArticles");
+const ARTICLES = loadData("src/data/property-articles.js", "sectionArticles")
+  .concat([{ hub: FAMILY.hub.slug, articles: FAMILY.articles }]);
 ARTICLES.forEach((group) => {
   const hub = SECTION_HUBS.filter((h) => h.slug === group.hub)[0];
   if (!hub) throw new Error("Article group names an unknown hub: " + group.hub);
@@ -151,7 +159,8 @@ const PRACTICE_AREAS = [
   ["employment-law", "Employment Law", "Employment documentation, workplace matters and employer compliance."],
   ["income-tax", "Income Tax", "Assessments, appeals, notices and income tax compliance."],
   ["gst", "GST", "Registration, returns, notices, audits and appellate proceedings."],
-  ["firm-business-registration", "Firm and Business Registration", "Formation and registration of firms, companies and other entities."]
+  ["firm-business-registration", "Firm and Business Registration", "Formation and registration of firms, companies and other entities."],
+  ["family-law", "Family & Matrimonial Law", "Marriage registration, divorce, maintenance, custody and protection matters."]
 ];
 
 const SERVICE_LAW_SCOPE = [
@@ -206,7 +215,8 @@ const PRACTICE_AREA_HUBS = {
   "contractual-agreements": "corporate-and-contracts",
   "income-tax": "tax-and-gst",
   "gst": "tax-and-gst",
-  "firm-business-registration": "business-registration"
+  "firm-business-registration": "business-registration",
+  "family-law": "family-law"
 };
 
 /* Every city list on the site is derived from src/data/locations.js, so a
@@ -1177,7 +1187,7 @@ HOME_SERVICES.forEach(([name, key, href]) => {
   }
 });
 
-/* The twelve practice areas plus Other, for the homepage enquiry form.
+/* Every practice area plus Other, for the homepage enquiry form.
    Taken from PRACTICE_AREAS so the form cannot list an area the site
    does not have. */
 const PRACTICE_FORM_OPTIONS = PRACTICE_AREAS
@@ -1762,7 +1772,7 @@ ${pillars([
 ${sectionHead({
   eyebrow: "Scope",
   title: "Areas of Assistance",
-  lead: "The twelve areas the firm handles. Each links to its own page.",
+  lead: "The " + countWord(PRACTICE_AREAS.length).toLowerCase() + " areas the firm handles. Each links to its own page.",
   id: "areas-title"
 })}
       <ul class="link-list" data-reveal>
@@ -2115,7 +2125,7 @@ files["practice-areas/index.html"] = page({
     <div class="container">
 ${sectionHead({
   eyebrow: "Practice areas",
-  title: "The Twelve Areas the Firm Covers",
+  title: "The " + countWord(PRACTICE_AREAS.length) + " Areas the Firm Covers",
   lead: "Service law and employment law are dealt with separately, because the forums and the questions they raise are different.",
   id: "areas-title"
 })}
@@ -4090,7 +4100,7 @@ ${previewBlock(
   sectionHead({
     eyebrow: "Practice areas",
     title: "Matters handled by the firm",
-    lead: "Twelve areas of practice across litigation, property, corporate, service, employment and tax.",
+    lead: countWord(PRACTICE_AREAS.length) + " areas of practice across litigation, family, property, corporate, service, employment and tax.",
     reveal: false
   })
 )}
@@ -4443,13 +4453,14 @@ function disclaimerBlock(P) {
       </div>`;
 }
 
-function lastReviewed() {
-  const d = new Date(LEGAL.lastReviewed + "T00:00:00Z");
+function lastReviewed(date) {
+  const reviewed = date || LEGAL.lastReviewed;
+  const d = new Date(reviewed + "T00:00:00Z");
   const shown = d.toLocaleDateString("en-GB", {
     day: "numeric", month: "long", year: "numeric", timeZone: "UTC"
   });
   return `      <p class="last-reviewed">
-        Last reviewed: <time datetime="${LEGAL.lastReviewed}">${shown}</time>
+        Last reviewed: <time datetime="${reviewed}">${shown}</time>
       </p>`;
 }
 
@@ -4462,17 +4473,61 @@ function hubPage(hub) {
     { label: hub.name, canonical: hub.slug + "/" }
   ];
 
-  const serviceCards = hub.services
-    .map(
-      (s) => `      <article class="card svc-card" data-reveal>
+  /* A hub may supply `summary` and `linkLabel` per page, and `groups`
+     to set its pages out under headings. Without them the hub renders
+     as it always has: one grid, the page's lead, "Read more". */
+  const card = (s) => `      <article class="card svc-card" data-reveal>
         <div class="card__body">
           <h3 class="card__title"><a href="${P}${hub.slug}/${s.slug}/index.html">${s.navLabel}</a></h3>
-          <p class="card__text">${s.lead}</p>
-          <p class="card__foot">${arrowLink("Read more", P + hub.slug + "/" + s.slug + "/index.html")}</p>
+          <p class="card__text">${s.summary || s.lead}</p>
+          <p class="card__foot">${arrowLink(s.linkLabel || "Read more", P + hub.slug + "/" + s.slug + "/index.html")}</p>
         </div>
-      </article>`
-    )
-    .join("\n");
+      </article>`;
+  const serviceCards = hub.services.map(card).join("\n");
+
+  if (hub.groups) {
+    const grouped = hub.groups.reduce((acc, g) => acc.concat(g.pages), []);
+    const missing = hub.services.filter((s) => grouped.indexOf(s.slug) < 0).map((s) => s.slug);
+    const unknown = grouped.filter((slug) => !hub.services.some((s) => s.slug === slug));
+    if (missing.length || unknown.length || grouped.length !== hub.services.length) {
+      throw new Error("Hub " + hub.slug + " groups do not match its pages. Missing: " +
+        missing.join(", ") + " Unknown: " + unknown.join(", "));
+    }
+  }
+
+  const servicesSection = hub.groups
+    ? `  <section class="section section--soft" aria-labelledby="hub-services">
+    <div class="container">
+${sectionHead({
+  eyebrow: hub.servicesEyebrow || "Services",
+  title: hub.servicesTitle || "Services in this area",
+  lead: hub.servicesLead || "Each page below deals with one service and the questions it raises.",
+  id: "hub-services"
+})}
+${hub.groups
+  .map(
+    (g, gi) => `      <h3 class="hub-group__title" id="hub-group-${gi + 1}">${g.title}</h3>
+      <p class="hub-group__lead">${g.lead}</p>
+      <div class="grid ${gridFor(g.pages.length)}" data-reveal-group data-reveal-step="70">
+${g.pages.map((slug) => card(hub.services.find((s) => s.slug === slug))).join("\n")}
+      </div>`
+  )
+  .join("\n")}
+    </div>
+  </section>`
+    : `  <section class="section section--soft" aria-labelledby="hub-services">
+    <div class="container">
+${sectionHead({
+  eyebrow: "Services",
+  title: "Services in this area",
+  lead: "Each page below deals with one service and the questions it raises.",
+  id: "hub-services"
+})}
+      <div class="grid ${gridFor(hub.services.length)}" data-reveal-group data-reveal-step="70">
+${serviceCards}
+      </div>
+    </div>
+  </section>`;
 
   return page({
     depth: 1,
@@ -4492,19 +4547,7 @@ ${hub.intro.map((t) => `      <p>${t}</p>`).join("\n")}
     </div>
   </section>
 
-  <section class="section section--soft" aria-labelledby="hub-services">
-    <div class="container">
-${sectionHead({
-  eyebrow: "Services",
-  title: "Services in this area",
-  lead: "Each page below deals with one service and the questions it raises.",
-  id: "hub-services"
-})}
-      <div class="grid ${gridFor(hub.services.length)}" data-reveal-group data-reveal-step="70">
-${serviceCards}
-      </div>
-    </div>
-  </section>
+${servicesSection}
 
   <section class="section" aria-labelledby="hub-faq">
     <div class="container">
@@ -4533,7 +4576,7 @@ ${coverageBlock("hub-coverage")}
   <section class="section">
     <div class="container container--reading">
 ${disclaimerBlock(P)}
-${lastReviewed()}
+${lastReviewed(hub.lastReviewed)}
     </div>
   </section>`
   });
@@ -4807,9 +4850,9 @@ ${accordion("article-faq-" + a.slug, a.faqs, true)}
 
   <section class="section" aria-labelledby="article-related">
     <div class="container container--reading">
-${sectionHead({ eyebrow: "See also", title: "Related Services", id: "article-related" })}
+${sectionHead({ eyebrow: "See also", title: hub.relatedTitle || "Related Services", id: "article-related" })}
 ${relatedLinks(P, a.related)}
-      <p class="cluster">${arrowLink("All property services", P + hub.slug + "/index.html")}</p>
+      <p class="cluster">${arrowLink(hub.backLabel || "All property services", P + hub.slug + "/index.html")}</p>
     </div>
   </section>
 
@@ -4817,7 +4860,7 @@ ${relatedLinks(P, a.related)}
     <div class="container container--reading">
 ${sectionHead({ eyebrow: "Please note", title: "About This Page", id: "article-note" })}
 ${disclaimerBlock(P)}
-${lastReviewed()}
+${lastReviewed(a.dateModified && hub.lastReviewed ? a.dateModified : undefined)}
     </div>
   </section>`
   });
